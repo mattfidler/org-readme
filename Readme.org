@@ -1,0 +1,9 @@
+* Org-readme
+This file is to help generate =Readme.org= files based on emacs lisp
+files.
+* Changelog
+Currently this library allows changelog to become a history section in
+Readme.org
+* History
+
+ - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)
