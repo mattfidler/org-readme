@@ -6,9 +6,9 @@
 ;; Maintainer: 
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 
-;; Last-Updated: Sat Aug  4 00:13:22 2012 (-0500)
+;; Last-Updated: Sat Aug  4 21:42:20 2012 (-0500)
 ;;           By: Matthew L. Fidler
-;;     Update #: 22
+;;     Update #: 123
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: 
 ;; Compatibility: 
@@ -17,11 +17,19 @@
 ;; 
 ;;; Commentary: 
 ;; 
+;; * Org-readme
+;; This file is to help generate =Readme.org= files based on emacs lisp
+;; files.
+;; * Changelog
+;; Currently this library allows changelog to become a history section in
+;; Readme.org
 ;; 
-;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 04-Aug-2012    Matthew L. Fidler  
+;;    Last-Updated: Sat Aug  4 21:40:14 2012 (-0500) #122 (Matthew L. Fidler)
+;;    Added syncing with emacswiki.
 ;; 04-Aug-2012    Matthew L. Fidler  
 ;;    Last-Updated: Sat Aug  4 00:02:49 2012 (-0500) #20 (Matthew L. Fidler)
 ;;    Initial Release
@@ -48,12 +56,237 @@
 ;; 
 ;;; Code:
 
+(require 'yaoddmuse)
+
+(defgroup org-readme nil
+  "Org-readme is a way to create Readme.org files based on an elisp file.")
+
+(defcustom org-readme-remove-sections '("History")
+  "List of sections to remove when changing the Readme.org to Change-log."
+  :group 'org-readme
+  :type '(repeat (string :tag "Section")))
+
+(defun org-readme-convert-to-emacswiki ()
+  "Converts Readme.org to oddmuse markup and uploads to emacswiki."
+  (interactive)
+  (let ((readme (org-readme-find-readme))
+        (what (file-name-nondirectory (buffer-file-name)))
+        (wiki (org-readme-get-emacswiki-name))
+        tmp tmp2)                       
+    (with-temp-buffer
+      (insert-file-contents readme)
+
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" nil t)
+        (replace-match ""))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "=\\<\\(.*?\\)\\>=" nil t)
+        (replace-match (format "<tt>%s</tt>" (match-string 1))))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^\\([*]+\\) *\\(.*\\)" nil t)
+        (setq tmp (make-string (min 4 (+ 1 (length (match-string 1)))) ?=))
+        (replace-match (format "%s %s %s" tmp (match-string 2) tmp) t t))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^: " nil t)
+        (replace-match "<pre>\n::::")
+        (while (progn
+                 (end-of-line)
+                 (re-search-forward "\\=\n: " nil t))
+          (replace-match "\n:::: "))
+        (end-of-line)
+        (insert "\n</pre>"))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^ *#[+]BEGIN_SRC emacs-lisp *.*" nil t)
+        (replace-match "{{{")
+        (setq tmp (point))
+        (when (re-search-forward "^ *#[+]END_SRC" nil t)
+          (replace-match "}}}")
+          (beginning-of-line)
+          (setq tmp2 (point))
+          (goto-char tmp)
+          (while (and (> tmp2 (point))
+                      (re-search-forward "^" tmp2 t))
+            (replace-match "::::"))))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^ *#[+]BEGIN_SRC.*" nil t)
+        (replace-match "<pre>")
+        (setq tmp (point))
+        (when (re-search-forward "^ *#[+]END_SRC" nil t)
+          (replace-match "</pre>")
+          (beginning-of-line)
+          (setq tmp2 (point))
+          (goto-char tmp)
+          (while (and (> tmp2 (point))
+                      (re-search-forward "^" tmp2 t))
+            (replace-match "::::"))))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*[+-] +\\(.*?\\)::" nil t)
+        (replace-match (format "* <b>%s</b> -- " (match-string 1))))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*[+-] +" nil t)
+        (replace-match "* "))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*#.*" nil t)
+        (replace-match ""))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*[0-9]+[.)] +" nil t)
+        (replace-match "# "))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]+" nil t)
+        (replace-match ""))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "^::::" nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (insert "This page describes [[")
+      (insert what)
+      (insert "]].\n\n")
+      (setq readme (buffer-substring (point-min) (point-max))))
+    (with-temp-file wiki
+      (insert readme))
+    (save-excursion
+      (set-buffer (find-file-noselect wiki))
+      (emacswiki-post nil "")
+      (kill-buffer (current-buffer)))
+    (delete-file wiki)))
+
+
 ;;;###autoload
-(defun org-readme-changelog ()
+(defun org-readme-sync ()
+  "Syncs Readme.org with current buffer."
+  (interactive)
+  (message "Adding Readme to Header Commentary")
+  (org-readme-to-commentary)
+  (save-buffer)
+  (message "Updating Changelog in current file.")
+  (org-readme-changelog-to-readme)
+  (message "Posting lisp file to emacswiki")
+  (emacswiki-post nil "")
+  (message "Posting Description to emacswiki")
+  (org-readme-convert-to-emacswiki))
+
+;;;###autoload
+(defun org-readme-to-commentary ()
+  "Change Readme.org to a Commentary section."
+  (interactive)
+  (let ((readme (org-readme-find-readme)) p1)
+    (with-temp-buffer
+      (insert-file-contents readme)
+      (mapc
+       (lambda(section)
+         (org-readme-remove-section section))
+       org-readme-remove-sections)
+
+      (goto-char (point-min))
+      (while (re-search-forward "=\\<\\(.*?\\)\\>=" nil t)
+        (replace-match (format "<tt>%s</tt>" (match-string 1))))
+      
+      (goto-char (point-min))
+      (while (re-search-forward "#.*" nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (while (re-search-forward "^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (while (re-search-forward "^:" nil t)
+        (replace-match ""))
+      (goto-char (point-min))
+      (while (org-readme-remove-section
+              (regexp-opt
+               (mapcar
+                (lambda(x)
+                  (nth 0 x))
+                org-todo-keyword-faces)) nil t))
+      (goto-char (point-min))
+      (skip-chars-forward " \t\n")
+      (delete-region (point-min) (point))
+      (insert "\n")
+      (goto-char (point-max))
+      (skip-chars-backward " \t\n")
+      (delete-region (point) (point-max))
+      (insert "\n")
+      (goto-char (point-min))
+      (while (re-search-forward "^" nil t)
+        (insert ";; "))
+      (setq readme (buffer-substring (point-min) (point-max))))
+    (goto-char (point-min))
+    (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
+      (skip-chars-forward "\n")
+      (setq pt (point))
+      (when (re-search-forward "^;;;;+[ \t]*$" nil t)
+        (goto-char (match-beginning 0))
+        (skip-chars-backward "\n")
+        (delete-region pt (point))
+        (insert readme)))))
+
+(defun org-readme-get-emacswiki-name ()
+  "Gets emacswiki-style name based on buffer."
+  (let ((dir (file-name-directory (buffer-file-name)))
+        (name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
+    (with-temp-buffer
+      (insert (downcase name))
+      (goto-char (point-min))
+      (when (looking-at ".")
+        (replace-match (upcase (match-string 0))))
+      (while (re-search-forward "-\\(.\\)" nil t)
+        (replace-match  (upcase (match-string 1))) t t)
+      (setq name (concat dir (buffer-substring (point-min) (point-max)))))
+    (symbol-value 'name)))
+
+(defun org-readme-find-readme ()
+  "Find the Readme.org."
+  (let* ((dir (file-name-directory (buffer-file-name)))
+         (df (directory-files dir t "^[Rr][Ee][Aa][Dd][Mm][Ee][.][Oo][Rr][Gg]$")))
+    (if (= 1 (length df))
+        (setq df (nth 0 df))
+      (setq df (expand-file-name "Readme.org" dir))
+      (symbol-value 'df))))
+
+(defun org-readme-remove-section (section &optional txt any-level)
+  "Remove `org-mode' SECTION. Optionally insert TXT.
+When ANY-LEVEL is non-nil, any level may be specified."
+  (let ((case-fold-search t))
+    (save-excursion
+      (goto-char (point-min))
+      (if (re-search-forward
+           (format "^[*]%s %s"
+                   (if any-level
+                       "+" "")
+                   section) nil t)
+          (progn
+            (delete-region
+             (match-beginning 0)
+             (or
+              (if (re-search-forward  "^[*] " nil t)
+                  (progn
+                    (- (match-beginning 0) 1))
+                nil)
+              (point-max)))
+            (when txt
+              (insert txt))
+            t)
+        (goto-char (point-max))
+        (when txt
+          (insert txt))
+        nil))))
+
+;;;###autoload
+(defun org-readme-changelog-to-readme ()
   "This puts the emacs lisp change-log into the Readme.org file."
   (interactive)
   (when (buffer-file-name)
-    (let ((dir (file-name-directory (buffer-file-name)))
+    (let ((readme (org-readme-find-readme))
           pt1 pt2 txt)
       (save-excursion
         (goto-char (point-min))         
@@ -111,27 +344,9 @@
               (insert "* History\n")
               (setq txt (buffer-substring (point-min) (point-max))))
             (with-temp-buffer
-              (let ((df (directory-files dir t "^[Rr][Ee][Aa][Dd][Mm][Ee][.][Oo][Rr][Gg]$")))
-                (if (= 1 (length df))
-                    (setq df (nth 0 df))
-                  (setq df (expand-file-name "Readme.org" dir)))
-                
-                (insert-file-contents df)
-                (goto-char (point-min))
-                (if (re-search-forward "^[*] History" nil t)
-                    (progn
-                      (delete-region
-                       (match-beginning 0)
-                       (or
-                        (if (re-search-forward  "^[*] " nil t)
-                            (progn
-                              (- (match-beginning 0) 1))
-                          nil)
-                        (point-max)))
-                      (insert txt))
-                  (goto-char (point-max))
-                  (insert txt))
-                (write-file df)))))))))
+              (insert-file-contents readme)
+              (org-readme-remove-section "History" txt)
+              (write-file readme))))))))
 
 (provide 'org-readme)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
