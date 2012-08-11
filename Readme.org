@@ -8,11 +8,11 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 0.7
+ - Version :: 0.8
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Sat Aug 11 01:07:58 2012 (-0500)
+ - Last-Updated :: Sat Aug 11 01:09:12 2012 (-0500)
  -           By :: Matthew L. Fidler
- -     Update # :: 466
+ -     Update # :: 468
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
@@ -55,9 +55,9 @@ as follows:
   the library and converting to Camel Case.  For example,
   org-readme.el would be converted to OrgReadme.
 - When the library is a multiple file lisp library, or a library
-  without any direct lisp calls, the Readme.org is converted to an
 * History
 
+ - 11-Aug-2012 ::  Git push worked. Bumping minor version. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Attempted to push repository again. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Attempt to push with git. Something changed. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Added better Package-Requires tag. (Matthew L. Fidler)
@@ -73,11 +73,11 @@ as follows:
  - 11-Aug-2012 ::  Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
  - 11-Aug-2012 ::  Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version.  (Matthew L. Fidler)
  - 08-Aug-2012 ::  Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE></pre> instead of <pre></pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
- - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 01:08:14 2012 (-0500)
+ - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 01:09:25 2012 (-0500)
  - 06-Aug-2012 ::  Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Added the ability to call =org-readme-sync= from Readme.org (Matthew L. Fidler)
  - 05-Aug-2012 ::  Added git pushing to org-readme (Matthew L. Fidler)
  - 05-Aug-2012 ::  Added git support as well as a comment mode. The only thing that should need to be called is =org-readme-sync= (Matthew L. Fidler)
  - 04-Aug-2012 ::  Added syncing with emacswiki.  (Matthew L. Fidler)
-  - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)  appropriate EmacsWiki documentation file by the Parent Directory of
+  - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)  without any direct lisp calls, the Readme.org is converted to an
