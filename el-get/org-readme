@@ -1,0 +1,6 @@
+(:name org-readme
+ :description "org-readme"
+ :depends (http-post-simple yaoddmuse header2 lib-requires)
+ :website "https://github.com/mlf176f2/org-readme"
+ :type git
+ :url "https://github.com/mlf176f2/org-readme.git")
