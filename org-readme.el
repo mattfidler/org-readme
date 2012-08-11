@@ -7,9 +7,9 @@
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 0.18
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Sat Aug 11 16:46:03 2012 (-0500)
+;; Last-Updated: Sat Aug 11 17:08:10 2012 (-0500)
 ;;           By: Matthew L. Fidler
-;;     Update #: 647
+;;     Update #: 656
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -50,19 +50,34 @@
 ;; single lisp file, the function exports the readme in EmacsWiki format
 ;; and posts it to the EmacsWiki.
 ;; ** EmacsWiki Page Names
+;; EmacsWiki Page names are generated from the file.  `org-readme.el'
+;; would generate a page of OrgReadme.
+;; 
 ;; ** Why each required library is needed
 ;; There are a few required libraries.  This is a list of the require
 ;; libraries and why they are needed.
 ;; 
-;; |------------------+-----------------------------------------------|
-;; | Library          | Why it is needed                              |
-;; |------------------+-----------------------------------------------|
-;; | yaoddmuse        | Publishing to emacswiki                       |
-;; | http-post-simple | Publishing to marmalade-repo.org              |
+;; |------------------+--------------------------------------|
+;; | Library          | Why it is needed                     |
+;; |------------------+--------------------------------------|
+;; | yaoddmuse        | Publish to emacswiki                 |
+;; | http-post-simple | Publish to marmalade-repo.org        |
+;; | header2          | To create header and changelog       |
+;; | lib-requires     | To generate the library dependencies |
+;; |------------------+--------------------------------------|
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 11-Aug-2012    Matthew L. Fidler  
+;;    Last-Updated: Sat Aug 11 17:07:22 2012 (-0500) #654 (Matthew L. Fidler)
+;;    Bug fix for org-readme version tagging.
+;; 11-Aug-2012    Matthew L. Fidler  
+;;    Last-Updated: Sat Aug 11 17:03:26 2012 (-0500) #650 (Matthew L. Fidler)
+;;    Test the bug where some of the section text is deleted 
+;; 11-Aug-2012    Matthew L. Fidler  
+;;    Last-Updated: Sat Aug 11 16:46:03 2012 (-0500) #647 (Matthew L. Fidler)
+;;    Added more documentation
 ;; 11-Aug-2012    Matthew L. Fidler  
 ;;    Last-Updated: Sat Aug 11 16:45:19 2012 (-0500) #645 (Matthew L. Fidler)
 ;;    One last bug fix to the markdown export engine.
@@ -761,7 +776,7 @@ Returns file name if created."
       (when el-get
         (message "Adding El-Get recipe")
         (shell-command
-         (format "git add el-get/%s"
+         (format "git add el-get/%s"    
                  (file-name-nondirectory el-get)))))
     
     (message "Git Adding Readme")
@@ -789,12 +804,12 @@ Returns file name if created."
       (shell-command "git push")
       (let ((tags (shell-command-to-string "git tag"))
             (ver  (org-readme-buffer-version)))
-        (message "Tags: %s\n%s" tags ver)
-        (unless (string-match (concat "v" (regexp-quote ver)) tags)
-          (message "Tagging the new version")
-          (message "git tag -a v%s -m \"version %s\"" ver ver)
-          (shell-command (format "git tag -a v%s -m \"version %s\"" ver ver))
-          (shell-command "git push --tags"))))))
+        (when ver
+          (unless (string-match (concat "v" (regexp-quote ver)) tags)
+            (message "Tagging the new version")
+            (message "git tag -a v%s -m \"version %s\"" ver ver)
+            (shell-command (format "git tag -a v%s -m \"version %s\"" ver ver))
+            (shell-command "git push --tags")))))))
 
 (defun org-readme-in-readme-org-p ()
   "Determine if the currently open buffer is the Readme.org"
@@ -865,17 +880,17 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
         (message "Posting lisp file to emacswiki")
         (emacswiki-post nil ""))
       
-      (when org-readme-edit-last-window-configuration
-        (set-window-configuration org-readme-edit-last-window-configuration)
-        (setq org-readme-edit-last-window-configuration nil))
-      
       (when org-readme-sync-git
         (org-readme-git))
-      
+
       (when (and (featurep 'yaoddmuse)
                  org-readme-sync-emacswiki)
         (message "Posting Description to emacswiki")
-        (org-readme-convert-to-emacswiki)))))
+        (org-readme-convert-to-emacswiki))
+      
+      (when org-readme-edit-last-window-configuration
+        (set-window-configuration org-readme-edit-last-window-configuration)
+        (setq org-readme-edit-last-window-configuration nil)))))
 
 ;;;###autoload
 (defun org-readme-to-commentary ()
@@ -1010,7 +1025,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
             (setq mtch (match-string 1))
             (delete-region
              (save-excursion
-               (goto-char (match-beginning 0))
+               (beginning-of-line)
                (skip-chars-backward " \t\n")
                (point))
              (if (re-search-forward (format "^%s +" (regexp-quote mtch)) nil t)
