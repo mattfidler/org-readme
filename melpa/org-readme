@@ -1,0 +1,4 @@
+(org-readme
+ :repo "mlf176f2/org-readme"
+ :fetcher github
+ :files ("org-readme.el"))
