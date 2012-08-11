@@ -10,9 +10,9 @@
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
 - __Version__ --  0.18
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Sat Aug 11 16:45:40 2012 (-0500)
+- __Last-Updated__ --  Sat Aug 11 17:00:39 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  646
+- __Update #__ --  648
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -49,6 +49,9 @@ When `org-readme-sync` is called in a `Readme.org` file that is not a
 single lisp file, the function exports the readme in EmacsWiki format
 and posts it to the EmacsWiki.
 ### EmacsWiki Page Names
+EmacsWiki Page names are generated from the file.  `org-readme.el`
+would generate a page of OrgReadme.
+
 ### Why each required library is needed
 There are a few required libraries.  This is a list of the require
 libraries and why they are needed.
@@ -62,13 +65,18 @@ libraries and why they are needed.
 <tr><th scope="col" align="left">Library</th><th scope="col" align="left">Why it is needed</th></tr>
 </thead>
 <tbody>
-<tr><td align="left">yaoddmuse</td><td align="left">Publishing to emacswiki</td></tr>
+<tr><td align="left">yaoddmuse</td><td align="left">Publish to emacswiki</td></tr>
+<tr><td align="left">http-post-simple</td><td align="left">Publish to marmalade-repo.org</td></tr>
+<tr><td align="left">header2</td><td align="left">To create header and changelog</td></tr>
+<tr><td align="left">lib-requires</td><td align="left">To generate the library dependencies</td></tr>
 </tbody>
 </table>
 
 
+
 ## History
 
+- __11-Aug-2012__ --   Added more documentation (Matthew L. Fidler)
 - __11-Aug-2012__ --   One last bug fix to the markdown export engine. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Markdown bug fix (Matthew L. Fidler)
 - __11-Aug-2012__ --   Bug fix for el-get recipe. (Matthew L. Fidler)
@@ -97,11 +105,11 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 16:45:58 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 17:00:54 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git pushing to org-readme (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git support as well as a comment mode. The only thing that should need to be called is `org-readme-sync` (Matthew L. Fidler)
 - __04-Aug-2012__ --   Added syncing with emacswiki.  (Matthew L. Fidler)
-- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)| http-post-simple | Publishing to marmalade-repo.org              |
+- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)Another assumption is the primary lisp file is on github.com
