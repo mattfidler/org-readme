@@ -1,6 +1,7 @@
 #  Org Readme
  Matthew L. Fidler
-## Library Information
+
+## * Library Information
  __org-readme.el__ --- Integrates Readme.org and Commentary/Change-logs.
 
 - __Filename__ --  org-readme.el
@@ -10,9 +11,9 @@
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
 - __Version__ --  0.18
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Sat Aug 11 17:07:49 2012 (-0500)
+- __Last-Updated__ --  Sat Aug 11 17:13:51 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  655
+- __Update #__ --  660
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -21,7 +22,7 @@
 
   None
 
-## Using org-readme
+Using org-readme
 Org readme is used to:
 
 - Create/Update a "History" section in the Readme.org based on the changelog
@@ -73,8 +74,11 @@ libraries and why they are needed.
 </table>
 
 
+
+This line is put at the end of the file.
 ## History
 
+- __11-Aug-2012__ --   Another attempt at a remove-section fix. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Bug fix for org-readme version tagging. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Test the bug where some of the section text is deleted  (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added more documentation (Matthew L. Fidler)
@@ -106,11 +110,11 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 17:08:03 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 17:14:08 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git pushing to org-readme (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git support as well as a comment mode. The only thing that should need to be called is `org-readme-sync` (Matthew L. Fidler)
 - __04-Aug-2012__ --   Added syncing with emacswiki.  (Matthew L. Fidler)
-- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)|------------------+--------------------------------------|
+- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)
