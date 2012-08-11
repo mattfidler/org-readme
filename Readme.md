@@ -3,16 +3,16 @@
 ## Library Information
  __org-readme.el__ --- Integrates Readme.org and Commentary/Change-logs.
 
-- __Filename__ --  <org-readme.el>
+- __Filename__ --  org-readme.el
 - __Description__ --  Integrate Readme.org and Commentary/Change Logs.
 - __Author__ --  Matthew L. Fidler
 - __Maintainer__ --  Matthew L. Fidler
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
-- __Version__ --  0.17
+- __Version__ --  0.18
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Sat Aug 11 16:43:25 2012 (-0500)
+- __Last-Updated__ --  Sat Aug 11 16:45:40 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  643
+- __Update #__ --  646
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -63,13 +63,13 @@ libraries and why they are needed.
 </thead>
 <tbody>
 <tr><td align="left">yaoddmuse</td><td align="left">Publishing to emacswiki</td></tr>
-<tr><td align="left">http-post-simple</td><td align="left">Publishing to marmalade-repo.org</td></tr>
 </tbody>
 </table>
 
 
 ## History
 
+- __11-Aug-2012__ --   One last bug fix to the markdown export engine. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Markdown bug fix (Matthew L. Fidler)
 - __11-Aug-2012__ --   Bug fix for el-get recipe. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added the ability to create a markdown Readme (Readme.md) as well as adding a el-get recipe. (Matthew L. Fidler)
@@ -97,11 +97,11 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 16:43:38 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 16:45:58 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git pushing to org-readme (Matthew L. Fidler)
 - __05-Aug-2012__ --   Added git support as well as a comment mode. The only thing that should need to be called is `org-readme-sync` (Matthew L. Fidler)
 - __04-Aug-2012__ --   Added syncing with emacswiki.  (Matthew L. Fidler)
-- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)| header2          | To Create the required header                 |
+- __04-Aug-2012__ --   Initial Release  (Matthew L. Fidler)| http-post-simple | Publishing to marmalade-repo.org              |
