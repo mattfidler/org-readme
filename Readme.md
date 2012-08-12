@@ -8,11 +8,11 @@
 - __Author__ --  Matthew L. Fidler
 - __Maintainer__ --  Matthew L. Fidler
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
-- __Version__ --  0.18
+- __Version__ --  0.19
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Sat Aug 11 17:18:33 2012 (-0500)
+- __Last-Updated__ --  Sat Aug 11 23:51:56 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  663
+- __Update #__ --  666
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -22,8 +22,26 @@
   None
 
 
+## * Library Information
+ __org-readme.el__ --- Integrates Readme.org and Commentary/Change-logs.
+
+- __Filename__ --  org-readme.el
+- __Description__ --  Integrate Readme.org and Commentary/Change Logs.
+- __Author__ --  Matthew L. Fidler
+- __Maintainer__ --  Matthew L. Fidler
+- __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
+- __Version__ --  0.18
+- __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
+- __Last-Updated__ --  Sat Aug 11 17:13:51 2012 (-0500)
+- __By__ --  Matthew L. Fidler
+- __Update #__ --  660
+- __URL__ --  https:__github.com_mlf176f2_org-readme
+- __Keywords__ --  Header2, Readme.org, Emacswiki, Git
+- __Compatibility__ --  Tested with Emacs 24.1 on Windows.
+
 ## History
 
+- __11-Aug-2012__ --   Reverted. Still buggy. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Another attempt at bug fix to remove section. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Another attempt at a remove-section fix. (Matthew L. Fidler)
 - __11-Aug-2012__ --   Bug fix for org-readme version tagging. (Matthew L. Fidler)
@@ -57,7 +75,7 @@
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 17:18:49 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 23:52:09 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
