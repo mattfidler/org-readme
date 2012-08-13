@@ -8,11 +8,11 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 0.19
+ - Version :: 0.20
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Sat Aug 11 23:51:56 2012 (-0500)
+ - Last-Updated :: Mon Aug 13 16:48:00 2012 (-0500)
  -           By :: Matthew L. Fidler
- -     Update # :: 666
+ -     Update # :: 669
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
@@ -21,26 +21,53 @@
 
   None
 
+* Using org-readme
+Org readme is used to:
 
-* * Library Information
- *org-readme.el* --- Integrates Readme.org and Commentary/Change-logs.
+- Create/Update a "History" section in the Readme.org based on the changelog
+  section of the Emacs Log.
+- Create/Update a "Library Information" Section Based on the Emacs lisp header.
+- Create/Update a "Possible Dependencies" Section Based on the Emacs
+  lisp header.
 
- - Filename :: [[file:org-readme.el][org-readme.el]]
- - Description :: Integrate Readme.org and Commentary/Change Logs.
- - Author :: Matthew L. Fidler
- - Maintainer :: Matthew L. Fidler
- - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 0.18
- - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Sat Aug 11 17:13:51 2012 (-0500)
- -           By :: Matthew L. Fidler
- -     Update # :: 660
- - URL :: https://github.com/mlf176f2/org-readme
- - Keywords :: Header2, Readme.org, Emacswiki, Git
- - Compatibility :: Tested with Emacs 24.1 on Windows.
+All other sections of the Readme.org are then put into the
+"Commentary" section of the readme.org.
+
+In addition this library defines =org-readme-sync=,  a convenience function that:
+
+- Asks for a commentary about the library change.
+- Syncs the Readme.org with the lisp file as described above.
+- Updates emacswiki with the library description and the library
+  itself (requires yaoddmuse).
+- Updates Marmalade-repo if the library version is different than the
+  version in the server (requires http-post-simple).
+- Updates the git repository with the differences that you posted.
+- If you are using github, this library creates a melpa recipie.
+- If you are using github, this library creates a el-get recipie. 
+
+When =org-readme-sync= is called in a =Readme.org= file that is not a
+single lisp file, the function exports the readme in EmacsWiki format
+and posts it to the EmacsWiki.
+** EmacsWiki Page Names
+EmacsWiki Page names are generated from the file.  =org-readme.el=
+would generate a page of OrgReadme.
+
+** Why each required library is needed
+There are a few required libraries.  This is a list of the require
+libraries and why they are needed.
+
+|------------------+--------------------------------------|
+| Library          | Why it is needed                     |
+|------------------+--------------------------------------|
+| yaoddmuse        | Publish to emacswiki                 |
+| http-post-simple | Publish to marmalade-repo.org        |
+| header2          | To create header and changelog       |
+| lib-requires     | To generate the library dependencies |
+|------------------+--------------------------------------|
 
 * History
 
+ - 13-Aug-2012 ::  Changed the =org-readme-remove-section= to use =org-cut-subtree=. Hopefully all errors will resolve themselves now. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Reverted. Still buggy. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Another attempt at bug fix to remove section. (Matthew L. Fidler)
  - 11-Aug-2012 ::  Another attempt at a remove-section fix. (Matthew L. Fidler)
@@ -75,7 +102,7 @@
  - 11-Aug-2012 ::  Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
  - 11-Aug-2012 ::  Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
  - 08-Aug-2012 ::  Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE></pre> instead of <pre></pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
- - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Sat Aug 11 23:52:09 2012 (-0500)
+ - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 13 16:48:27 2012 (-0500)
  - 06-Aug-2012 ::  Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Added the ability to call =org-readme-sync= from Readme.org (Matthew L. Fidler)
