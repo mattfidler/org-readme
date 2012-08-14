@@ -10,9 +10,9 @@
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
 - __Version__ --  0.22
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Mon Aug 13 17:24:07 2012 (-0500)
+- __Last-Updated__ --  Mon Aug 13 21:53:01 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  677
+- __Update #__ --  680
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -76,6 +76,7 @@ libraries and why they are needed.
 
 ## History
 
+- __13-Aug-2012__ --   Another attempt to make texinfo documents. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Added texinfo output. Allows native emacs documentation. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Tried to post behind firewall. Reattempting. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Changed the `org-readme-remove-section` to use `org-cut-subtree`. Hopefully all errors will resolve themselves now. (Matthew L. Fidler)
@@ -113,7 +114,7 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 13 17:24:57 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 13 21:53:20 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
