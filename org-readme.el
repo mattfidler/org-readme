@@ -43,8 +43,8 @@
 ;; - Updates Marmalade-repo if the library version is different than the
 ;;   version in the server (requires http-post-simple).
 ;; - Updates the git repository with the differences that you posted.
-;; - If you are using github, this library creates a melpa recipie.
-;; - If you are using github, this library creates a el-get recipie. 
+;; - If you are using github, this library creates a melpa recipe.
+;; - If you are using github, this library creates a el-get recipe. 
 ;; 
 ;; When `org-readme-sync' is called in a `Readme.org' file that is not a
 ;; single lisp file, the function exports the readme in EmacsWiki format
@@ -286,7 +286,7 @@
   :group 'org-readme)
 
 (defcustom org-readme-build-melpa-recipe t
-  "Builds a mepla recipe based on github information"
+  "Builds a melpa recipe based on github information"
   :type 'boolean
   :group 'org-readme)
 
