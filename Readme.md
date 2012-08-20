@@ -8,11 +8,11 @@
 - __Author__ --  Matthew L. Fidler
 - __Maintainer__ --  Matthew L. Fidler
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
-- __Version__ --  0.22
+- __Version__ --  0.23
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Mon Aug 13 21:53:01 2012 (-0500)
+- __Last-Updated__ --  Mon Aug 20 09:33:57 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  680
+- __Update #__ --  685
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -56,26 +56,18 @@ would generate a page of OrgReadme.
 There are a few required libraries.  This is a list of the require
 libraries and why they are needed.
 
-
-<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
-<caption></caption>
-<colgroup><col align="left" /><col align="left" />
-</colgroup>
-<thead>
-<tr><th scope="col" align="left">Library</th><th scope="col" align="left">Why it is needed</th></tr>
-</thead>
-<tbody>
-<tr><td align="left">yaoddmuse</td><td align="left">Publish to emacswiki</td></tr>
-<tr><td align="left">http-post-simple</td><td align="left">Publish to marmalade-repo.org</td></tr>
-<tr><td align="left">header2</td><td align="left">To create header and changelog</td></tr>
-<tr><td align="left">lib-requires</td><td align="left">To generate the library dependencies</td></tr>
-</tbody>
-</table>
-
-
++------------------+--------------------------------------+
+| Library          | Why it is needed                     |
++------------------+--------------------------------------+
+| yaoddmuse        | Publish to emacswiki                 |
+| http-post-simple | Publish to marmalade-repo.org        |
+| header2          | To create header and changelog       |
+| lib-requires     | To generate the library dependencies |
++------------------+--------------------------------------+
 
 ## History
 
+- __20-Aug-2012__ --   Added pandoc markdown table support (optional) (Matthew L. Fidler)
 - __13-Aug-2012__ --   Another attempt to make texinfo documents. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Added texinfo output. Allows native emacs documentation. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Tried to post behind firewall. Reattempting. (Matthew L. Fidler)
@@ -114,7 +106,7 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 13 21:53:20 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 09:34:27 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)

@@ -27,15 +27,15 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 @item
 @strong{Created} -- Fri Aug 3 22:33:41 2012 (-0500)
 @item
-@strong{Version} -- 0.22
+@strong{Version} -- 0.23
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
-@strong{Last-Updated} -- Mon Aug 13 21:53:01 2012 (-0500)
+@strong{Last-Updated} -- Mon Aug 20 09:33:57 2012 (-0500)
 @item
 @strong{By} -- Matthew L. Fidler
 @item
-@strong{Update #} -- 680
+@strong{Update #} -- 685
 @item
 @strong{URL} -- https:__github.com_mlf176f2_org-readme
 @item
@@ -97,21 +97,20 @@ When @code{org-readme-sync} is called in a @code{Readme.org} file that is not a 
 @subsection Why each required library is needed
 There are a few required libraries. This is a list of the require libraries and why they are needed.
 
-  
+@multitable @columnfractions 0.26 0.54 
+@item 
 Library
-Why it is needed
-yaoddmuse
-Publish to emacswiki
-http-post-simple
-Publish to marmalade-repo.org
-header2
-To create header and changelog
-lib-requires
-To generate the library dependencies
+ @tab Why it is needed
+@item 
+yaoddmuse http-post-simple header2 lib-requires
+ @tab Publish to emacswiki Publish to marmalade-repo.org To create header and changelog To generate the library dependencies
+@end multitable
 
 @node History
 @section History
 @itemize
+@item
+@strong{20-Aug-2012} -- Added pandoc markdown table support (optional) (Matthew L. Fidler)
 @item
 @strong{13-Aug-2012} -- Another attempt to make texinfo documents. (Matthew L. Fidler)
 @item
@@ -191,7 +190,7 @@ To generate the library dependencies
 <_pre> instead of
 <_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
 @item
-@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 13 21:53:20 2012 (-0500)
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 09:34:27 2012 (-0500)
 @item
 @strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 @item
