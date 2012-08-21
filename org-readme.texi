@@ -31,11 +31,11 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
-@strong{Last-Updated} -- Mon Aug 20 22:27:08 2012 (-0500)
+@strong{Last-Updated} -- Mon Aug 20 22:34:55 2012 (-0500)
 @item
 @strong{By} -- Matthew L. Fidler
 @item
-@strong{Update #} -- 758
+@strong{Update #} -- 771
 @item
 @strong{URL} -- https:__github.com_mlf176f2_org-readme
 @item
@@ -219,6 +219,10 @@ This puts the top header into the Readme.org file as Library Information
 * org-readme-remove-section::
 * org-readme-single-lisp-p::
 * org-readme-token::
+* org-readme-add-changelog-to-readme::
+* org-readme-add-functions-to-readme::
+* org-readme-add-top-header-to-readme::
+* org-readme-add-variables-to-readme::
 * org-readme-build-el-get-recipe::
 * org-readme-build-markdown::
 * org-readme-build-melpa-recipe::
@@ -307,6 +311,22 @@ Determine if the Readme.org is in a directory with a single lisp file. If so@com
 
 Gets marmalade-token@comma{} if not already saved. ## Variables ### Customizable Variables
 
+@node org-readme-add-changelog-to-readme
+@subsubsection org-readme-add-changelog-to-readme
+Add a Variables section to Readme.org
+
+@node org-readme-add-functions-to-readme
+@subsubsection org-readme-add-functions-to-readme
+Add a Functions section to Readme.org
+
+@node org-readme-add-top-header-to-readme
+@subsubsection org-readme-add-top-header-to-readme
+Add Top Header information to Readme.org
+
+@node org-readme-add-variables-to-readme
+@subsubsection org-readme-add-variables-to-readme
+Add a Variables section to Readme.org
+
 @node org-readme-build-el-get-recipe
 @subsubsection org-readme-build-el-get-recipe
 Builds a el-get recipe based on github information
@@ -378,6 +398,8 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 @node History
 @section History
 @itemize
+@item
+@strong{20-Aug-2012} -- Added ability to customize which sections are added to the Readme.org (Matthew L. Fidler)
 @item
 @strong{20-Aug-2012} -- Bug fix for creating function readme (Matthew L. Fidler)
 @item
@@ -467,7 +489,7 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 <_pre> instead of
 <_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
 @item
-@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 22:27:59 2012 (-0500)
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 22:35:51 2012 (-0500)
 @item
 @strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 @item
