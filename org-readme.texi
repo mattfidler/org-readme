@@ -27,15 +27,15 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 @item
 @strong{Created} -- Fri Aug 3 22:33:41 2012 (-0500)
 @item
-@strong{Version} -- 0.25
+@strong{Version} -- 0.26
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
-@strong{Last-Updated} -- Tue Aug 21 12:38:50 2012 (-0500)
+@strong{Last-Updated} -- Tue Aug 21 12:58:41 2012 (-0500)
 @item
 @strong{By} -- Matthew L. Fidler
 @item
-@strong{Update #} -- 784
+@strong{Update #} -- 787
 @item
 @strong{URL} -- https:__github.com_mlf176f2_org-readme
 @item
@@ -409,6 +409,8 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 @section History
 @itemize
 @item
+@strong{21-Aug-2012} -- Bug fix. When variables/functions are documented with an initial asterisk@comma{} change that asterisk to a bulleted item. (Matthew L. Fidler)
+@item
 @strong{21-Aug-2012} -- Another documentation update where I document how to change the comment and that org-readme may change the minor revision of the library. (Matthew L. Fidler)
 @item
 @strong{21-Aug-2012} -- Updated the documentation for org-readme. (Matthew L. Fidler)
@@ -509,7 +511,7 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 <_pre> instead of
 <_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
 @item
-@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Tue Aug 21 12:39:52 2012 (-0500)
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Tue Aug 21 12:59:36 2012 (-0500)
 @item
 @strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 @item
