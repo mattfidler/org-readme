@@ -31,11 +31,11 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
-@strong{Last-Updated} -- Mon Aug 20 22:17:18 2012 (-0500)
+@strong{Last-Updated} -- Mon Aug 20 22:22:37 2012 (-0500)
 @item
 @strong{By} -- Matthew L. Fidler
 @item
-@strong{Update #} -- 751
+@strong{Update #} -- 755
 @item
 @strong{URL} -- https:__github.com_mlf176f2_org-readme
 @item
@@ -48,6 +48,7 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 * Possible Dependencies::
 * Using org-readme::
 * Functions::
+* Variables::
 * History::
 @end menu
 
@@ -125,6 +126,7 @@ yaoddmuse http-post-simple header2 lib-requires
 * org-readme-build-melpa-recipe::
 * org-readme-build-texi::
 * org-readme-default-template::
+* org-readme-drop-markdown-after-build-texi::
 * org-readme-marmalade-server::
 * org-readme-marmalade-token::
 * org-readme-marmalade-user-name::
@@ -193,74 +195,8 @@ Remove @code{org-mode} SECTION. Optionally insert TXT. When ANY-LEVEL is non-nil
 
 Determine if the Readme.org is in a directory with a single lisp file. If so@comma{} return the name of that lisp file@comma{} otherwise return nil. #### org-readme-token @code{(org-readme-token)}
 
-Gets marmalade-token@comma{} if not already saved.* Variables ### Customizable Variables
+Gets marmalade-token@comma{} if not already saved.* History
 
-@node org-readme-build-el-get-recipe
-@subsubsection org-readme-build-el-get-recipe
-Builds a el-get recipe based on github information
-
-@node org-readme-build-markdown
-@subsubsection org-readme-build-markdown
-Builds Readme.md from Readme.org
-
-@node org-readme-build-melpa-recipe
-@subsubsection org-readme-build-melpa-recipe
-Builds a melpa recipe based on github information
-
-@node org-readme-build-texi
-@subsubsection org-readme-build-texi
-Builds library-name.texi from Readme.org@comma{} using Readme.md and pandoc. Requires @code{org-readme-build-markdown} to be non-nil as pandoc to be found.
-
-@node org-readme-default-template
-@subsubsection org-readme-default-template
-Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
-
-@node org-readme-marmalade-server
-@subsubsection org-readme-marmalade-server
-Marmalade server website. This should start with http: and should notend with a trailing forward slash@comma{} just like the default value of http:__marmalade-repo.org
-
-@node org-readme-marmalade-token
-@subsubsection org-readme-marmalade-token
-Marmalade token to upload content to the marmalade server.
-
-@node org-readme-marmalade-user-name
-@subsubsection org-readme-marmalade-user-name
-Marmalade user name to upload content to the marmalade server.
-
-@node org-readme-remove-sections
-@subsubsection org-readme-remove-sections
-List of sections to remove when changing the Readme.org to Change-log.
-
-@node org-readme-sync-emacswiki
-@subsubsection org-readme-sync-emacswiki
-Posts library to the emacswiki. Requires @code{yaoddmuse}
-
-@node org-readme-sync-git
-@subsubsection org-readme-sync-git
-Posts library to git
-
-@node org-readme-sync-marmalade
-@subsubsection org-readme-sync-marmalade
-Posts library to marmalade-repo.org
-
-@node org-readme-use-pandoc-markdown
-@subsubsection org-readme-use-pandoc-markdown
-Uses pandoc's grid tables instead of transferring the tables to html.
-
-@node Internal Variables
-@subsection Internal Variables
-@menu
-* org-readme-edit-mode-map::
-@end menu
-
-@node org-readme-edit-mode-map
-@subsubsection org-readme-edit-mode-map
-Keymap for editing change-logs.
-
-Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-readme-edit-cancel) (3 . org-readme-edit-commit)) keymap (27 keymap (9 . ispell-complete-word)))
-
-@node History
-@section History
 @itemize
 @item
 @strong{20-Aug-2012} -- Attempt to remove Readme.md when not needed. (Matthew L. Fidler)
@@ -347,7 +283,7 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 <_pre> instead of
 <_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
 @item
-@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 22:18:10 2012 (-0500)
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 22:23:30 2012 (-0500)
 @item
 @strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 @item
@@ -363,10 +299,6 @@ Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-rea
 @item
 @strong{04-Aug-2012} -- Initial Release (Matthew L. Fidler)* Variables ### Customizable Variables
 @end itemize
-
-@menu
-* Internal Variables::
-@end menu
 
 @node org-readme-build-el-get-recipe
 @subsubsection org-readme-build-el-get-recipe
@@ -435,5 +367,206 @@ Uses pandoc's grid tables instead of transferring the tables to html.
 Keymap for editing change-logs.
 
 Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-readme-edit-cancel) (3 . org-readme-edit-commit)) keymap (27 keymap (9 . ispell-complete-word)))
+
+@node Variables
+@section Variables
+@menu
+* Customizable Variables::
+* Internal Variables::
+@end menu
+
+@node Customizable Variables
+@subsection Customizable Variables
+@menu
+* org-readme-build-el-get-recipe::
+* org-readme-build-markdown::
+* org-readme-build-melpa-recipe::
+* org-readme-build-texi::
+* org-readme-default-template::
+* org-readme-drop-markdown-after-build-texi::
+* org-readme-marmalade-server::
+* org-readme-marmalade-token::
+* org-readme-marmalade-user-name::
+* org-readme-remove-sections::
+* org-readme-sync-emacswiki::
+* org-readme-sync-git::
+* org-readme-sync-marmalade::
+* org-readme-use-pandoc-markdown::
+@end menu
+
+@node org-readme-build-el-get-recipe
+@subsubsection org-readme-build-el-get-recipe
+Builds a el-get recipe based on github information
+
+@node org-readme-build-markdown
+@subsubsection org-readme-build-markdown
+Builds Readme.md from Readme.org
+
+@node org-readme-build-melpa-recipe
+@subsubsection org-readme-build-melpa-recipe
+Builds a melpa recipe based on github information
+
+@node org-readme-build-texi
+@subsubsection org-readme-build-texi
+Builds library-name.texi from Readme.org@comma{} using Readme.md and pandoc. Requires @code{org-readme-build-markdown} to be non-nil as pandoc to be found.
+
+@node org-readme-default-template
+@subsubsection org-readme-default-template
+Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
+
+@node org-readme-drop-markdown-after-build-texi
+@subsubsection org-readme-drop-markdown-after-build-texi
+Removes Readme.md after texinfo is generated
+
+@node org-readme-marmalade-server
+@subsubsection org-readme-marmalade-server
+Marmalade server website. This should start with http: and should notend with a trailing forward slash@comma{} just like the default value of http:__marmalade-repo.org
+
+@node org-readme-marmalade-token
+@subsubsection org-readme-marmalade-token
+Marmalade token to upload content to the marmalade server.
+
+@node org-readme-marmalade-user-name
+@subsubsection org-readme-marmalade-user-name
+Marmalade user name to upload content to the marmalade server.
+
+@node org-readme-remove-sections
+@subsubsection org-readme-remove-sections
+List of sections to remove when changing the Readme.org to Commentary.
+
+@node org-readme-sync-emacswiki
+@subsubsection org-readme-sync-emacswiki
+Posts library to the emacswiki. Requires @code{yaoddmuse}
+
+@node org-readme-sync-git
+@subsubsection org-readme-sync-git
+Posts library to git
+
+@node org-readme-sync-marmalade
+@subsubsection org-readme-sync-marmalade
+Posts library to marmalade-repo.org
+
+@node org-readme-use-pandoc-markdown
+@subsubsection org-readme-use-pandoc-markdown
+Uses pandoc's grid tables instead of transferring the tables to html.
+
+@node Internal Variables
+@subsection Internal Variables
+@menu
+* org-readme-edit-mode-map::
+@end menu
+
+@node org-readme-edit-mode-map
+@subsubsection org-readme-edit-mode-map
+Keymap for editing change-logs.
+
+Value: (keymap (24 keymap (19 . org-readme-edit-commit)) (3 keymap (11 . org-readme-edit-cancel) (3 . org-readme-edit-commit)) keymap (27 keymap (9 . ispell-complete-word)))
+
+@node History
+@section History
+@itemize
+@item
+@strong{20-Aug-2012} -- Will now remove the Functions and Variables sections before putting them in the commentary section. (Matthew L. Fidler)
+@item
+@strong{20-Aug-2012} -- Attempt to remove Readme.md when not needed. (Matthew L. Fidler)
+@item
+@strong{20-Aug-2012} -- Added ability to add function documentation and variable documentation to the Readme.org file (Matthew L. Fidler)
+@item
+@strong{20-Aug-2012} -- Added pandoc markdown table support (optional) (Matthew L. Fidler)
+@item
+@strong{13-Aug-2012} -- Another attempt to make texinfo documents. (Matthew L. Fidler)
+@item
+@strong{13-Aug-2012} -- Added texinfo output. Allows native emacs documentation. (Matthew L. Fidler)
+@item
+@strong{13-Aug-2012} -- Tried to post behind firewall. Reattempting. (Matthew L. Fidler)
+@item
+@strong{13-Aug-2012} -- Changed the @code{org-readme-remove-section} to use @code{org-cut-subtree}. Hopefully all errors will resolve themselves now. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Reverted. Still buggy. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Another attempt at bug fix to remove section. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Another attempt at a remove-section fix. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for org-readme version tagging. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Test the bug where some of the section text is deleted (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added more documentation (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- One last bug fix to the markdown export engine. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Markdown bug fix (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for el-get recipe. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added the ability to create a markdown Readme (Readme.md) as well as adding a el-get recipe. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for emacswiki post and melpa bug fix (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for adding melpa recipes. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for creating melpa recipe. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added ability to add melpa recipe (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for pushing tags to a git repository (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Another fix for git tags. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Found a bug@comma{} let see if tagging works now. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added Git tagging of new versions. Lets see if it works. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Git push worked. Bumping minor version. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Attempted to push repository again. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Attempt to push with git. Something changed. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added better Package-Requires tag. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Made request for minor revision earlier@comma{} and fixed bug. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Fixed code typo (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for deleting a section of a Readme.org file. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Testing bug. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Minor bug fix. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for comment sync@comma{} now Readme.org @code{file} is translated to lisp @code{file}. Additionally@comma{} asks for version bump. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix for syncing readme. Now the returns should not be as prevalent. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Attempting to post to marmlade again... (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Attempting to fix org-readme-marmalade-post. (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
+@item
+@strong{11-Aug-2012} -- Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
+@item
+@strong{08-Aug-2012} -- Fixed preformatting tags in emacswiki post. Previously they may have been replaced with
+<_pre> instead of
+<_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
+@item
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Tue Aug 7 19:14:34 2012 (-0500) #331 (Matthew L. Fidler) Added a Comment to EmcsWiki pages that states that the content of the page will likely be overwitten since it is automatically generated by @code{org-readme} 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 6 23:42:02 2012 (-0500) #328 (Matthew L. Fidler) Added more documentation. (Matthew L. Fidler)
+@item
+@strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
+@item
+@strong{06-Aug-2012} -- Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
+@item
+@strong{06-Aug-2012} -- Added the ability to call @code{org-readme-sync} from Readme.org (Matthew L. Fidler)
+@item
+@strong{05-Aug-2012} -- Added git pushing to org-readme (Matthew L. Fidler)
+@item
+@strong{05-Aug-2012} -- Added git support as well as a comment mode. The only thing that should need to be called is @code{org-readme-sync} (Matthew L. Fidler)
+@item
+@strong{04-Aug-2012} -- Added syncing with emacswiki. (Matthew L. Fidler)
+@item
+@strong{04-Aug-2012} -- Initial Release (Matthew L. Fidler)
+@end itemize
 
 @bye
