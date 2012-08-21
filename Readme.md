@@ -8,11 +8,11 @@
 - __Author__ --  Matthew L. Fidler
 - __Maintainer__ --  Matthew L. Fidler
 - __Created__ --  Fri Aug  3 22:33:41 2012 (-0500)
-- __Version__ --  0.23
+- __Version__ --  0.24
 - __Package-Requires__ --  ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-- __Last-Updated__ --  Mon Aug 20 09:33:57 2012 (-0500)
+- __Last-Updated__ --  Mon Aug 20 22:07:09 2012 (-0500)
 - __By__ --  Matthew L. Fidler
-- __Update #__ --  685
+- __Update #__ --  745
 - __URL__ --  https:__github.com_mlf176f2_org-readme
 - __Keywords__ --  Header2, Readme.org, Emacswiki, Git
 - __Compatibility__ --  Tested with Emacs 24.1 on Windows.
@@ -65,8 +65,221 @@ libraries and why they are needed.
 | lib-requires     | To generate the library dependencies |
 +------------------+--------------------------------------+
 
+## Functions
+### Interactive Functions
+
+#### org-readme-changelog-to-readme
+`(org-readme-changelog-to-readme)`
+
+This puts the emacs lisp change-log into the Readme.org file.
+#### org-readme-convert-to-emacswiki
+`(org-readme-convert-to-emacswiki)`
+
+Converts Readme.org to oddmuse markup and uploads to emacswiki.
+#### org-readme-convert-to-markdown
+`(org-readme-convert-to-markdown)`
+
+Converts Readme.org to markdown Readme.md.
+#### org-readme-edit
+`(org-readme-edit)`
+
+Edit change comment for commit.
+#### org-readme-edit-cancel
+`(org-readme-edit-cancel)`
+
+Cancel the edit log.
+#### org-readme-edit-commit
+`(org-readme-edit-commit)`
+
+Changelog for editing.
+#### org-readme-git
+`(org-readme-git)`
+
+Add The files to git.
+#### org-readme-insert-variables
+`(org-readme-insert-variables)`
+
+Extracts variable documentation and places it in the Readme.org file.
+#### org-readme-marmalade-post
+`(org-readme-marmalade-post)`
+
+Posts the current buffer to Marmalade.
+#### org-readme-sync
+`(org-readme-sync &optional COMMENT-ADDED)`
+
+Syncs Readme.org with current buffer.
+When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin.
+
+#### org-readme-to-commentary
+`(org-readme-to-commentary)`
+
+Change Readme.org to a Commentary section.
+#### org-readme-top-header-to-readme
+`(org-readme-top-header-to-readme)`
+
+This puts the top header into the Readme.org file as Library Information
+### Internal Functions
+
+#### org-readme-buffer-version
+`(org-readme-buffer-version)`
+
+Gets the version of the current buffer.
+#### org-readme-build-el-get
+`(org-readme-build-el-get)`
+
+Builds an el-get recipe. This assumes github, though others could be added.
+Returns file name if created.
+#### org-readme-build-melpa
+`(org-readme-build-melpa)`
+
+Builds a melpa recipe. This assumes github, though other could be added.
+Returns file name if created.
+#### org-readme-find-readme
+`(org-readme-find-readme)`
+
+Find the Readme.org.
+#### org-readme-get-change
+`(org-readme-get-change)`
+
+Get file for changelog commits.
+#### org-readme-get-emacswiki-name
+`(org-readme-get-emacswiki-name)`
+
+Gets emacswiki-style name based on buffer.
+#### org-readme-in-readme-org-p
+`(org-readme-in-readme-org-p)`
+
+Determine if the currently open buffer is the Readme.org
+#### org-readme-insert-functions
+`(org-readme-insert-functions)`
+
+Extracts function documentation and places it in the Readme.org file.
+#### org-readme-marmalade-version
+`(org-readme-marmalade-version PACKAGE)`
+
+Gets the marmalade version of the PACKAGE.
+#### org-readme-remove-section
+=(org-readme-remove-section SECTION &optional TXT ANY-LEVEL
+AT-BEGINNING)=
+
+Remove `org-mode` SECTION. Optionally insert TXT.
+When ANY-LEVEL is non-nil, any level may be specified.
+When AT-BEGINNING is non-nil, if the section is not found, insert it at the beginning.
+#### org-readme-single-lisp-p
+`(org-readme-single-lisp-p)`
+
+Determine if the Readme.org is in a directory with a single lisp file.
+If so, return the name of that lisp file, otherwise return nil.
+#### org-readme-token
+`(org-readme-token)`
+
+Gets marmalade-token, if not already saved.* Variables
+### Customizable Variables
+
+#### org-readme-build-el-get-recipe
+Builds a el-get recipe based on github information
+
+#### org-readme-build-markdown
+Builds Readme.md from Readme.org
+
+#### org-readme-build-melpa-recipe
+Builds a melpa recipe based on github information
+
+#### org-readme-build-texi
+Builds library-name.texi from Readme.org, using Readme.md and pandoc.  Requires `org-readme-build-markdown` to be non-nil as pandoc to be found.
+
+#### org-readme-default-template
+Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
+
+#### org-readme-marmalade-server
+Marmalade server website.  This should start with http: and should notend with a trailing forward slash, just like the default value of http:__marmalade-repo.org
+
+#### org-readme-marmalade-token
+Marmalade token to upload content to the marmalade server.
+
+#### org-readme-marmalade-user-name
+Marmalade user name to upload content to the marmalade server.
+
+#### org-readme-remove-sections
+List of sections to remove when changing the Readme.org to Change-log.
+
+#### org-readme-sync-emacswiki
+Posts library to the emacswiki. Requires `yaoddmuse`
+
+#### org-readme-sync-git
+Posts library to git
+
+#### org-readme-sync-marmalade
+Posts library to marmalade-repo.org
+
+#### org-readme-use-pandoc-markdown
+Uses pandoc's grid tables instead of transferring the tables to html.
+
+### Internal Variables
+
+#### org-readme-edit-mode-map
+Keymap for editing change-logs.
+## Variables
+### Customizable Variables
+
+#### org-readme-build-el-get-recipe
+Builds a el-get recipe based on github information
+
+#### org-readme-build-markdown
+Builds Readme.md from Readme.org
+
+#### org-readme-build-melpa-recipe
+Builds a melpa recipe based on github information
+
+#### org-readme-build-texi
+Builds library-name.texi from Readme.org, using Readme.md and pandoc.  Requires `org-readme-build-markdown` to be non-nil as pandoc to be found.
+
+#### org-readme-default-template
+Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
+
+#### org-readme-marmalade-server
+Marmalade server website.  This should start with http: and should notend with a trailing forward slash, just like the default value of http:__marmalade-repo.org
+
+#### org-readme-marmalade-token
+Marmalade token to upload content to the marmalade server.
+
+#### org-readme-marmalade-user-name
+Marmalade user name to upload content to the marmalade server.
+
+#### org-readme-remove-sections
+List of sections to remove when changing the Readme.org to Change-log.
+
+#### org-readme-sync-emacswiki
+Posts library to the emacswiki. Requires `yaoddmuse`
+
+#### org-readme-sync-git
+Posts library to git
+
+#### org-readme-sync-marmalade
+Posts library to marmalade-repo.org
+
+#### org-readme-use-pandoc-markdown
+Uses pandoc's grid tables instead of transferring the tables to html.
+
+### Internal Variables
+
+#### org-readme-edit-mode-map
+Keymap for editing change-logs.
+
+Value: (keymap
+ (24 keymap
+     (19 . org-readme-edit-commit))
+ (3 keymap
+    (11 . org-readme-edit-cancel)
+    (3 . org-readme-edit-commit))
+ keymap
+ (27 keymap
+     (9 . ispell-complete-word)))
+
+
 ## History
 
+- __20-Aug-2012__ --   Added ability to add function documentation and variable documentation to the Readme.org file (Matthew L. Fidler)
 - __20-Aug-2012__ --   Added pandoc markdown table support (optional) (Matthew L. Fidler)
 - __13-Aug-2012__ --   Another attempt to make texinfo documents. (Matthew L. Fidler)
 - __13-Aug-2012__ --   Added texinfo output. Allows native emacs documentation. (Matthew L. Fidler)
@@ -106,7 +319,7 @@ libraries and why they are needed.
 - __11-Aug-2012__ --   Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
 - __11-Aug-2012__ --   Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
 - __08-Aug-2012__ --   Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE><_pre> instead of <pre><_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
-- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 09:34:27 2012 (-0500)
+- __07-Aug-2012__ --   To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 20 22:08:07 2012 (-0500)
 - __06-Aug-2012__ --   Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
 - __06-Aug-2012__ --   Added the ability to call `org-readme-sync` from Readme.org (Matthew L. Fidler)
