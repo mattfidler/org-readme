@@ -8,11 +8,11 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 0.26
+ - Version :: 0.27
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Tue Aug 21 12:58:41 2012 (-0500)
+ - Last-Updated :: Wed Aug 22 13:04:18 2012 (-0500)
  -           By :: Matthew L. Fidler
- -     Update # :: 787
+ -     Update # :: 791
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
@@ -250,6 +250,9 @@ Marmalade user name to upload content to the marmalade server.
 *** org-readme-remove-sections
 List of sections to remove when changing the Readme.org to Commentary.
 
+*** org-readme-remove-sections-from-markdown
+List of sections to remove when changing the Readme.org to Markdown which is an intermediary for texinfo (using pandoc).
+
 *** org-readme-sync-emacswiki
 Posts library to the emacswiki. Requires =yaoddmuse=
 
@@ -280,6 +283,7 @@ Value: (keymap
 
 * History
 
+ - 22-Aug-2012 ::  Now will remove variable name and functions from markdown and outputted texinfo. (Matthew L. Fidler)
  - 21-Aug-2012 ::  Bug fix. When variables/functions are documented with an initial asterisk, change that asterisk to a bulleted item. (Matthew L. Fidler)
  - 21-Aug-2012 ::  Another documentation update where I document how to change the comment and that org-readme may change the minor revision of the library. (Matthew L. Fidler)
  - 21-Aug-2012 ::  Updated the documentation for org-readme. (Matthew L. Fidler)
@@ -330,7 +334,7 @@ Value: (keymap
  - 11-Aug-2012 ::  Bug fix to upload to emacswiki and upload to marmalade-repo (Matthew L. Fidler)
  - 11-Aug-2012 ::  Added marmalade-repo support. Now org-readme should upload to marmalade-repo when the version is different from the latest version. (Matthew L. Fidler)
  - 08-Aug-2012 ::  Fixed preformatting tags in emacswiki post. Previously they may have been replaced with <PRE></pre> instead of <pre></pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
- - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Tue Aug 21 12:59:36 2012 (-0500)
+ - 07-Aug-2012 ::  To use, put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Wed Aug 22 13:05:06 2012 (-0500)
  - 06-Aug-2012 ::  Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Bug fix for syncing from the single lisp file. (Matthew L. Fidler)
  - 06-Aug-2012 ::  Added the ability to call =org-readme-sync= from Readme.org (Matthew L. Fidler)
