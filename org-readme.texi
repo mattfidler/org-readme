@@ -31,11 +31,11 @@ Matthew L. Fidler ## Library Information @strong{org-readme.el} --- Integrates R
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
-@strong{Last-Updated} -- Wed Aug 22 13:04:18 2012 (-0500)
+@strong{Last-Updated} -- Wed Aug 22 13:10:30 2012 (-0500)
 @item
 @strong{By} -- Matthew L. Fidler
 @item
-@strong{Update #} -- 791
+@strong{Update #} -- 793
 @item
 @strong{URL} -- https:__github.com_mlf176f2_org-readme
 @item
@@ -119,6 +119,8 @@ yaoddmuse http-post-simple header2 lib-requires
 @node History
 @section History
 @itemize
+@item
+@strong{22-Aug-2012} -- Attempting to upload again (Matthew L. Fidler)
 @item
 @strong{22-Aug-2012} -- Now will remove variable name and functions from markdown and outputted texinfo. (Matthew L. Fidler)
 @item
@@ -224,7 +226,7 @@ yaoddmuse http-post-simple header2 lib-requires
 <_pre> instead of
 <_pre>. This makes the emacswiki page display correctly. (Matthew L. Fidler)
 @item
-@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Wed Aug 22 13:05:06 2012 (-0500)
+@strong{07-Aug-2012} -- To use@comma{} put (require 'ess-smart-underscore) in your ~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Wed Aug 22 13:11:17 2012 (-0500)
 @item
 @strong{06-Aug-2012} -- Added support for uploading Readme.org files to emacswiki without having to have a single associated lisp file. (Matthew L. Fidler)
 @item
