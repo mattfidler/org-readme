@@ -27,7 +27,7 @@ Matthew L. Fidler ## Library Information @emph{org-readme.el} --- Integrates Rea
 @item
 @strong{Created} -- Fri Aug 3 22:33:41 2012 (-0500)
 @item
-@strong{Version} -- 0.30
+@strong{Version} -- 0.31
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
@@ -119,6 +119,8 @@ yaoddmuse http-post-simple header2 lib-requires
 @node History
 @section History
 @itemize
+@item
+@strong{12-Sep-2012} -- Handle errors with the package gracefully. ()
 @item
 @strong{12-Sep-2012} -- Bug fix to eliminate duplicate headers in Readme.org and emacswiki ()
 @item
