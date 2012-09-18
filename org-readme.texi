@@ -27,7 +27,7 @@ Matthew L. Fidler ## Library Information @emph{org-readme.el} --- Integrates Rea
 @item
 @strong{Created} -- Fri Aug 3 22:33:41 2012 (-0500)
 @item
-@strong{Version} -- 0.31
+@strong{Version} -- 0.32
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
@@ -120,13 +120,17 @@ yaoddmuse http-post-simple header2 lib-requires
 @section History
 @itemize
 @item
-@strong{12-Sep-2012} -- Handle errors with the package gracefully. ()
+@strong{18-Sep-2012} -- Bug fix to allow changes that read (Matthew L. Fidler)
 @item
-@strong{12-Sep-2012} -- Bug fix to eliminate duplicate headers in Readme.org and emacswiki ()
+@strong{12-Sep-2012} -- Handle errors with the package gracefully. to include the author name who updated the file. (Matthew L. Fidler)
 @item
-@strong{12-Sep-2012} -- Bug fix when org todo faces are not set. ()
+@strong{12-Sep-2012} -- Handle errors with the package gracefully. (Matthew L. Fidler)
 @item
-@strong{12-Sep-2012} -- Added bug fix when @code{org-todo-keyword-faces} is undefined. ()
+@strong{12-Sep-2012} -- Bug fix to eliminate duplicate headers in Readme.org and emacswiki (Matthew L. Fidler)
+@item
+@strong{12-Sep-2012} -- Bug fix when org todo faces are not set. (Matthew L. Fidler)
+@item
+@strong{12-Sep-2012} -- Added bug fix when @code{org-todo-keyword-faces} is undefined. (Matthew L. Fidler)
 @item
 @strong{22-Aug-2012} -- Attempting to upload again (Matthew L. Fidler)
 @item
