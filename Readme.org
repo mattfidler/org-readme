@@ -8,7 +8,7 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 0.32
+ - Version :: 0.34
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
  - Last-Updated :: Wed Aug 22 13:11:26 2012 (-0500)
  -           By :: Matthew L. Fidler
@@ -283,6 +283,8 @@ Value: (keymap
 
 * History
 
+ - 07-Dec-2012 ::  Test directory entry (Matthew L. Fidler)
+ - 07-Dec-2012 ::  Added directory entry to texinfo file. (Matthew L. Fidler)
  - 18-Sep-2012 ::  Bug fix to allow changes that read (Matthew L. Fidler)
  - 12-Sep-2012 ::  Handle errors with the package gracefully. to include the author name who updated the file.  (Matthew L. Fidler)
  - 12-Sep-2012 ::  Handle errors with the package gracefully. (Matthew L. Fidler)

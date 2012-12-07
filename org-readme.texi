@@ -1,5 +1,10 @@
 \input texinfo
 @documentencoding UTF-8
+@dircategory Emacs lisp libraries
+@direntry
+* org-readme: (org-readme).     org-readme
+@end direntry
+
 
 @ifnottex
 @paragraphindent 0
@@ -27,7 +32,7 @@ Matthew L. Fidler ## Library Information @emph{org-readme.el} --- Integrates Rea
 @item
 @strong{Created} -- Fri Aug 3 22:33:41 2012 (-0500)
 @item
-@strong{Version} -- 0.32
+@strong{Version} -- 0.34
 @item
 @strong{Package-Requires} -- ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 @item
@@ -119,6 +124,10 @@ yaoddmuse http-post-simple header2 lib-requires
 @node History
 @section History
 @itemize
+@item
+@strong{07-Dec-2012} -- Test directory entry (Matthew L. Fidler)
+@item
+@strong{07-Dec-2012} -- Added directory entry to texinfo file. (Matthew L. Fidler)
 @item
 @strong{18-Sep-2012} -- Bug fix to allow changes that read (Matthew L. Fidler)
 @item
