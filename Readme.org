@@ -283,6 +283,7 @@ Value: (keymap
 
 * History
 
+ - 07-Dec-2012 ::  Get description from info file. (Matthew L. Fidler)
  - 07-Dec-2012 ::  The description should now be picked up. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Attempting to update description. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Test directory entry (Matthew L. Fidler)

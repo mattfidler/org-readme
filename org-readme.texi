@@ -2,7 +2,7 @@
 @documentencoding UTF-8
 @dircategory Emacs lisp libraries
 @direntry
-* org-readme: (org-readme).     org-readme
+* org-readme: (org-readme).     Integrate Readme.org and Commentary/Change Logs.
 @end direntry
 
 
@@ -124,6 +124,8 @@ yaoddmuse http-post-simple header2 lib-requires
 @node History
 @section History
 @itemize
+@item
+@strong{07-Dec-2012} -- Get description from info file. (Matthew L. Fidler)
 @item
 @strong{07-Dec-2012} -- The description should now be picked up. (Matthew L. Fidler)
 @item
