@@ -149,6 +149,11 @@ File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
 1.3 History
 ===========
 
+   * *07-Dec-2012* - Bug fix for deleting directory. (Matthew L. Fidler)
+
+   * *07-Dec-2012* - Remove the directory that was created to make the
+     package tarball (Matthew L. Fidler)
+
    * *07-Dec-2012* - Attempted to fix the package information file.
      (Matthew L. Fidler)
 

@@ -289,6 +289,8 @@ Value: (keymap
 
 * History
 
+ - 07-Dec-2012 ::  Bug fix for deleting directory. (Matthew L. Fidler)
+ - 07-Dec-2012 ::  Remove the directory that was created to make the package tarball  (Matthew L. Fidler)
  - 07-Dec-2012 ::  Attempted to fix the package information file. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Added tar package that includes the info file (Matthew L. Fidler)
  - 07-Dec-2012 ::  No longer deletes ilg files. (Matthew L. Fidler)
