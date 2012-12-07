@@ -149,6 +149,9 @@ File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
 1.3 History
 ===========
 
+   * *07-Dec-2012* - Added tar package that includes the info file
+     (Matthew L. Fidler)
+
    * *07-Dec-2012* - No longer deletes ilg files. (Matthew L. Fidler)
 
    * *07-Dec-2012* - Bug fix for info generation. (Matthew L. Fidler)

@@ -289,6 +289,7 @@ Value: (keymap
 
 * History
 
+ - 07-Dec-2012 ::  Added tar package that includes the info file (Matthew L. Fidler)
  - 07-Dec-2012 ::  No longer deletes ilg files. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Bug fix for info generation. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Added mecahism to build info files and dir files for elpa package. (Matthew L. Fidler)
