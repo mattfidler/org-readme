@@ -81,6 +81,9 @@
 ;;; Change Log:
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Use 7zip to create tar.  May create a readable tar for package.el
+;; 07-Dec-2012    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
 ;;    Trying to test the org-readme tar balls
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
@@ -1313,7 +1316,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (shell-command (concat "install-info --dir-file=dir " base ".info"))
                   ;; Now Make a marmalade package
                   (when (or (executable-find "tar")
-                            (executable-find "bsdtar"))
+                            (executable-find "7z")
+                            (executable-find "7za"))
                     (make-directory (concat base "-" ver))
                     (copy-file (concat base ".el") (concat base "-" ver "/" base ".el"))
                     (copy-file (concat base ".info") (concat base "-" ver "/" base ".info"))
@@ -1330,9 +1334,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                       (insert ")"))
                     (when (file-exists-p (concat base ".tar"))
                       (delete-file (concat base ".tar")))
-                    (shell-command (concat
-                                    (if (executable-find "bsdtar") "bsd" "")
-                                    "tar -cvf " base ".tar " base "-" ver "/"))
+                    (if (executable-find "tar")
+                        (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
+                      (shell-commad (concat "7z" (if (executable-find "7za") "a" "")
+                                            " -ttar -so " base ".tar " base "-" ver "/*.*")))
+                    
                     (delete-file (concat base "-" ver "/" base ".el"))
                     (delete-file (concat base "-" ver "/" base "-pkg.el"))
                     (delete-file (concat base "-" ver "/" base ".info"))
