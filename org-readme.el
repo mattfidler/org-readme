@@ -81,6 +81,9 @@
 ;;; Change Log:
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Trying to test the org-readme tar balls
+;; 07-Dec-2012    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
 ;;    Trying to post the tar package again.
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
@@ -728,8 +731,6 @@ Returns file name if created."
                             (insert-file-contents (concat package ".tar"))
                             (buffer-string))
                         (buffer-string))))))
-      (when (file-exists-p (concat package ".tar"))
-        (delete-file (concat package ".tar")))
       (message "%s" resp))))
 
 (defun org-readme-marmalade-version (package)
