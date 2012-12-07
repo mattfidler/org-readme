@@ -125,6 +125,8 @@ yaoddmuse http-post-simple header2 lib-requires
 @section History
 @itemize
 @item
+@strong{07-Dec-2012} -- Attempting to update description. (Matthew L. Fidler)
+@item
 @strong{07-Dec-2012} -- Test directory entry (Matthew L. Fidler)
 @item
 @strong{07-Dec-2012} -- Added directory entry to texinfo file. (Matthew L. Fidler)
