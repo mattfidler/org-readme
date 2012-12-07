@@ -35,7 +35,7 @@ Readme.org and Commentary/Change-logs.
 
    * *Created* - Fri Aug 3 22:33:41 2012 (-0500)
 
-   * *Version* - 0.34
+   * *Version* - 0.35
 
    * *Package-Requires* - ((http-post-simple "1.0") (yaoddmuse
      "0.1.1")(header2 "21.0") (lib-requires "21.0"))
@@ -148,6 +148,9 @@ File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
 
 1.3 History
 ===========
+
+   * *07-Dec-2012* - Attempted to add Readme in info format in the elpa
+     package. (Matthew L. Fidler)
 
    * *07-Dec-2012* - Bug fix for deleting directory. (Matthew L. Fidler)
 
