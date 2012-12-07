@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20121207.1640
+;; Version: 20121207.1718
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 ;; Last-Updated: Wed Aug 22 13:11:26 2012 (-0500)
 ;;           By: Matthew L. Fidler
@@ -79,6 +79,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 07-Dec-2012    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Post to marmalade
+;; 07-Dec-2012    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Remove tar support because it is broken without gnu tar.  Gnu tar in
+;;    windows is broken in opening elpa tarballs.
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
 ;;    Use 7zip to create tar.  May create a readable tar for package.el
@@ -395,6 +402,11 @@
 
 (defcustom org-readme-use-melpa-versions t
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions"
+  :type 'boolean
+  :group 'org-readme)
+
+(defcustom org-readme-create-tar-package nil
+  "Creates a tar package for use in ELPA"
   :type 'boolean
   :group 'org-readme)
 
@@ -1315,9 +1327,12 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                 (when (executable-find "install-info")
                   (shell-command (concat "install-info --dir-file=dir " base ".info"))
                   ;; Now Make a marmalade package
-                  (when (or (executable-find "tar")
-                            (executable-find "7z")
-                            (executable-find "7za"))
+                  (when (file-exists-p (concat base ".tar"))
+                    (delete-file (concat base ".tar")))
+                  (when (and org-readme-create-tar-package
+                             (or (executable-find "tar")
+                                 (executable-find "7z")
+                                 (executable-find "7za")))
                     (make-directory (concat base "-" ver))
                     (copy-file (concat base ".el") (concat base "-" ver "/" base ".el"))
                     (copy-file (concat base ".info") (concat base "-" ver "/" base ".info"))
@@ -1332,8 +1347,6 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                       (insert "\" '")
                       (insert pkg)
                       (insert ")"))
-                    (when (file-exists-p (concat base ".tar"))
-                      (delete-file (concat base ".tar")))
                     (if (executable-find "tar")
                         (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
                       (shell-commad (concat "7z" (if (executable-find "7za") "a" "")

@@ -35,7 +35,7 @@ Readme.org and Commentary/Change-logs.
 
    * *Created* - Fri Aug 3 22:33:41 2012 (-0500)
 
-   * *Version* - 20121207.1640
+   * *Version* - 20121207.1718
 
    * *Package-Requires* - ((http-post-simple "1.0") (yaoddmuse
      "0.1.1")(header2 "21.0") (lib-requires "21.0"))
@@ -151,6 +151,12 @@ File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
 
 1.3 History
 ===========
+
+   * *07-Dec-2012* - Post to marmalade (Matthew L. Fidler)
+
+   * *07-Dec-2012* - Remove tar support because it is broken without
+     gnu tar. Gnu tar in windows is broken in opening elpa tarballs.
+     (Matthew L. Fidler)
 
    * *07-Dec-2012* - Use 7zip to create tar. May create a readable tar
      for package.el (Matthew L. Fidler)

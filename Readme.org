@@ -8,7 +8,7 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20121207.1640
+ - Version :: 20121207.1718
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
  - Last-Updated :: Wed Aug 22 13:11:26 2012 (-0500)
  -           By :: Matthew L. Fidler
@@ -237,6 +237,9 @@ Builds a melpa recipe based on github information
 *** org-readme-build-texi
 Builds library-name.texi from Readme.org, using Readme.md and pandoc.  Requires =org-readme-build-markdown= to be non-nil as pandoc to be found.
 
+*** org-readme-create-tar-package
+Creates a tar package for use in ELPA
+
 *** org-readme-default-template
 Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
 
@@ -294,6 +297,8 @@ Value: (keymap
 
 * History
 
+ - 07-Dec-2012 ::  Post to marmalade (Matthew L. Fidler)
+ - 07-Dec-2012 ::  Remove tar support because it is broken without gnu tar. Gnu tar in windows is broken in opening elpa tarballs. (Matthew L. Fidler)
  - 07-Dec-2012 ::  Use 7zip to create tar. May create a readable tar for package.el (Matthew L. Fidler)
  - 07-Dec-2012 ::  Trying to test the org-readme tar balls (Matthew L. Fidler)
  - 07-Dec-2012 ::  Trying to post the tar package again. (Matthew L. Fidler)
