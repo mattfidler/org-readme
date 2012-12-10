@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20121207.1718
+;; Version: 20121210.1148
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 ;; Last-Updated: Wed Aug 22 13:11:26 2012 (-0500)
 ;;           By: Matthew L. Fidler
@@ -79,6 +79,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 10-Dec-2012    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Changed melpa versions to be nil.  However if a melpa version is
+;;    detected, continue using it.
 ;; 07-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
 ;;    Post to marmalade
@@ -400,7 +404,7 @@
 (defgroup org-readme nil
   "Org-readme is a way to create Readme.org files based on an elisp file.")
 
-(defcustom org-readme-use-melpa-versions t
+(defcustom org-readme-use-melpa-versions nil
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions"
   :type 'boolean
   :group 'org-readme)
@@ -1253,7 +1257,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (goto-char (point-min))
           (let ((case-fold-search t))
             (when (re-search-forward "^[ \t]*;+[ \t]*Version:" nil t)
-              (if org-readme-use-melpa-versions
+              (if (or org-readme-use-melpa-versions
+                      (save-match-data (looking-at "[ \t]*[0-9]\\{8\\}[.][0-9]\\{4\\}[ \t]*$")))
                   (progn
                     (delete-region (point) (point-at-eol))
                     (insert (concat " " (format-time-string "%Y%m%d." (current-time))
