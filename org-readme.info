@@ -35,7 +35,7 @@ Readme.org and Commentary/Change-logs.
 
    * *Created* - Fri Aug 3 22:33:41 2012 (-0500)
 
-   * *Version* - 20121210.1148
+   * *Version* - 20130313.1503
 
    * *Package-Requires* - ((http-post-simple "1.0") (yaoddmuse
      "0.1.1")(header2 "21.0") (lib-requires "21.0"))
@@ -151,6 +151,10 @@ File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
 
 1.3 History
 ===========
+
+   * *13-Mar-2013* - Added bug fix so that starred initial variables do
+     not mess with org-cut-region. That way, strange duplication of
+     lines and regions do not occur. (Matthew L. Fidler)
 
    * *10-Dec-2012* - Changed melpa versions to be nil. However if a
      melpa version is detected, continue using it. (Matthew L. Fidler)

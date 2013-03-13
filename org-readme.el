@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20121210.1148
+;; Version: 20130313.1503
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 ;; Last-Updated: Wed Aug 22 13:11:26 2012 (-0500)
 ;;           By: Matthew L. Fidler
@@ -79,6 +79,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 13-Mar-2013    Matthew L. Fidler  
+;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+;;    Added bug fix so that starred initial variables do not mess with
+;;    org-cut-region.  That way, strange duplication of lines and regions do
+;;    not occur.
 ;; 10-Dec-2012    Matthew L. Fidler  
 ;;    Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
 ;;    Changed melpa versions to be nil.  However if a melpa version is
@@ -534,6 +539,9 @@
                      (replace-match " - "))
                    (goto-char (point-max))
                    (insert "\n")
+                   (goto-char (point-min))
+                   (while (re-search-forward "^[ \t]*[*]+")
+                     (replace-match ""))
                    (buffer-string))))
         (setq ret1 "** Interactive Functions\n")
         (setq ret2 "** Internal Functions\n")
@@ -588,6 +596,9 @@
                      (replace-match " - "))
                    (goto-char (point-max))
                    (insert "\n")
+                   (goto-char (point-min))
+                   (while (re-search-forward "^[ \t]*[*]+")
+                     (replace-match ""))
                    (buffer-string))))
         (setq ret1 "** Customizable Variables\n")
         (setq ret2 "** Internal Variables\n")
