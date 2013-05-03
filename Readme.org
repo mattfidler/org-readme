@@ -8,7 +8,7 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20130322.924
+ - Version :: 20130322.925
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
  - Last-Updated :: Wed Aug 22 13:11:26 2012 (-0500)
  -           By :: Matthew L. Fidler
@@ -85,6 +85,9 @@ libraries and why they are needed.
 ** Internal Variables
 * History
 
+3-May-2013    Matthew L. Fidler  
+   Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
+   Uploading using org-readme.
  - 22-Mar-2013 ::  Bug fix for org-readme generating texinfo documentation from org-files. (Matthew L. Fidler)
  - 22-Mar-2013 ::  Separated out the texinfo conversion so that this may be applied to a generalized readme. (Matthew L. Fidler)
  - 13-Mar-2013 ::  Added bug fix so that starred initial variables do not mess with org-cut-region. That way, strange duplication of lines and regions do not occur. (Matthew L. Fidler)
