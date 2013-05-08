@@ -1437,7 +1437,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
   (let ((readme (org-readme-find-readme)) p1)
     (with-temp-buffer
       (insert-file-contents readme)
-      
+      (org-mode)
       (mapc
        (lambda(section)
          (org-readme-remove-section section))
