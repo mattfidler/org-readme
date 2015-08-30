@@ -528,7 +528,7 @@
       (while (re-search-forward "(defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
-      (flet ((fd (x)
+      (cl-flet ((fd (x)
                  (with-temp-buffer
                    (insert x)
                    (goto-char (point-min))
@@ -587,7 +587,7 @@
       (while (re-search-forward "(def\\(?:var\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
-      (flet ((fd (x)
+      (cl-flet ((fd (x)
                  (with-temp-buffer
                    (insert x)
                    (goto-char (point-min))
