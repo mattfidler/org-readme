@@ -414,7 +414,7 @@
 
 (require 'yaoddmuse nil t)
 (require 'http-post-simple nil t)
-(require 'org-html)
+(require 'org-html nil t)
 
 (defgroup org-readme nil
   "Org-readme is a way to create Readme.org files based on an elisp file.")
@@ -996,7 +996,9 @@ Returns file name if created."
                 (goto-char (point-min))
                 (while (re-search-forward "^\\([ \t]*\\)|\\(-.*?-\\)|\\([ \t]*\\)$" nil t)
                   (replace-match "\\1+\\2+\\3")))
-            (org-replace-region-by-html (point-min) (point-max))
+                  (if (featurep 'org-html)
+                      (org-replace-region-by-html (point-min) (point-max))
+                    (org-export-replace-region-by 'html))
             (goto-char (point-min))
             (while (re-search-forward "class" nil t)
               (replace-match "align")))))
