@@ -417,7 +417,7 @@
 
 (require 'yaoddmuse nil t)
 (require 'http-post-simple nil t)
-(require 'org-html)
+(require 'org-html nil t)
 
 (defgroup org-readme nil
   "Org-readme is a way to create Readme.org files based on an elisp file.")
@@ -531,7 +531,7 @@
       (while (re-search-forward "(defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
-      (flet ((fd (x)
+      (cl-flet ((fd (x)
                  (with-temp-buffer
                    (insert x)
                    (goto-char (point-min))
@@ -590,7 +590,7 @@
       (while (re-search-forward "(def\\(?:var\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
-      (flet ((fd (x)
+      (cl-flet ((fd (x)
                  (with-temp-buffer
                    (insert x)
                    (goto-char (point-min))
@@ -999,7 +999,9 @@ Returns file name if created."
                 (goto-char (point-min))
                 (while (re-search-forward "^\\([ \t]*\\)|\\(-.*?-\\)|\\([ \t]*\\)$" nil t)
                   (replace-match "\\1+\\2+\\3")))
-            (org-replace-region-by-html (point-min) (point-max))
+                  (if (featurep 'org-html)
+                      (org-replace-region-by-html (point-min) (point-max))
+                    (org-export-replace-region-by 'html))
             (goto-char (point-min))
             (while (re-search-forward "class" nil t)
               (replace-match "align")))))
