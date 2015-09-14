@@ -420,7 +420,8 @@
 (require 'org-html nil t)
 
 (defgroup org-readme nil
-  "Org-readme is a way to create Readme.org files based on an elisp file.")
+  "Org-readme is a way to create Readme.org files based on an elisp file."
+  :group 'org)
 
 (defcustom org-readme-use-melpa-versions nil
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions"
@@ -526,7 +527,7 @@
   "Extracts function documentation and places it in the Readme.org file."
   (save-excursion
     (goto-char (point-min))
-    (let ((lst1 '()) tmp ret1 ret2 ret
+    (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
       (while (re-search-forward "(defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
@@ -585,7 +586,7 @@
     (error nil))
   (save-excursion
     (goto-char (point-min))
-    (let ((lst1 '()) tmp ret1 ret2 ret
+    (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
       (while (re-search-forward "(def\\(?:var\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
@@ -1488,12 +1489,12 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
     (goto-char (point-min))
     (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
       (skip-chars-forward "\n")
-      (setq pt (point))
-      (when (re-search-forward "^;;;;+[ \t]*$" nil t)
-        (goto-char (match-beginning 0))
-        (skip-chars-backward "\n")
-        (delete-region pt (point))
-        (insert readme)))))
+      (let ((pt (point)))
+        (when (re-search-forward "^;;;;+[ \t]*$" nil t)
+          (goto-char (match-beginning 0))
+          (skip-chars-backward "\n")
+          (delete-region pt (point))
+          (insert readme))))))
 
 (defun org-readme-get-emacswiki-name ()
   "Gets emacswiki-style name based on buffer."
