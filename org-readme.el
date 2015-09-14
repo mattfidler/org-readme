@@ -420,7 +420,8 @@
 (require 'org-html nil t)
 
 (defgroup org-readme nil
-  "Org-readme is a way to create Readme.org files based on an elisp file.")
+  "Org-readme is a way to create Readme.org files based on an elisp file."
+  :group 'org)
 
 (defcustom org-readme-use-melpa-versions nil
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions"
