@@ -1404,8 +1404,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
             (insert ")"))
           (if (executable-find "tar")
               (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
-            (shell-commad (concat "7z" (if (executable-find "7za") "a" "")
-                                  " -ttar -so " base ".tar " base "-" ver "/*.*")))
+            (shell-command (concat "7z" (if (executable-find "7za") "a" "")
+                                   " -ttar -so " base ".tar " base "-" ver "/*.*")))
           
           (delete-file (concat base "-" ver "/" base ".el"))
           (delete-file (concat base "-" ver "/" base "-pkg.el"))
