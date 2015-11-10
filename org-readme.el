@@ -554,7 +554,7 @@
                    (goto-char (point-max))
                    (insert "\n")
                    (goto-char (point-min))
-                   (while (re-search-forward "^[ \t]*[*]+")
+                   (while (re-search-forward "^[ \t]*[*]+" nil t)
                      (replace-match ""))
                    (buffer-string))))
         (setq ret1 "** Interactive Functions\n")
