@@ -503,6 +503,11 @@
   :type 'boolean
   :group 'org-readme)
 
+(defcustom org-readme-add-readme-to-lisp-file t
+  "Whether `org-readme-sync' should update lisp file header with commentary section of Readme.org."
+  :type 'boolean
+  :group 'org-readme)
+
 (defcustom org-readme-add-functions-to-readme t
   "Add a Functions section to Readme.org"
   :type 'boolean
@@ -1366,9 +1371,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (when (looking-back "\\([ .]\\)\\([0-9]+\\)[ \t]*")
                     (replace-match (format "\\1%s"
                                            (+ 1 (string-to-number (match-string 2)))))))))))
-        
-        (message "Adding Readme to Header Commentary")
-        (org-readme-to-commentary)
+	(when org-readme-add-readme-to-lisp-file
+	  (message "Adding Readme to Header Commentary")
+	  (org-readme-to-commentary))
         (when org-readme-add-functions-to-readme
           (message "Updating Functions.")
           (org-readme-insert-functions))
@@ -1431,10 +1436,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (insert-file-contents readme)
       (org-mode)
       (mapc
-       (lambda(section)
+       (lambda (section)
          (org-readme-remove-section section))
        org-readme-remove-sections)
-      
       (goto-char (point-min))
       (while (re-search-forward "=\\<\\(.*?\\)\\>=" nil t)
         (replace-match (format "`%s'" (match-string 1)) t t))
