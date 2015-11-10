@@ -504,7 +504,7 @@
   :group 'org-readme)
 
 (defcustom org-readme-add-readme-to-lisp-file t
-  "Whether `org-readme-sync' should update lisp file header with commentary section of Readme.org."
+  "Whether `org-readme-sync' should update Lisp file header with commentary section of Readme.org."
   :type 'boolean
   :group 'org-readme)
 
@@ -515,6 +515,11 @@
 
 (defcustom org-readme-add-variables-to-readme t
   "Add a Variables section to Readme.org"
+  :type 'boolean
+  :group 'org-readme)
+
+(defcustom org-readme-update-changelog t
+  "Whether `org-readme-sync' should update a Changelog file."
   :type 'boolean
   :group 'org-readme)
 
@@ -1352,7 +1357,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	    (unless (not org-readme-sync-emacswiki)
 	      (message "Posting Description to emacswiki")
 	      (org-readme-convert-to-emacswiki))))
-      (if (not comment-added)
+      (if (and (not comment-added)
+	       org-readme-update-changelog)
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
             (org-readme-edit))
