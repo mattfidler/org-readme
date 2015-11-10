@@ -1321,8 +1321,7 @@ If so, return the name of that lisp file, otherwise return nil."
 ;;;###autoload
 (defun org-readme-sync (&optional comment-added)
   "Syncs Readme.org with current buffer.
-When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin.
-"
+When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin."
   (interactive)
   (let ((base (file-name-sans-extension
                (file-name-nondirectory (buffer-file-name)))))
@@ -1345,8 +1344,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                 (setq org-readme-edit-last-buffer (current-buffer))
                 (org-readme-sync))
             ;; Multiple lisp files or no lisp files.
-            (message "Posting Description to emacswiki")
-            (org-readme-convert-to-emacswiki)))
+	    (unless (not org-readme-sync-emacswiki)
+	      (message "Posting Description to emacswiki")
+	      (org-readme-convert-to-emacswiki))))
       (if (not comment-added)
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
@@ -1384,7 +1384,6 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
         (org-readme-gen-info)
         (when (file-exists-p (concat base ".tar"))
           (delete-file (concat base ".tar")))
-        
         (when (and org-readme-create-tar-package
                    (or (executable-find "tar")
                        (executable-find "7z")
@@ -1394,44 +1393,31 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (copy-file (concat base ".info") (concat base "-" ver "/" base ".info"))
           (copy-file "dir" (concat base "-" ver "/dir"))
           (with-temp-file (concat base "-" ver "/" base "-pkg.el")
-            (insert "(define-package \"")
-            (insert base)
-            (insert "\" \"")
-            (insert ver)
-            (insert "\" \"")
-            (insert desc)
-            (insert "\" '")
-            (insert pkg)
-            (insert ")"))
+            (insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
           (if (executable-find "tar")
               (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
             (shell-command (concat "7z" (if (executable-find "7za") "a" "")
                                    " -ttar -so " base ".tar " base "-" ver "/*.*")))
-          
-          (delete-file (concat base "-" ver "/" base ".el"))
-          (delete-file (concat base "-" ver "/" base "-pkg.el"))
-          (delete-file (concat base "-" ver "/" base ".info"))
-          (delete-file (concat base "-" ver "/dir"))
+	  (mapcar 'delete-file
+		  (list (concat base "-" ver "/" base ".el")
+			(concat base "-" ver "/" base "-pkg.el")
+			(concat base "-" ver "/" base ".info")
+			(concat base "-" ver "/dir")))
           (delete-directory (concat base "-" ver)))
-        
         (when (and (featurep 'http-post-simple)
                    org-readme-sync-marmalade)
           (message "Attempting to post to marmalade-repo.org")
           (org-readme-marmalade-post))
-        
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting lisp file to emacswiki")
           (emacswiki-post nil ""))
-        
         (when org-readme-sync-git
           (org-readme-git))
-        
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting Description to emacswiki")
           (org-readme-convert-to-emacswiki))
-        
         (when org-readme-edit-last-window-configuration
           (set-window-configuration org-readme-edit-last-window-configuration)
           (setq org-readme-edit-last-window-configuration nil))))))
