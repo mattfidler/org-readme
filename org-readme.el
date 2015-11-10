@@ -588,7 +588,7 @@
     (goto-char (point-min))
     (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
-      (while (re-search-forward "(def\\(?:var\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
+      (while (re-search-forward "(def\\(?:var\\|var-local\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
       (cl-flet ((fd (x)
