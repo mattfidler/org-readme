@@ -1333,6 +1333,7 @@ If so, return the name of that lisp file, otherwise return nil."
   "Syncs Readme.org with current buffer.
 When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin."
   (interactive)
+  ;; Store the name of the package in `base'
   (let ((base (file-name-sans-extension
                (file-name-nondirectory (buffer-file-name)))))
     (when (string= (downcase base) "readme")
@@ -1343,25 +1344,28 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-pkg[.]el$")))
         (when (= 1 (length df))
           (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))))))
+
     (if (and (not comment-added)
-             (org-readme-in-readme-org-p))
+	     (org-readme-in-readme-org-p))
         (let ((single-lisp-file (org-readme-single-lisp-p)))
           (message "In Readme.org")
+	  ;; If there's only one lisp file, switch to it, and start again.
           (if single-lisp-file
               (progn
                 (setq org-readme-edit-last-window-configuration (current-window-configuration))
                 (find-file single-lisp-file)
                 (setq org-readme-edit-last-buffer (current-buffer))
                 (org-readme-sync))
-            ;; Multiple lisp files or no lisp files.
+            ;; Post to emacswiki if necessary
 	    (unless (not org-readme-sync-emacswiki)
 	      (message "Posting Description to emacswiki")
 	      (org-readme-convert-to-emacswiki))))
-      (if (and (not comment-added)
-	       org-readme-update-changelog)
+      (if (and (not comment-added) org-readme-update-changelog)
+	  ;; Update the Changelog file if necessary
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
             (org-readme-edit))
+	;; Update version number 
         (when (yes-or-no-p "Is this a minor revision (upload to Marmalade)? ")
           (save-excursion
             (goto-char (point-min))
@@ -1377,18 +1381,23 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (when (looking-back "\\([ .]\\)\\([0-9]+\\)[ \t]*")
                     (replace-match (format "\\1%s"
                                            (+ 1 (string-to-number (match-string 2)))))))))))
-	(when org-readme-add-readme-to-lisp-file
+	;; Replace commentary section in elisp file with text extracted from Readme.org
+	 (when org-readme-add-readme-to-lisp-file
 	  (message "Adding Readme to Header Commentary")
 	  (org-readme-to-commentary))
+	;; Add functions section to Readme.org
         (when org-readme-add-functions-to-readme
           (message "Updating Functions.")
           (org-readme-insert-functions))
+	;; Add variables section to Readme.org
         (when org-readme-add-variables-to-readme
           (message "Updating Variables.")
           (org-readme-insert-variables))
+	;; Add Changelog to Readme.org
         (when org-readme-add-changelog-to-readme
           (message "Updating Changelog in current file.")
           (org-readme-changelog-to-readme))
+	;; Add 
         (when org-readme-add-top-header-to-readme
           (org-readme-top-header-to-readme))
         (save-buffer)
@@ -1435,7 +1444,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 
 ;;;###autoload
 (defun org-readme-to-commentary ()
-  "Change Readme.org to a Commentary section."
+  "Replace Commentary section in elisp file with text from Readme.org."
   (interactive)
   (let ((readme (org-readme-find-readme)) p1)
     (with-temp-buffer
@@ -1446,22 +1455,23 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
          (org-readme-remove-section section))
        org-readme-remove-sections)
       (goto-char (point-min))
+      ;; replace =SYMBOL= with `SYMBOL'
       (while (re-search-forward "=\\<\\(.*?\\)\\>=" nil t)
         (replace-match (format "`%s'" (match-string 1)) t t))
-      
+      ;; remove all org #+KEYWORDS)
       (goto-char (point-min))
       (while (re-search-forward "#.*" nil t)
         (replace-match ""))
+      ;; remove ???
       (goto-char (point-min))
-      
       (while (re-search-forward "^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" nil t)
         (replace-match ""))
+      ;; remove : at beginning of lines
       (goto-char (point-min))
-      
       (while (re-search-forward "^:" nil t)
         (replace-match ""))
+      ;; remove all TODO items
       (goto-char (point-min))
-      
       (when org-todo-keyword-faces
         (while (org-readme-remove-section
                 (regexp-opt
@@ -1469,7 +1479,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (lambda(x)
                     (nth 0 x))
                   org-todo-keyword-faces)) nil t)))
-      
+      ;; replace initial & final whitespace with single newline chars
       (goto-char (point-min))
       (skip-chars-forward " \t\n")
       (delete-region (point-min) (point))
@@ -1478,10 +1488,13 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (skip-chars-backward " \t\n")
       (delete-region (point) (point-max))
       (insert "\n")
+      ;; comment all lines with ;;
       (goto-char (point-min))
       (while (re-search-forward "^" nil t)
         (insert ";; "))
       (setq readme (buffer-string)))
+    ;; delete current "Commentary" region in elisp file, and replace
+    ;; with text extracted from Readme.org
     (goto-char (point-min))
     (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
       (skip-chars-forward "\n")
@@ -1572,7 +1585,6 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
             (save-excursion
               (when txt
                 (insert txt)))
-            
             t)
         (when txt
           (goto-char (if at-beginning
@@ -1592,39 +1604,48 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
   (interactive)
   (let ((top-header "")
         (readme (org-readme-find-readme)))
+    ;; copy the top header from the elisp file
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^;;;;+[ \t]*$" nil t)
         (beginning-of-line)
         (setq top-header (buffer-substring (point-min) (point)))))
+    ;; copy top header info and reformat it for orgmode
     (with-temp-buffer
       (insert top-header)
       (goto-char (point-min))
+      ;; uncomment and format first line
+      ;; (remove initial ;'s and backslash quote the library name)
       (when (looking-at ";;; *\\(.*?\\) *--+ *\\(.*\\)")
         (replace-match " /\\1/ --- \\2"))
-      
+      ;; remove elisp comment chars (;'s)
       (goto-char (point-min))
       (while (re-search-forward "^ *;; ?" nil t)
         (replace-match ""))
-      
+      ;; replace filename with orglink to filename
       (goto-char (point-min))
       (when (re-search-forward "[Ff]ile[Nn]ame: *\\(.*\\) *$" nil t)
         (replace-match "Filename: [[file:\\1][\\1]]"))
-      
+      ;; format other info lines into an org list
       (goto-char (point-min))
       (while (re-search-forward "^\\(.*?\\):\\(.*?[A-Za-z0-9.].*\\)$" nil t)
         (replace-match " - \\1 ::\\2"))
+      ;; add the header line
       (goto-char (point-min))
       (insert "* Library Information\n")
-      
+      ;; make new header for dependencies info
       (goto-char (point-min))
       (when (re-search-forward "^[ \t]*Features that might be required by this library:[ \t]*$" nil t)
         (replace-match "* Possible Dependencies" t t))
+      ;; save new org-formatted text into `top-header'
       (setq top-header (buffer-substring (point-min) (point-max))))
-    (with-temp-buffer
+    ;; Read the readme file and replace the "Library Information"
+    ;; and "Possible Dependencies" sections with the new org-formatted text
+     (with-temp-buffer
       (insert-file-contents readme)
       (org-readme-remove-section "Possible Dependencies")
       (org-readme-remove-section "Library Information" top-header nil t)
+      ;; save the new readme file
       (write-file readme))))
 
 ;;;###autoload
