@@ -552,13 +552,13 @@ This will also create the directory entry using install-info, if it is found."
   "Query user if option OPT is 'prompt, otherwise return OPT.
 If PROMPT is supplied use that for the prompt, otherwise use
 the first sentence of the docstring for OPT."
-  `(or (and (eq ,opt 'prompt)
-	    (y-or-n-p (or ,prompt
-			  (replace-regexp-in-string
-			   "\n.*" ""
-			   (documentation-property
-			    ',opt 'variable-documentation)))))
-       ,opt))
+  `(if (eq ,opt 'prompt)
+       (y-or-n-p (or ,prompt
+		     (replace-regexp-in-string
+		      "\n.*" ""
+		      (documentation-property
+		       ',opt 'variable-documentation))))
+     ,opt))
 
 (defun org-readme-insert-functions ()
   "Extracts function & macro documentation and places it in the Readme.org file."
@@ -870,7 +870,7 @@ Returns file name if created."
   :type '(repeat (string :tag "Section")))
 
 (defcustom org-readme-remove-sections-from-markdown
-  '("Functions" "Variables")
+  '("Functions & macros" "Variables")
   "List of sections to remove when changing the Readme.org to Markdown which is an intermediary for texinfo (using pandoc)."
   :group 'org-readme
   :type '(repeat (string :tag "Section")))
@@ -1390,7 +1390,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
             (org-readme-edit))
-	;; Update version number 
+	;; Update version number
         (when (yes-or-no-p "Is this a minor revision (upload to Marmalade)? ")
           (save-excursion
             (goto-char (point-min))
@@ -1428,7 +1428,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
         (save-buffer)
 	;; Create info documentation (if required; checks are done in `org-readme-gen-info')
         (org-readme-gen-info)
-	;; Create .tar archive 
+	;; Create .tar archive
         (when (file-exists-p (concat base ".tar"))
           (delete-file (concat base ".tar")))
         (when (and (org-readme-check-opt org-readme-create-tar-package)
