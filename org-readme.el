@@ -423,18 +423,29 @@
   "Org-readme is a way to create Readme.org files based on an elisp file."
   :group 'org)
 
+;; Define a new customization type that we will be using a lot.
+(define-widget 'yesnoprompt 'lazy
+  "A binary tree made of cons-cells and strings."
+  :offset 4
+  :tag "Choice"
+  :type '(choice (const :tag "Yes" t)
+		 (const :tag "No" nil)
+		 (const :tag "Ask" prompt)))
+
 (defcustom org-readme-use-melpa-versions nil
-  "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions"
-  :type 'boolean
+  "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-create-tar-package nil
-  "Creates a tar package for use in ELPA"
-  :type 'boolean
+  "Create a tar package for use in ELPA."
+  :type 'yesnoprompt
   :group 'org-readme)
 
-(defcustom org-readme-marmalade-server "http://marmalade-repo.org" 
-  "Marmalade server website.  This should start with http: and should notend with a trailing forward slash, just like the default value of http://marmalade-repo.org"
+(defcustom org-readme-marmalade-server "http://marmalade-repo.org"
+  "Marmalade server website.
+This should start with http: and should notend with a trailing forward slash,
+just like the default value of http://marmalade-repo.org"
   :type 'string
   :group 'org-readme)
 
@@ -449,89 +460,105 @@
   :group 'org-readme)
 
 (defcustom org-readme-sync-emacswiki t
-  "Posts library to the emacswiki. Requires `yaoddmuse'"
-  :type 'boolean
+  "Post library to the emacswiki.
+Requires `yaoddmuse'."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-sync-marmalade t
-  "Posts library to marmalade-repo.org"
-  :type 'boolean
+  "Post library to marmalade-repo.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-sync-git t
-  "Posts library to git"
-  :type 'boolean
+  "Post library to git."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-build-melpa-recipe t
-  "Builds a melpa recipe based on github information"
-  :type 'boolean
+  "Build a melpa recipe based on github information."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-build-el-get-recipe t
-  "Builds a el-get recipe based on github information"
-  :type 'boolean
+  "Build an el-get recipe based on github information."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-build-markdown t
-  "Builds Readme.md from Readme.org"
-  :type 'boolean
+  "Build Readme.md from Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-use-pandoc-markdown t
-  "Uses pandoc's grid tables instead of transferring the tables to html."
-  :type 'boolean
+  "Use pandoc's grid tables instead of transferring the tables to html."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-build-texi t
-  "Builds library-name.texi from Readme.org, using Readme.md and pandoc.  Requires `org-readme-build-markdown' to be non-nil as pandoc to be found."
-  :type 'boolean
+  "Build library-name.texi from Readme.org, using Readme.md and pandoc.
+Requires `org-readme-build-markdown' to be non-nil as pandoc to be found."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-drop-markdown-after-build-texi t
-  "Removes Readme.md after texinfo is generated"
-  :type 'boolean
+  "Remove Readme.md after texinfo is generated."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-build-info t
-  "Builds library-name.info from Reade.org using texi.  Requires `org-readme-build-texi' to be non-nil, pandoc and makeinfo to be found. This will also create the directory entry using install-info, if it is found."
-  :type 'boolean
+  "Build library-name.info from Reade.org using texi.  
+Requires `org-readme-build-texi' to be non-nil, pandoc and makeinfo to be found. 
+This will also create the directory entry using install-info, if it is found."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-drop-texi-after-build-info t
-  "Removes the texi information after building info files."
-  :type 'boolean
+  "Remove the texi information after building info files."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-add-readme-to-lisp-file t
-  "Whether `org-readme-sync' should update Lisp file header with commentary section of Readme.org."
-  :type 'boolean
+  "Update elisp file header with commentary section of Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-add-functions-to-readme t
-  "Add a Functions section to Readme.org"
-  :type 'boolean
+  "Add a Functions section to Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-add-variables-to-readme t
-  "Add a Variables section to Readme.org"
-  :type 'boolean
+  "Add a Variables section to Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-update-changelog t
-  "Whether `org-readme-sync' should update a Changelog file."
-  :type 'boolean
+  "Add/update Changelog file."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-add-changelog-to-readme t
-  "Add a Variables section to Readme.org"
-  :type 'boolean
+  "Add Changelog information to Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
 
 (defcustom org-readme-add-top-header-to-readme t
-  "Add Top Header information to Readme.org"
-  :type 'boolean
+  "Add Top Header information to Readme.org."
+  :type 'yesnoprompt
   :group 'org-readme)
+
+(cl-defmacro org-readme-check-opt (opt &optional prompt)
+  "Query user if option OPT is 'prompt, otherwise return OPT.
+If PROMPT is supplied use that for the prompt, otherwise use
+the first sentence of the docstring for OPT."
+  `(or (and (eq ,opt 'prompt)
+	    (y-or-n-p (or ,prompt
+			  (replace-regexp-in-string
+			   "\n.*" ""
+			   (documentation-property
+			    ',opt 'variable-documentation)))))
+       ,opt))
 
 (defun org-readme-insert-functions ()
   "Extracts function documentation and places it in the Readme.org file."
@@ -1005,7 +1032,7 @@ Returns file name if created."
         (end-of-line)
         (save-restriction
           (narrow-to-region p1 (point))
-          (if org-readme-use-pandoc-markdown
+          (if (org-readme-check-opt org-readme-use-pandoc-markdown)
               (progn
                 (goto-char (point-min))
                 (while (re-search-forward "^\\([ \t]*\\)|\\(-.*?-\\)|\\([ \t]*\\)$" nil t)
@@ -1161,7 +1188,7 @@ Returns file name if created."
   (let* ((df (file-name-directory (buffer-file-name)))
          (default-directory df)
          melpa el-get)
-    (when org-readme-build-melpa-recipe
+    (when (org-readme-check-opt org-readme-build-melpa-recipe)
       (setq melpa (org-readme-build-melpa))
       (when melpa
         (message "Adding Melpa recipe")
@@ -1169,7 +1196,7 @@ Returns file name if created."
          (format "git add melpa/%s"
                  (file-name-nondirectory melpa)))))
     
-    (when org-readme-build-el-get-recipe
+    (when (org-readme-check-opt org-readme-build-el-get-recipe)
       (setq el-get (org-readme-build-el-get))
       (when el-get
         (message "Adding El-Get recipe")
@@ -1186,12 +1213,12 @@ Returns file name if created."
                           (file-name-sans-extension
                            (file-name-nondirectory (buffer-file-name)))
                           ".texi"))
-      (when (and org-readme-drop-markdown-after-build-texi
+      (when (and (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
                  (file-exists-p "Readme.md"))
         (delete-file "Readme.md")
         (shell-command
          (concat "git rm Readme.md")))
-      (if (and org-readme-drop-texi-after-build-info
+      (if (and (org-readme-check-opt org-readme-drop-texi-after-build-info)
                (file-exists-p (concat
                                (file-name-sans-extension
                                 (file-name-nondirectory (buffer-file-name)))
@@ -1270,9 +1297,9 @@ If so, return the name of that Lisp file, otherwise return nil."
 (defun org-readme-gen-info ()
   "With the proper tools, generates an info and dir from the current readme.org"
   (interactive)
-  (when org-readme-build-markdown 
+  (when (org-readme-check-opt org-readme-build-markdown) 
     (org-readme-convert-to-markdown)
-    (when org-readme-build-texi
+    (when (org-readme-check-opt org-readme-build-texi)
       (when (executable-find "pandoc")
         (let ((default-directory (file-name-directory (buffer-file-name)))
               (base (file-name-sans-extension
@@ -1314,7 +1341,7 @@ If so, return the name of that Lisp file, otherwise return nil."
               (goto-char (point-at-eol))
               (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
 		      base ": (" base ").     " desc "\n@end direntry\n")))
-          (when (and org-readme-build-info
+          (when (and (org-readme-check-opt org-readme-build-info)
                      (executable-find "makeinfo"))
             (shell-command (concat "makeinfo " base ".texi"))
             (when (executable-find "install-info")
@@ -1349,10 +1376,13 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                 (setq org-readme-edit-last-buffer (current-buffer))
                 (org-readme-sync))
             ;; Post to emacswiki if necessary
-	    (unless (not org-readme-sync-emacswiki)
+	    (unless (not (org-readme-check-opt
+			  org-readme-sync-emacswiki
+			  "Post Readme.org to emacswiki"))
 	      (message "Posting Description to emacswiki")
 	      (org-readme-convert-to-emacswiki))))
-      (if (and (not comment-added) org-readme-update-changelog)
+      (if (and (not comment-added)
+	       (org-readme-check-opt org-readme-update-changelog))
 	  ;; Update the Changelog file if necessary
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
@@ -1363,7 +1393,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
             (goto-char (point-min))
             (let ((case-fold-search t))
               (when (re-search-forward "^[ \t]*;+[ \t]*Version:" nil t)
-                (if (or org-readme-use-melpa-versions
+                (if (or (org-readme-check-opt org-readme-use-melpa-versions)
                         (save-match-data (looking-at "[ \t]*[0-9]\\{8\\}[.][0-9]\\{4\\}[ \t]*$")))
                     (progn
                       (delete-region (point) (point-at-eol))
@@ -1374,23 +1404,23 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                     (replace-match (format "\\1%s"
                                            (+ 1 (string-to-number (match-string 2)))))))))))
 	;; Replace commentary section in elisp file with text extracted from readme file
-	 (when org-readme-add-readme-to-lisp-file
+	(when (org-readme-check-opt org-readme-add-readme-to-lisp-file)
 	  (message "Adding Readme to Header Commentary")
 	  (org-readme-to-commentary))
 	;; Add functions section to readme file
-        (when org-readme-add-functions-to-readme
+        (when (org-readme-check-opt org-readme-add-functions-to-readme)
           (message "Updating Functions.")
           (org-readme-insert-functions))
 	;; Add variables section to readme file
-        (when org-readme-add-variables-to-readme
+        (when (org-readme-check-opt org-readme-add-variables-to-readme)
           (message "Updating Variables.")
           (org-readme-insert-variables))
 	;; Add Changelog to readme file
-        (when org-readme-add-changelog-to-readme
+        (when (org-readme-check-opt org-readme-add-changelog-to-readme)
           (message "Updating Changelog in current file.")
           (org-readme-changelog-to-readme))
 	;; Copy top header from elisp file into readme file
-        (when org-readme-add-top-header-to-readme
+        (when (org-readme-check-opt org-readme-add-top-header-to-readme)
           (org-readme-top-header-to-readme))
         (save-buffer)
 	;; Create info documentation (if required; checks are done in `org-readme-gen-info')
@@ -1398,7 +1428,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	;; Create .tar archive 
         (when (file-exists-p (concat base ".tar"))
           (delete-file (concat base ".tar")))
-        (when (and org-readme-create-tar-package
+        (when (and (org-readme-check-opt org-readme-create-tar-package)
                    (or (executable-find "tar")
                        (executable-find "7z")
                        (executable-find "7za")))
@@ -1420,20 +1450,24 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (delete-directory (concat base "-" ver)))
 	;; post to marmalade
         (when (and (featurep 'http-post-simple)
-                   org-readme-sync-marmalade)
+                   (org-readme-check-opt org-readme-sync-marmalade))
           (message "Attempting to post to marmalade-repo.org")
           (org-readme-marmalade-post))
 	;; post to elisp file to emacswiki
         (when (and (featurep 'yaoddmuse)
-                   org-readme-sync-emacswiki)
-          (message "Posting lisp file to emacswiki")
+                   (org-readme-check-opt
+		    org-readme-sync-emacswiki
+		    "Post elisp file to emacswiki?"))
+          (message "Posting elisp file to emacswiki")
           (emacswiki-post nil ""))
 	;; add files to git repo
-        (when org-readme-sync-git
+        (when (org-readme-check-opt org-readme-sync-git)
           (org-readme-git))
 	;; post readme file to emacswiki
         (when (and (featurep 'yaoddmuse)
-                   org-readme-sync-emacswiki)
+                   (org-readme-check-opt
+		    org-readme-sync-emacswiki
+		    "Post Readme.org to emacswiki?"))
           (message "Posting Description to emacswiki")
           (org-readme-convert-to-emacswiki))
 	;; revert the window config back to how it was before
