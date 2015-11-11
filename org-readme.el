@@ -561,12 +561,12 @@ the first sentence of the docstring for OPT."
        ,opt))
 
 (defun org-readme-insert-functions ()
-  "Extracts function documentation and places it in the Readme.org file."
+  "Extracts function & macro documentation and places it in the Readme.org file."
   (save-excursion
     (goto-char (point-min))
     (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
-      (while (re-search-forward "(\\(?:cl-\\)?defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
+      (while (re-search-forward "(\\(?:cl-\\)?def\\(un\\|macro\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
       (cl-flet ((fd (x)
@@ -596,6 +596,7 @@ the first sentence of the docstring for OPT."
                    (buffer-string))))
         (setq ret1 "** Interactive Functions\n")
         (setq ret2 "** Internal Functions\n")
+	(setq ret3 "** Macros\n")
         (mapc
          (lambda(x)
            (condition-case err
@@ -603,16 +604,18 @@ the first sentence of the docstring for OPT."
                  (setq tmp (describe-function (intern x)))
                  (cond
                   ((string-match "Not documented" tmp))
+		  ((string-match "Lisp macro" tmp)
+		   (setq ret3 (concat ret3 "\n*** " x "\n" (fd tmp))))
                   ((string-match "interactive" tmp)
                    (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
                   (t
                    (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
              (error nil)))
          lst)
-        (setq ret (concat "* Functions\n" ret1 "\n" ret2)))
+        (setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
       (with-temp-buffer
         (insert-file-contents readme)
-        (org-readme-remove-section "Functions" ret)
+        (org-readme-remove-section "Functions & macros" ret)
         (write-file readme)))))
 
 (defun org-readme-insert-variables ()
@@ -861,7 +864,7 @@ Returns file name if created."
 
 (defcustom org-readme-remove-sections
   '("History" "Possible Dependencies" "Library Information"
-    "Functions" "Variables")
+    "Functions & macros" "Variables")
   "List of sections to remove when changing the Readme.org to Commentary."
   :group 'org-readme
   :type '(repeat (string :tag "Section")))
