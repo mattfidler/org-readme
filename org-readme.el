@@ -503,6 +503,11 @@
   :type 'boolean
   :group 'org-readme)
 
+(defcustom org-readme-add-readme-to-lisp-file t
+  "Whether `org-readme-sync' should update Lisp file header with commentary section of Readme.org."
+  :type 'boolean
+  :group 'org-readme)
+
 (defcustom org-readme-add-functions-to-readme t
   "Add a Functions section to Readme.org"
   :type 'boolean
@@ -510,6 +515,11 @@
 
 (defcustom org-readme-add-variables-to-readme t
   "Add a Variables section to Readme.org"
+  :type 'boolean
+  :group 'org-readme)
+
+(defcustom org-readme-update-changelog t
+  "Whether `org-readme-sync' should update a Changelog file."
   :type 'boolean
   :group 'org-readme)
 
@@ -529,7 +539,7 @@
     (goto-char (point-min))
     (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
-      (while (re-search-forward "(defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
+      (while (re-search-forward "(\\(?:cl-\\)?defun[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
       (cl-flet ((fd (x)
@@ -554,7 +564,7 @@
                    (goto-char (point-max))
                    (insert "\n")
                    (goto-char (point-min))
-                   (while (re-search-forward "^[ \t]*[*]+")
+                   (while (re-search-forward "^[ \t]*[*]+" nil t)
                      (replace-match ""))
                    (buffer-string))))
         (setq ret1 "** Interactive Functions\n")
@@ -588,7 +598,7 @@
     (goto-char (point-min))
     (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
-      (while (re-search-forward "(def\\(?:var\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
+      (while (re-search-forward "(def\\(?:var\\|var-local\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
       (cl-flet ((fd (x)
@@ -1321,8 +1331,7 @@ If so, return the name of that lisp file, otherwise return nil."
 ;;;###autoload
 (defun org-readme-sync (&optional comment-added)
   "Syncs Readme.org with current buffer.
-When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin.
-"
+When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin."
   (interactive)
   (let ((base (file-name-sans-extension
                (file-name-nondirectory (buffer-file-name)))))
@@ -1345,9 +1354,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                 (setq org-readme-edit-last-buffer (current-buffer))
                 (org-readme-sync))
             ;; Multiple lisp files or no lisp files.
-            (message "Posting Description to emacswiki")
-            (org-readme-convert-to-emacswiki)))
-      (if (not comment-added)
+	    (unless (not org-readme-sync-emacswiki)
+	      (message "Posting Description to emacswiki")
+	      (org-readme-convert-to-emacswiki))))
+      (if (and (not comment-added)
+	       org-readme-update-changelog)
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
             (org-readme-edit))
@@ -1366,9 +1377,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (when (looking-back "\\([ .]\\)\\([0-9]+\\)[ \t]*")
                     (replace-match (format "\\1%s"
                                            (+ 1 (string-to-number (match-string 2)))))))))))
-        
-        (message "Adding Readme to Header Commentary")
-        (org-readme-to-commentary)
+	(when org-readme-add-readme-to-lisp-file
+	  (message "Adding Readme to Header Commentary")
+	  (org-readme-to-commentary))
         (when org-readme-add-functions-to-readme
           (message "Updating Functions.")
           (org-readme-insert-functions))
@@ -1384,7 +1395,6 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
         (org-readme-gen-info)
         (when (file-exists-p (concat base ".tar"))
           (delete-file (concat base ".tar")))
-        
         (when (and org-readme-create-tar-package
                    (or (executable-find "tar")
                        (executable-find "7z")
@@ -1394,44 +1404,31 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (copy-file (concat base ".info") (concat base "-" ver "/" base ".info"))
           (copy-file "dir" (concat base "-" ver "/dir"))
           (with-temp-file (concat base "-" ver "/" base "-pkg.el")
-            (insert "(define-package \"")
-            (insert base)
-            (insert "\" \"")
-            (insert ver)
-            (insert "\" \"")
-            (insert desc)
-            (insert "\" '")
-            (insert pkg)
-            (insert ")"))
+            (insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
           (if (executable-find "tar")
               (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
             (shell-command (concat "7z" (if (executable-find "7za") "a" "")
                                    " -ttar -so " base ".tar " base "-" ver "/*.*")))
-          
-          (delete-file (concat base "-" ver "/" base ".el"))
-          (delete-file (concat base "-" ver "/" base "-pkg.el"))
-          (delete-file (concat base "-" ver "/" base ".info"))
-          (delete-file (concat base "-" ver "/dir"))
+	  (mapcar 'delete-file
+		  (list (concat base "-" ver "/" base ".el")
+			(concat base "-" ver "/" base "-pkg.el")
+			(concat base "-" ver "/" base ".info")
+			(concat base "-" ver "/dir")))
           (delete-directory (concat base "-" ver)))
-        
         (when (and (featurep 'http-post-simple)
                    org-readme-sync-marmalade)
           (message "Attempting to post to marmalade-repo.org")
           (org-readme-marmalade-post))
-        
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting lisp file to emacswiki")
           (emacswiki-post nil ""))
-        
         (when org-readme-sync-git
           (org-readme-git))
-        
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting Description to emacswiki")
           (org-readme-convert-to-emacswiki))
-        
         (when org-readme-edit-last-window-configuration
           (set-window-configuration org-readme-edit-last-window-configuration)
           (setq org-readme-edit-last-window-configuration nil))))))
@@ -1445,10 +1442,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (insert-file-contents readme)
       (org-mode)
       (mapc
-       (lambda(section)
+       (lambda (section)
          (org-readme-remove-section section))
        org-readme-remove-sections)
-      
       (goto-char (point-min))
       (while (re-search-forward "=\\<\\(.*?\\)\\>=" nil t)
         (replace-match (format "`%s'" (match-string 1)) t t))
