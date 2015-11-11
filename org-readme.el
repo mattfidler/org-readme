@@ -589,7 +589,7 @@
         (write-file readme)))))
 
 (defun org-readme-insert-variables ()
-  "Extracts variable documentation and places it in the Readme.org file."
+  "Extracts variable documentation and places it in the readme file."
   (interactive)
   (condition-case err
       (eval-buffer)
@@ -1256,8 +1256,8 @@ Returns file name if created."
            (downcase (file-name-nondirectory (buffer-file-name)))))
 
 (defun org-readme-single-lisp-p ()
-  "Determine if the Readme.org is in a directory with a single lisp file.
-If so, return the name of that lisp file, otherwise return nil."
+  "Determine if the Readme.org is in a directory with a single Lisp file.
+If so, return the name of that Lisp file, otherwise return nil."
   (let* ((dn (file-name-directory (buffer-file-name)))
          (df (directory-files dn t "[.][Ee][Ll]$")))
     (if (= 1 (length df))
@@ -1280,10 +1280,7 @@ If so, return the name of that lisp file, otherwise return nil."
               (file (concat (file-name-sans-extension
                              (file-name-nondirectory (buffer-file-name)))
                             ".texi"))
-              pkg
-              ver
-              desc
-              cnt)
+              pkg ver desc cnt)
           (when (string= (downcase base) "readme")
             (let ((df (directory-files (file-name-directory (buffer-file-name)) t ".*[.]el$")))
               (unless (= 1 (length df))
@@ -1315,13 +1312,8 @@ If so, return the name of that lisp file, otherwise return nil."
             (goto-char (point-min))
             (when (re-search-forward "@documentencoding")
               (goto-char (point-at-eol))
-              (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* ")
-              (insert base)
-              (insert ": (")
-              (insert base)
-              (insert ").     ")
-              (insert desc)
-              (insert "\n@end direntry\n")))
+              (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
+		      base ": (" base ").     " desc "\n@end direntry\n")))
           (when (and org-readme-build-info
                      (executable-find "makeinfo"))
             (shell-command (concat "makeinfo " base ".texi"))
@@ -1344,7 +1336,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-pkg[.]el$")))
         (when (= 1 (length df))
           (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))))))
-
+    ;; Check if we need to switch file or update the changelog first
     (if (and (not comment-added)
 	     (org-readme-in-readme-org-p))
         (let ((single-lisp-file (org-readme-single-lisp-p)))
@@ -1381,27 +1373,29 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                   (when (looking-back "\\([ .]\\)\\([0-9]+\\)[ \t]*")
                     (replace-match (format "\\1%s"
                                            (+ 1 (string-to-number (match-string 2)))))))))))
-	;; Replace commentary section in elisp file with text extracted from Readme.org
+	;; Replace commentary section in elisp file with text extracted from readme file
 	 (when org-readme-add-readme-to-lisp-file
 	  (message "Adding Readme to Header Commentary")
 	  (org-readme-to-commentary))
-	;; Add functions section to Readme.org
+	;; Add functions section to readme file
         (when org-readme-add-functions-to-readme
           (message "Updating Functions.")
           (org-readme-insert-functions))
-	;; Add variables section to Readme.org
+	;; Add variables section to readme file
         (when org-readme-add-variables-to-readme
           (message "Updating Variables.")
           (org-readme-insert-variables))
-	;; Add Changelog to Readme.org
+	;; Add Changelog to readme file
         (when org-readme-add-changelog-to-readme
           (message "Updating Changelog in current file.")
           (org-readme-changelog-to-readme))
-	;; Add 
+	;; Copy top header from elisp file into readme file
         (when org-readme-add-top-header-to-readme
           (org-readme-top-header-to-readme))
         (save-buffer)
+	;; Create info documentation (if required; checks are done in `org-readme-gen-info')
         (org-readme-gen-info)
+	;; Create .tar archive 
         (when (file-exists-p (concat base ".tar"))
           (delete-file (concat base ".tar")))
         (when (and org-readme-create-tar-package
@@ -1424,20 +1418,25 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 			(concat base "-" ver "/" base ".info")
 			(concat base "-" ver "/dir")))
           (delete-directory (concat base "-" ver)))
+	;; post to marmalade
         (when (and (featurep 'http-post-simple)
                    org-readme-sync-marmalade)
           (message "Attempting to post to marmalade-repo.org")
           (org-readme-marmalade-post))
+	;; post to elisp file to emacswiki
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting lisp file to emacswiki")
           (emacswiki-post nil ""))
+	;; add files to git repo
         (when org-readme-sync-git
           (org-readme-git))
+	;; post readme file to emacswiki
         (when (and (featurep 'yaoddmuse)
                    org-readme-sync-emacswiki)
           (message "Posting Description to emacswiki")
           (org-readme-convert-to-emacswiki))
+	;; revert the window config back to how it was before
         (when org-readme-edit-last-window-configuration
           (set-window-configuration org-readme-edit-last-window-configuration)
           (setq org-readme-edit-last-window-configuration nil))))))
@@ -1600,7 +1599,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
 
 ;;;###autoload
 (defun org-readme-top-header-to-readme ()
-  "This puts the top header into the Readme.org file as Library Information"
+  "Copy top header from the elisp file into the readme file as Library Information."
   (interactive)
   (let ((top-header "")
         (readme (org-readme-find-readme)))
