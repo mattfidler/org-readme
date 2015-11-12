@@ -5,7 +5,7 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20130322.926
+;; Version: 20151112.36
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
 ;; Last-Updated: Wed Aug 22 13:11:26 2012 (-0500)
 ;;           By: Matthew L. Fidler
@@ -16,7 +16,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   None
+;;   yaoddmuse, http-post-simple, org-html, header2
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -570,30 +570,30 @@ the first sentence of the docstring for OPT."
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
       (cl-flet ((fd (x)
-                 (with-temp-buffer
-                   (insert x)
-                   (goto-char (point-min))
-                   (when (re-search-forward "'[.]" nil t)
-                     (skip-chars-forward " \t\n")
-                     (delete-region (point) (point-min)))
-                   (goto-char (point-min))
-                   (when (re-search-forward "[(]" nil t)
-                     (goto-char (match-beginning 0))
-                     (insert "=")
-                     (forward-list)
-                     (insert "="))
-                   (goto-char (point-min))
-                   (while (re-search-forward "`\\(.*?\\)'" nil t)
-                     (replace-match "=\\1="))
-                   (goto-char (point-min))
-                   (while (re-search-forward "^[ \t]*[*]+[ \t]+" nil t)
-                     (replace-match " - "))
-                   (goto-char (point-max))
-                   (insert "\n")
-                   (goto-char (point-min))
-                   (while (re-search-forward "^[ \t]*[*]+" nil t)
-                     (replace-match ""))
-                   (buffer-string))))
+		    (with-temp-buffer
+		      (insert x)
+		      (goto-char (point-min))
+		      (when (re-search-forward "'[.]" nil t)
+			(skip-chars-forward " \t\n")
+			(delete-region (point) (point-min)))
+		      (goto-char (point-min))
+		      (when (re-search-forward "[(]" nil t)
+			(goto-char (match-beginning 0))
+			(insert "=")
+			(forward-list)
+			(insert "="))
+		      (goto-char (point-min))
+		      (while (re-search-forward "`\\(.*?\\)'" nil t)
+			(replace-match "=\\1="))
+		      (goto-char (point-min))
+		      (while (re-search-forward "^[ \t]*[*]+[ \t]+" nil t)
+			(replace-match " - "))
+		      (goto-char (point-max))
+		      (insert "\n")
+		      (goto-char (point-min))
+		      (while (re-search-forward "^[ \t]*[*]+" nil t)
+			(replace-match ""))
+		      (buffer-string))))
         (setq ret1 "** Interactive Functions\n")
         (setq ret2 "** Internal Functions\n")
 	(setq ret3 "** Macros\n")
@@ -1391,7 +1391,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
             (setq org-readme-edit-last-buffer (current-buffer))
             (org-readme-edit))
 	;; Update version number
-        (when (yes-or-no-p "Is this a minor revision (upload to Marmalade)? ")
+        (when (yes-or-no-p "Update version number? ")
           (save-excursion
             (goto-char (point-min))
             (let ((case-fold-search t))

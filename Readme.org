@@ -8,7 +8,7 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20130322.926
+ - Version :: 20151112.36
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
  - Last-Updated :: Wed Aug 22 13:11:26 2012 (-0500)
  -           By :: Matthew L. Fidler
@@ -19,7 +19,7 @@
 
 * Possible Dependencies
 
-  None
+  yaoddmuse, http-post-simple, org-html, header2
 
 * Using org-readme
 Org readme is used to:
@@ -74,15 +74,20 @@ libraries and why they are needed.
 | header2          | To create header and changelog       |
 | lib-requires     | To generate the library dependencies |
 |------------------+--------------------------------------|
-
-* Functions
+* Functions & macros
 ** Interactive Functions
 
 ** Internal Functions
-* Variables
-** Customizable Variables
 
-** Internal Variables
+*** macro
+macro is an alias for =macro=,
+which is not defined.  Please make a bug report.
+
+*** un
+un is an alias for =un=,
+which is not defined.  Please make a bug report.
+
+** Macros
 * History
 
 8-May-2013    Matthew L. Fidler  
@@ -183,3 +188,7 @@ libraries and why they are needed.
  - 05-Aug-2012 ::  Added git support as well as a comment mode. The only thing that should need to be called is =org-readme-sync= (Matthew L. Fidler)
  - 04-Aug-2012 ::  Added syncing with emacswiki.  (Matthew L. Fidler)
  - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)
+* Variables
+** Customizable Variables
+
+** Internal Variables
