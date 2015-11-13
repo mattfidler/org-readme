@@ -414,6 +414,7 @@
 ;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 ;; Floor, Boston, MA 02110-1301, USA.
 ;; 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Code:
@@ -459,6 +460,27 @@ After installing el-get, Type M-x el-get-install LIB-NAME.
 
 (defcustom org-readme-features-regexp "^[ \t]*Features that might be required by this library:[ \t]*$"
   "Regexp to match the header line for the required libraries section."
+  :type 'regexp
+  :group 'org-readme)
+
+(defcustom org-readme-changelog-lines-regexp "^[ \t]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ \t]*.*\n.*(\\([^)]*\\))[ \t]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ \t]*\\([0-9][0-9]?\\)"
+  "Regexp matching changelog lines in the elisp file (you probably shouldn't change this).
+
+It should contain 4 parenthesised subexpressions matching:
+ 1) The date of the changelog entry.
+ 2) The author name.
+ 3) The changelog comment.
+ 4) The beginning of the next changelog line (used to delimit the lines)."
+  :type 'regexp
+  :group 'org-readme)
+
+(defcustom org-readme-final-changelog-line-regexp "\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ \t]*\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)"
+  "Regexp matching the final changelog line in the elisp file (you probably shouldn't change this).
+
+  It should contain 3 parenthesised subexpressions matching:
+  1) The date of the changelog entry.
+  2) The author name.
+  3) The changelog comment."
   :type 'regexp
   :group 'org-readme)
 
@@ -1581,13 +1603,11 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
 		  txt (buffer-substring-no-properties pt1 pt2))
 	    (with-temp-buffer
 	      (insert txt)
-	      ;; Take out comments
+	      ;; Remove initial ;'s
 	      (org-readme-regexp-pairs [["^[ \t]*;+ ?" ""]])
 	      (goto-char (point-min))
-	      (cl-symbol-macrolet
-		  ((date "[0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]")
-		   (whitespace "[ \t]*") (anything ".*") (newline "\n")
-		   (comment (save-match-data
+	      (cl-symbol-macrolet	;a couple of symbol-macros to save space
+		  ((comment (save-match-data
 			      (replace-regexp-in-string
 			       "~~~~" "\n    + "
 			       (replace-regexp-in-string
@@ -1597,27 +1617,26 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
 				 (replace-regexp-in-string
 				  "\n[ \t]*[*-+] +" "~~~~" (match-string 3)))))))
 		   (author (save-match-data (replace-regexp-in-string "[ \t]*$" "" (match-string 2)))))
-		(while (re-search-forward
-			(concat "^" whitespace "\\(" date "\\)" whitespace anything newline anything "(\\([^)]*\\))"
-				whitespace newline "\\(\\(?:\n\\|.\\)*?\\)" newline whitespace "\\([0-9][0-9]?\\)")
-			nil t)
+		;; copy and reformat each changelog line
+		(while (re-search-forward org-readme-changelog-lines-regexp nil t)
 		  (replace-match
 		   (format " - %s :: %s (%s)\n %s"
 			   (match-string 1) comment author (match-string 4))
 		   t t)
 		  (beginning-of-line))
-		(when (re-search-forward
-		       (concat "\\(" date "\\)" whitespace "\\(" anything "\\)"
-			       newline anything newline "\\(\\(?:\n\\|.\\)*\\)")
-		       nil t)
+		;; copy and reformat final changelog line
+		(when (re-search-forward org-readme-final-changelog-line-regexp nil t)
 		  (replace-match
-		   (format " - %s :: %s (%s)" (match-string 1) comment author)
+		   (format " - %s :: %s (%s)\n" (match-string 1) comment author)
 		   t t)))
+	      ;; replace `' quotes with = quotes, and initial whitespace with single whitespace
 	      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="]
 					["^[ \t][ \t]+[-]" " -"]])
+	      ;; add org header
 	      (goto-char (point-min))
 	      (insert "* History\n")
 	      (setq txt (buffer-substring-no-properties (point-min) (point-max))))
+	    ;; add to readme file and save it
 	    (with-temp-buffer
 	      (insert-file-contents readme)
 	      (org-readme-remove-section "History" txt)
