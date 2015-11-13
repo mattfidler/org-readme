@@ -573,6 +573,34 @@ This will also create the directory entry using install-info, if it is found."
   :type 'yesnoprompt
   :group 'org-readme)
 
+(defcustom org-readme-remove-sections
+  '("History" "Possible Dependencies" "Library Information"
+    "Functions & macros" "Variables")
+  "List of sections to remove when changing the Readme.org to Commentary."
+  :group 'org-readme
+  :type '(repeat (string :tag "Section")))
+
+(defcustom org-readme-remove-sections-from-markdown
+  '("Functions & macros" "Variables")
+  "List of sections to remove when changing the Readme.org to 
+Markdown which is an intermediary for texinfo (using pandoc)."
+  :group 'org-readme
+  :type '(repeat (string :tag "Section")))
+
+(defvar org-readme-edit-mode-map nil
+  "Keymap for editing change-logs.")
+
+(unless org-readme-edit-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-c C-c") 'org-readme-edit-commit)
+    (define-key map (kbd "C-x C-s") 'org-readme-edit-commit)
+    (define-key map (kbd "C-c C-k") 'org-readme-edit-cancel)
+    (setq org-readme-edit-mode-map map)))
+
+(defvar org-readme-edit-last-window-configuration nil)
+
+(defvar org-readme-edit-last-buffer nil)
+
 (cl-defmacro org-readme-check-opt (opt &optional prompt)
   "Query user if option OPT is 'prompt, otherwise return OPT.
 If PROMPT is supplied use that for the prompt, otherwise use
@@ -893,30 +921,6 @@ Returns file name if created."
 	  (customize-save-variable 'org-readme-marmalade-token org-readme-marmalade-token))
 	(symbol-value 'token))))
 
-(defcustom org-readme-remove-sections
-  '("History" "Possible Dependencies" "Library Information"
-    "Functions & macros" "Variables")
-  "List of sections to remove when changing the Readme.org to Commentary."
-  :group 'org-readme
-  :type '(repeat (string :tag "Section")))
-
-(defcustom org-readme-remove-sections-from-markdown
-  '("Functions & macros" "Variables")
-  "List of sections to remove when changing the Readme.org to 
-Markdown which is an intermediary for texinfo (using pandoc)."
-  :group 'org-readme
-  :type '(repeat (string :tag "Section")))
-
-(defvar org-readme-edit-mode-map nil
-  "Keymap for editing change-logs.")
-
-(unless org-readme-edit-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'org-readme-edit-commit)
-    (define-key map (kbd "C-x C-s") 'org-readme-edit-commit)
-    (define-key map (kbd "C-c C-k") 'org-readme-edit-cancel)
-    (setq org-readme-edit-mode-map map)))
-
 (defun org-readme-edit-commit ()
   "Changelog for editing."
   (interactive)
@@ -944,10 +948,6 @@ Markdown which is an intermediary for texinfo (using pandoc)."
   (kill-buffer (get-buffer "*Change Comment*"))
   (when org-readme-edit-last-window-configuration
     (set-window-configuration org-readme-edit-last-window-configuration)))
-
-(defvar org-readme-edit-last-window-configuration nil)
-
-(defvar org-readme-edit-last-buffer nil)
 
 (defun org-readme-edit ()
   "Edit change comment for commit."
@@ -1585,7 +1585,8 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
 				whitespace newline "\\(\\(?:\n\\|.\\)*?\\)" newline whitespace "\\([0-9][0-9]?\\)")
 			nil t)
 		  (replace-match
-		   (format " - %s :: %s (%s)\n %s" (match-string 1) comment author (match-string 4))
+		   (format " - %s :: %s (%s)\n %s"
+			   (match-string 1) comment author (match-string 4))
 		   t t)
 		  (beginning-of-line))
 		(when (re-search-forward
