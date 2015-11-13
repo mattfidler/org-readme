@@ -452,6 +452,16 @@ After installing el-get, Type M-x el-get-install LIB-NAME.
   :type 'string
   :group 'org-readme)
 
+(defcustom org-readme-end-section-regexp "^;;;;+[ \t]*$"
+  "Regexp to match the end of a header/comments/changelog section in the elisp file comments."
+  :type 'regexp
+  :group 'org-readme)
+
+(defcustom org-readme-features-regexp "^[ \t]*Features that might be required by this library:[ \t]*$"
+  "Regexp to match the header line for the required libraries section."
+  :type 'regexp
+  :group 'org-readme)
+
 (defcustom org-readme-use-melpa-versions nil
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions."
   :type 'yesnoprompt
@@ -1007,7 +1017,7 @@ Returns file name if created."
 	  (while (and (> tmp2 (point))
 		      (re-search-forward "^" tmp2 t))
 	    (replace-match "::::"))))
-      
+      ;; convert evaluation results
       (goto-char (point-min))
       (while (re-search-forward "^: " nil t)
 	(replace-match "\n::::" t t) ;
@@ -1111,7 +1121,7 @@ Returns file name if created."
 				["^[ \t]*#.*" ""]
 				["^[ \t]*[0-9]+[.)] +" "# "]
 				["^[ \t]+" ""]])
-      (goto-char (point-min))           
+      (goto-char (point-min))
       (while (re-search-forward "^::::" nil t)
 	(replace-match "")
 	(let ((case-fold-search nil))
@@ -1155,10 +1165,10 @@ Returns file name if created."
 	(when el-get
 	  (message "Adding El-Get recipe")
 	  (gitadd (concat "el-get/" (file-name-nondirectory el-get)))))
-      ;; add readme
+      ;; add Readme.org
       (message "Git Adding Readme")
       (gitadd (file-name-nondirectory (org-readme-find-readme)))
-      
+      ;; add either .info or .texi file, and delete Readme.md if necessary
       (when (file-exists-p texifile)
 	(when (and (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
 		   (file-exists-p "Readme.md"))
@@ -1174,18 +1184,20 @@ Returns file name if created."
 		       (gitadd "dir"))
 		   (gitrm texifile))
 	  (gitadd texifile)))
-      
+      ;; add Readme.md if it wasn't deleted
       (when (file-exists-p "Readme.md") (gitadd "Readme.md"))
-      
+      ;; add elisp file
       (message "Git Adding %s" thisfile)
       (gitadd thisfile)
-      
+      ;; commit the changes
       (when (file-exists-p changelog)
 	(message "Git Committing")
 	(shell-command (concat "git commit -F " (file-name-nondirectory changelog)))
 	(delete-file changelog)
+	;; push the commits
 	(message "Git push")
 	(shell-command "git push")
+	;; tag the commit if this is a new version
 	(let ((tags (shell-command-to-string "git tag"))
 	      (ver  (org-readme-buffer-version)))
 	  (when ver
@@ -1213,8 +1225,9 @@ If so, return the name of that Lisp file, otherwise return nil."
 (defun org-readme-gen-info ()
   "With the proper tools, generates an info and dir from the current readme.org"
   (interactive)
-  (when (org-readme-check-opt org-readme-build-markdown) 
-    (org-readme-convert-to-markdown)
+  (when (org-readme-check-opt org-readme-build-markdown)
+    ;; first create the Readme.md file
+    (org-readme-convert-to-markdown)	;create Readme.md
     (when (org-readme-check-opt org-readme-build-texi)
       (when (executable-find "pandoc")
         (let ((default-directory (file-name-directory (buffer-file-name)))
@@ -1233,8 +1246,9 @@ If so, return the name of that Lisp file, otherwise return nil."
               (when (= 1 (length df))
                 (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))
 		      file (concat base ".texi")))))
+	  ;; convert Readme.md to a .texi file
 	  (shell-command (concat "pandoc Readme.md -s -o " file))
-	  ;; Now add direntry.
+	  ;; get information for direntry
 	  (setq cnt (with-temp-buffer
 		      (insert-file-contents file)
 		      (goto-char (point-min))
@@ -1250,6 +1264,7 @@ If so, return the name of that Lisp file, otherwise return nil."
 			  (setq ver "0.0")
 			(setq ver (buffer-substring (point) (point-at-eol))))
 		      (buffer-string)))
+	  ;; Now add direntry to the .texi file
 	  (with-temp-file file
 	    (insert cnt)
 	    (goto-char (point-min))
@@ -1257,6 +1272,7 @@ If so, return the name of that Lisp file, otherwise return nil."
 	      (goto-char (point-at-eol))
 	      (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
 		      base ": (" base ").     " desc "\n@end direntry\n")))
+	  ;; create and install the .info file
 	  (when (and (org-readme-check-opt org-readme-build-info)
 		     (executable-find "makeinfo"))
 	    (shell-command (concat "makeinfo " base ".texi"))
@@ -1430,7 +1446,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
     (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
       (skip-chars-forward "\n")
       (let ((pt (point)))
-	(when (re-search-forward "^;;;;+[ \t]*$" nil t)
+	(when (re-search-forward org-readme-end-section-regexp nil t)
 	  (goto-char (match-beginning 0))
 	  (skip-chars-backward "\n")
 	  (delete-region pt (point))
@@ -1481,14 +1497,15 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 
 (defun org-readme-remove-section (section &optional txt any-level at-beginning)
   "Remove `org-mode' SECTION. Optionally insert TXT.
-When ANY-LEVEL is non-nil, any level may be specified.
-When AT-BEGINNING is non-nil, if the section is not found, insert it at the beginning."
+When ANY-LEVEL is non-nil, the SECTION may be at any level.
+When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beginning."
   (let ((case-fold-search t)
         (mtch ""))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
-			     nil t)
+      (if (re-search-forward
+	   (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
+	   nil t)
           (progn
             (org-cut-subtree)
             (save-excursion (when txt (insert txt)))
@@ -1512,7 +1529,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
     ;; copy the top header from the elisp file
     (save-excursion
       (goto-char (point-min))
-      (when (re-search-forward "^;;;;+[ \t]*$" nil t)
+      (when (re-search-forward org-readme-end-section-regexp nil t)
         (beginning-of-line)
         (setq top-header (buffer-substring (point-min) (point)))))
     ;; copy top header info and reformat it for orgmode
@@ -1535,8 +1552,8 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
       (goto-char (point-min))
       (insert "* Library Information\n")
       ;; make new header for dependencies info
-      (org-readme-regexp-pairs [["^[ \t]*Features that might be required by this library:[ \t]*$"
-				 "* Possible Dependencies"]] t t)
+      (org-readme-regexp-pairs (list (list org-readme-features-regexp
+					   "* Possible Dependencies")) t t)
       ;; save new org-formatted text into `top-header'
       (setq top-header (buffer-substring (point-min) (point-max))))
     ;; Read the readme file and replace the "Library Information"
@@ -1559,7 +1576,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
         (goto-char (point-min))
         (when (re-search-forward "^[ \t]*;;; Change Log:[ \t]*$" nil t)
           (setq pt1 (point))
-          (when (re-search-forward "^[ \t]*;;;;+[ \t]*$" nil t)
+          (when (re-search-forward org-readme-end-section-regexp nil t)
             (setq pt2 (match-beginning 0)
 		  txt (buffer-substring-no-properties pt1 pt2))
 	    (with-temp-buffer
