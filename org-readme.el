@@ -435,6 +435,23 @@
 		 (const :tag "No" nil)
 		 (const :tag "Ask" prompt)))
 
+(defcustom org-readme-default-template "
+* Installation
+
+To use without using a package manager:
+
+ - Put the library in a directory in the emacs load path, like ~/.emacs.d
+ - Add (require 'LIB-NAME) in your ~/.emacs file
+ - If you have [[http://www.marmalade-repo.org/][marmalade-repo.org]], this LIB-NAME is part of the emacs packges you can install.  Just type M-x package-install LIB-NAME marmalade 
+
+This is in emacswiki, so this package can also be installed using el-get.
+
+After installing el-get, Type M-x el-get-install LIB-NAME.
+"
+  "Default template for blank Readme.org Files. LIB-NAME is replaced with the library."
+  :type 'string
+  :group 'org-readme)
+
 (defcustom org-readme-use-melpa-versions nil
   "Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions."
   :type 'yesnoprompt
@@ -630,29 +647,29 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 		      (insert "\n")
 		      (org-readme-regexp-pairs [["^[ \t]*[*]+" ""]])
 		      (buffer-string))))
-        (setq ret1 "** Interactive Functions\n")
-        (setq ret2 "** Internal Functions\n")
-	(setq ret3 "** Macros\n")
-        (mapc
-         (lambda(x)
-           (condition-case err
-               (when (intern x)
-                 (setq tmp (describe-function (intern x)))
-                 (cond
-                  ((string-match "Not documented" tmp))
+        (setq ret1 "** Interactive Functions\n"
+	      ret2 "** Internal Functions\n"
+	      ret3 "** Macros\n")
+	(mapc
+	 (lambda(x)
+	   (condition-case err
+	       (when (intern x)
+		 (setq tmp (describe-function (intern x)))
+		 (cond
+		  ((string-match "Not documented" tmp))
 		  ((string-match "Lisp macro" tmp)
 		   (setq ret3 (concat ret3 "\n*** " x "\n" (fd tmp))))
-                  ((string-match "interactive" tmp)
-                   (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
-                  (t
-                   (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
-             (error nil)))
-         lst)
-        (setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
+		  ((string-match "interactive" tmp)
+		   (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
+		  (t
+		   (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
+	     (error nil)))
+	 lst)
+	(setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
       (with-temp-buffer
-        (insert-file-contents readme)
-        (org-readme-remove-section "Functions & macros" ret)
-        (write-file readme)))))
+	(insert-file-contents readme)
+	(org-readme-remove-section "Functions & macros" ret)
+	(write-file readme)))))
 
 (defun org-readme-insert-variables ()
   "Extracts variable documentation and places it in the readme file."
@@ -664,13 +681,15 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
     (goto-char (point-min))
     (let ((lst1 '()) tmp ret1 ret2 ret lst
           (readme (org-readme-find-readme)))
+      ;; Find all variables & options, add them to `lst1', and sort the list alphabetically
       (while (re-search-forward "(def\\(?:var\\|var-local\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
         (add-to-list 'lst1 (match-string-no-properties 1)))
       (setq lst (sort lst1 'string<))
-      (cl-flet ((fd (x)
+      (cl-flet ((fd (x)			;function to format text returned by `describe-variable'
 		    (with-temp-buffer
 		      (insert x)
 		      (goto-char (point-min))
+		      ;; remove whitespace before and after variable description
 		      (when (re-search-forward "Documentation:" nil t)
 			(skip-chars-forward " \t\n")
 			(delete-region (point) (point-min)))
@@ -678,13 +697,15 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 			(goto-char (match-beginning 0))
 			(skip-chars-backward " \t\n")
 			(delete-region (point) (point-max)))
-		      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ["^[ \t]*[*]+[ \t]+" " - "]])
+		      ;; reformat to org format
+		      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
+						["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
+						["^[ \t]*[*]+" ""]]) ;remove empty list items
 		      (goto-char (point-max))
-		      (insert "\n")
-		      (org-readme-regexp-pairs [["^[ \t]*[*]+" ""]])
+		      (insert "\n")	;final extra newline
 		      (buffer-string))))
-	(setq ret1 "** Customizable Variables\n")
-	(setq ret2 "** Internal Variables\n")
+	(setq ret1 "** Customizable Variables\n"
+	      ret2 "** Internal Variables\n")
 	(mapc
 	 (lambda(x)
 	   (condition-case err
@@ -713,9 +734,9 @@ Returns file name if created."
                    (file-name-nondirectory (buffer-file-name))))
         (git-cfg
          (expand-file-name
-          "config"
-          (expand-file-name
-           ".git" (file-name-directory (buffer-file-name)))))
+	  "config"
+	  (expand-file-name
+	   ".git" (file-name-directory (buffer-file-name)))))
         github tmp
         rcp)
     (unless (file-exists-p el-get)
@@ -778,7 +799,7 @@ Returns file name if created."
          (expand-file-name
           "config"
           (expand-file-name
-           ".git" (file-name-directory (buffer-file-name)))))
+	   ".git" (file-name-directory (buffer-file-name)))))
         rcp)
     (unless (file-exists-p melpa)
       (make-directory melpa))
@@ -796,52 +817,46 @@ Returns file name if created."
 
 (defun org-readme-buffer-version ()
   "Gets the version of the current buffer."
-  (let (ver
-        (case-fold-search t))
+  (let ((case-fold-search t))
     (save-excursion
       (goto-char (point-min))
       (when (re-search-forward "^ *;+ *Version: *\\(.*?\\) *$" nil t)
-        (setq ver (match-string-no-properties 1))))
-    (symbol-value 'ver)))
+        (match-string-no-properties 1)))))
 
 (defun org-readme-marmalade-post ()
   "Posts the current buffer to Marmalade."
   (interactive)
   (let* ((package (file-name-sans-extension
-                   (file-name-nondirectory (buffer-file-name))))
+		   (file-name-nondirectory (buffer-file-name))))
          (m-ver (org-readme-marmalade-version package))
          (b-ver (org-readme-buffer-version))
-         token
-         resp)
+         token resp)
     (message "Marmalade %s Version: %s, Buffer Version: %s"
              package m-ver b-ver)
     (when (or (not m-ver) (not (string= m-ver b-ver)))
       (message "Should post %s, the marmalade package is outdated or does not exist."
                package)
-      (setq token (org-readme-token))
-      
-      (setq resp (http-post-simple-multipart
-                  (format "%s/v1/packages"
-                          org-readme-marmalade-server)
-                  `((name . ,org-readme-marmalade-user-name)
-                    (token . ,token))
-                  `(("package" ,(if (file-exists-p (concat package ".tar"))
-                                    (concat (file-name-sans-extension (buffer-file-name)) ".tar")
-                                  (buffer-file-name))
-                     "text/x-script.elisp"
-                     ,(if (file-exists-p (concat package ".tar"))
-                          (with-temp-buffer
-                            (insert-file-contents (concat package ".tar"))
-                            (buffer-string))
-                        (buffer-string))))))
+      (setq token (org-readme-token)
+	    resp (http-post-simple-multipart
+		  (format "%s/v1/packages" org-readme-marmalade-server)
+		  `((name . ,org-readme-marmalade-user-name)
+		    (token . ,token))
+		  `(("package" ,(if (file-exists-p (concat package ".tar"))
+				    (concat (file-name-sans-extension (buffer-file-name)) ".tar")
+				  (buffer-file-name))
+		     "text/x-script.elisp"
+		     ,(if (file-exists-p (concat package ".tar"))
+			  (with-temp-buffer
+			    (insert-file-contents (concat package ".tar"))
+			    (buffer-string))
+			(buffer-string))))))
       (message "%s" resp))))
 
 (defun org-readme-marmalade-version (package)
-  "Gets the marmalade version of the PACKAGE." 
+  "Gets the marmalade version of the PACKAGE."
   (let ((ver-json (url-retrieve-synchronously
                    (format "%s/v1/packages/%s/latest"
-                           org-readme-marmalade-server
-                           package)))
+                           org-readme-marmalade-server package)))
         ver)
     (when ver-json
       (save-excursion
@@ -863,23 +878,20 @@ Returns file name if created."
               (with-temp-buffer
                 (insert
                  (format "%s"
-                         (nth 0
-                              (http-post-simple
-                               (format "%s/v1/users/login"
-                                       org-readme-marmalade-server)
-                               `((name . ,user-name)
-                                 (password . ,password))))))
+                         (nth 0 (http-post-simple
+				 (format "%s/v1/users/login" org-readme-marmalade-server)
+				 `((name . ,user-name)
+				   (password . ,password))))))
                 (goto-char (point-min))
-                
                 (if (not (re-search-forward "\"token\"[ \t]*:[ \t]*\"\\(.*?\\)\"" nil t))
                     nil
                   (match-string 1))))
         (when token
-          (setq org-readme-marmalade-user-name user-name)
-          (setq org-readme-marmalade-token token)
-          (customize-save-variable 'org-readme-marmalade-user-name org-readme-marmalade-user-name)
-          (customize-save-variable 'org-readme-marmalade-token org-readme-marmalade-token))
-        (symbol-value 'token))))
+          (setq org-readme-marmalade-user-name user-name
+		org-readme-marmalade-token token)
+	  (customize-save-variable 'org-readme-marmalade-user-name org-readme-marmalade-user-name)
+	  (customize-save-variable 'org-readme-marmalade-token org-readme-marmalade-token))
+	(symbol-value 'token))))
 
 (defcustom org-readme-remove-sections
   '("History" "Possible Dependencies" "Library Information"
@@ -890,7 +902,8 @@ Returns file name if created."
 
 (defcustom org-readme-remove-sections-from-markdown
   '("Functions & macros" "Variables")
-  "List of sections to remove when changing the Readme.org to Markdown which is an intermediary for texinfo (using pandoc)."
+  "List of sections to remove when changing the Readme.org to 
+Markdown which is an intermediary for texinfo (using pandoc)."
   :group 'org-readme
   :type '(repeat (string :tag "Section")))
 
@@ -947,7 +960,7 @@ Returns file name if created."
 (define-derived-mode org-readme-edit-mode text-mode "Org-readme Log edit.")
 
 (defun org-readme-convert-to-markdown ()
-  "Converts Readme.org to markdown Readme.md."
+  "Convert Readme.org to markdown Readme.md."
   (interactive)
   (let ((readme (org-readme-find-readme))
         (what "Readme.md")
@@ -955,8 +968,7 @@ Returns file name if created."
     (with-temp-buffer
       (insert-file-contents readme)
       (mapc
-       (lambda(section)
-         (org-readme-remove-section section))
+       (lambda(section) (org-readme-remove-section section))
        org-readme-remove-sections-from-markdown)
       ;; Convert org keywords
       (org-readme-regexp-pairs [["#[+]TITLE:" "+TITLE:"]
@@ -970,22 +982,21 @@ Returns file name if created."
 	(replace-match (format "%s %s" tmp (match-string 2)) t t))
       (org-readme-regexp-pairs [;; Convert links [[link][text]] to [text](link)
 				["\\[\\[\\(\\(?:https?\\|ftp\\).*?\\)\\]\\[!?\\(.*?\\)\\]\\]" "[\\2](\\1)"]
-				;; Replace file links.				
+				;; Replace file links.
 				["\\[\\[file:\\(.*?[.]el\\)\\]\\[\\1\\]\\]" "\\1"]
-				;; Underline _ul_ to <ul>ul</ul> 			
+				;; Underline _ul_ to <ul>ul</ul>
 				["_\\(.*+?\\)_" "<ul>\\1</ul>"]
-				;; Emphasis /emp/ to _emph_				
+				;; Emphasis /emp/ to _emph_
 				["/\\(.*+?\\)/" "_\\1_"]] t)
       ;; Bold *bold* to __bold__
       (goto-char (point-min))
       (while (re-search-forward "[*]\\(.*+?\\)[*]" nil t)
 	(unless (save-match-data (string-match "^[*]+$" (match-string 1)))
 	  (replace-match "__\\1__" t)))
-
+      ;; convert list items and quoted symbols
       (org-readme-regexp-pairs [["^[ \t]*[+-] +\\(.*?\\) *::" "- __\\1__ -- "]
-				;; Code blocks
 				["=\\(.*+?\\) *=" "`\\1`"]])
-      
+      ;; convert code blocks
       (goto-char (point-min))
       (while (re-search-forward "^ *#[+]BEGIN_SRC.*" nil t)
 	(setq tmp (point))
@@ -1000,9 +1011,8 @@ Returns file name if created."
       (goto-char (point-min))
       (while (re-search-forward "^: " nil t)
 	(replace-match "\n::::" t t) ;
-	(while (progn
-		 (end-of-line)
-		 (re-search-forward "\\=\n: " nil t))
+	(while (progn (end-of-line)
+		      (re-search-forward "\\=\n: " nil t))
 	  (replace-match "\n:::: "))
 	(end-of-line))
       ;; Convert pre-formatted
@@ -1122,93 +1132,72 @@ Returns file name if created."
   (interactive)
   (let* ((df (file-name-directory (buffer-file-name)))
          (default-directory df)
+	 (texifile (concat (file-name-sans-extension
+			    (file-name-nondirectory (buffer-file-name)))
+			   ".texi"))
+	 (infofile (concat (file-name-sans-extension
+			    (file-name-nondirectory (buffer-file-name)))
+			   ".info"))
+	 (thisfile (file-name-nondirectory (buffer-file-name)))
+	 (changelog (org-readme-get-change))
          melpa el-get)
-    (when (org-readme-check-opt org-readme-build-melpa-recipe)
-      (setq melpa (org-readme-build-melpa))
-      (when melpa
-        (message "Adding Melpa recipe")
-        (shell-command (format "git add melpa/%s" (file-name-nondirectory melpa)))))
-    
-    (when (org-readme-check-opt org-readme-build-el-get-recipe)
-      (setq el-get (org-readme-build-el-get))
-      (when el-get
-        (message "Adding El-Get recipe")
-        (shell-command (format "git add el-get/%s" (file-name-nondirectory el-get)))))
-    
-    (message "Git Adding Readme")
-    (shell-command
-     (format "git add %s"
-             (file-name-nondirectory (org-readme-find-readme))))
-    
-    (when (file-exists-p (concat (file-name-sans-extension
-				  (file-name-nondirectory (buffer-file-name)))
-				 ".texi"))
-      (when (and (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
-                 (file-exists-p "Readme.md"))
-        (delete-file "Readme.md")
-        (shell-command
-         (concat "git rm Readme.md")))
-      (if (and (org-readme-check-opt org-readme-drop-texi-after-build-info)
-               (file-exists-p (concat
-                               (file-name-sans-extension
-                                (file-name-nondirectory (buffer-file-name)))
-                               ".info")))
-          (progn
-            (delete-file (concat
-                          (file-name-sans-extension
-                           (file-name-nondirectory (buffer-file-name)))
-                          ".texi"))
-            (shell-command
-             (concat "git add "
-                     (concat
-                      (file-name-sans-extension
-                       (file-name-nondirectory (buffer-file-name)))
-                      ".info")))
-            (if (file-exists-p (expand-file-name "dir"
-                                                 (file-name-directory (buffer-file-name))))
-                (shell-command
-                 (concat "git add dir")))
-            (shell-command
-             (concat "git rm "
-                     (file-name-sans-extension
-                      (file-name-nondirectory (buffer-file-name)))
-                     ".texi")))
-	(shell-command
-	 (concat "git add "
-		 (concat
-		  (file-name-sans-extension
-		   (file-name-nondirectory (buffer-file-name)))
-		  ".texi")))))
-    
-    (when (file-exists-p "Readme.md") (shell-command "git add Readme.md"))
-    
-    (message "Git Adding %s" (file-name-nondirectory (buffer-file-name)))
-    (shell-command
-     (format "git add %s"
-             (file-name-nondirectory (buffer-file-name))))
-    
-    (when (file-exists-p (org-readme-get-change))
-      (message "Git Committing")
-      (shell-command
-       (format "git commit -F %s"
-               (file-name-nondirectory
-                (org-readme-get-change))))
-      (delete-file (org-readme-get-change))
-      (message "Git push")
-      (shell-command "git push")
-      (let ((tags (shell-command-to-string "git tag"))
-            (ver  (org-readme-buffer-version)))
-        (when ver
-          (unless (string-match (concat "v" (regexp-quote ver)) tags)
-            (message "Tagging the new version")
-            (message "git tag -a v%s -m \"version %s\"" ver ver)
-            (shell-command (format "git tag -a v%s -m \"version %s\"" ver ver))
-            (shell-command "git push --tags")))))))
+    (cl-flet ((gitadd (file) (shell-command (concat "git add " file)))
+	      (gitrm (file) (shell-command (concat "git rm " file))))
+      ;; add melpa recipe
+      (when (org-readme-check-opt org-readme-build-melpa-recipe)
+	(setq melpa (org-readme-build-melpa))
+	(when melpa
+	  (message "Adding Melpa recipe")
+	  (gitadd (concat "melpa/" (file-name-nondirectory melpa)))))
+      ;; add el-get recipe
+      (when (org-readme-check-opt org-readme-build-el-get-recipe)
+	(setq el-get (org-readme-build-el-get))
+	(when el-get
+	  (message "Adding El-Get recipe")
+	  (gitadd (concat "el-get/" (file-name-nondirectory el-get)))))
+      ;; add readme
+      (message "Git Adding Readme")
+      (gitadd (file-name-nondirectory (org-readme-find-readme)))
+      
+      (when (file-exists-p texifile)
+	(when (and (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
+		   (file-exists-p "Readme.md"))
+	  (delete-file "Readme.md")
+	  (gitrm "Readme.md"))
+	(if (and (org-readme-check-opt org-readme-drop-texi-after-build-info)
+		 (file-exists-p infofile))
+	    (progn (delete-file texifile)
+		   (gitadd infofile)
+		   (if (file-exists-p
+			(expand-file-name
+			 "dir" (file-name-directory (buffer-file-name))))
+		       (gitadd "dir"))
+		   (gitrm texifile))
+	  (gitadd texifile)))
+      
+      (when (file-exists-p "Readme.md") (gitadd "Readme.md"))
+      
+      (message "Git Adding %s" thisfile)
+      (gitadd thisfile)
+      
+      (when (file-exists-p changelog)
+	(message "Git Committing")
+	(shell-command (concat "git commit -F " (file-name-nondirectory changelog)))
+	(delete-file changelog)
+	(message "Git push")
+	(shell-command "git push")
+	(let ((tags (shell-command-to-string "git tag"))
+	      (ver  (org-readme-buffer-version)))
+	  (when ver
+	    (unless (string-match (concat "v" (regexp-quote ver)) tags)
+	      (message "Tagging the new version")
+	      (message "git tag -a v%s -m \"version %s\"" ver ver)
+	      (shell-command (format "git tag -a v%s -m \"version %s\"" ver ver))
+	      (shell-command "git push --tags"))))))))
 
 (defun org-readme-in-readme-org-p ()
   "Determine if the currently open buffer is the Readme.org"
-  (string= "readme.org"
-           (downcase (file-name-nondirectory (buffer-file-name)))))
+  (string= "readme.org" (downcase (file-name-nondirectory (buffer-file-name)))))
 
 (defun org-readme-single-lisp-p ()
   "Determine if the Readme.org is in a directory with a single Lisp file.
@@ -1216,9 +1205,8 @@ If so, return the name of that Lisp file, otherwise return nil."
   (let* ((dn (file-name-directory (buffer-file-name)))
          (df (directory-files dn t "[.][Ee][Ll]$")))
     (if (= 1 (length df))
-        (progn
-          (setq df (nth 0 df))
-          (symbol-value 'df))
+        (progn (setq df (nth 0 df))
+	       (symbol-value 'df))
       nil)))
 
 ;;;###autoload
@@ -1243,37 +1231,37 @@ If so, return the name of that Lisp file, otherwise return nil."
               (unless (= 1 (length df))
                 (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-pkg[.]el$")))
               (when (= 1 (length df))
-                (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df))))
-                (setq file (concat base ".texi")))))
-          (shell-command (concat "pandoc Readme.md -s -o " file))
-          ;; Now add direntry.
-          (setq cnt (with-temp-buffer
-                      (insert-file-contents file)
-                      (goto-char (point-min))
-                      (if (not (search-forward "@strong{Description} -- " nil t))
-                          (setq desc base)
-                        (setq desc (buffer-substring (point) (point-at-eol))))
-                      (goto-char (point-min))
-                      (if (not (search-forward "@strong{Package-Requires} -- " nil t))
-                          (setq pkg "()")
-                        (setq pkg (buffer-substring (point) (point-at-eol))))
-                      (goto-char (point-min))
-                      (if (not (search-forward "@strong{Version} -- " nil t))
-                          (setq ver "0.0")
-                        (setq ver (buffer-substring (point) (point-at-eol))))
-                      (buffer-string)))
-          (with-temp-file file
-            (insert cnt)
-            (goto-char (point-min))
-            (when (re-search-forward "@documentencoding")
-              (goto-char (point-at-eol))
-              (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
+                (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))
+		      file (concat base ".texi")))))
+	  (shell-command (concat "pandoc Readme.md -s -o " file))
+	  ;; Now add direntry.
+	  (setq cnt (with-temp-buffer
+		      (insert-file-contents file)
+		      (goto-char (point-min))
+		      (if (not (search-forward "@strong{Description} -- " nil t))
+			  (setq desc base)
+			(setq desc (buffer-substring (point) (point-at-eol))))
+		      (goto-char (point-min))
+		      (if (not (search-forward "@strong{Package-Requires} -- " nil t))
+			  (setq pkg "()")
+			(setq pkg (buffer-substring (point) (point-at-eol))))
+		      (goto-char (point-min))
+		      (if (not (search-forward "@strong{Version} -- " nil t))
+			  (setq ver "0.0")
+			(setq ver (buffer-substring (point) (point-at-eol))))
+		      (buffer-string)))
+	  (with-temp-file file
+	    (insert cnt)
+	    (goto-char (point-min))
+	    (when (re-search-forward "@documentencoding")
+	      (goto-char (point-at-eol))
+	      (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
 		      base ": (" base ").     " desc "\n@end direntry\n")))
-          (when (and (org-readme-check-opt org-readme-build-info)
-                     (executable-find "makeinfo"))
-            (shell-command (concat "makeinfo " base ".texi"))
-            (when (executable-find "install-info")
-              (shell-command (concat "install-info --dir-file=dir " base ".info")))))))))
+	  (when (and (org-readme-check-opt org-readme-build-info)
+		     (executable-find "makeinfo"))
+	    (shell-command (concat "makeinfo " base ".texi"))
+	    (when (executable-find "install-info")
+	      (shell-command (concat "install-info --dir-file=dir " base ".info")))))))))
 
 ;;;###autoload
 (defun org-readme-sync (&optional comment-added)
@@ -1411,25 +1399,19 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (insert-file-contents readme)
       (org-mode)
       ;; remove some sections
-      (mapc
-       (lambda (section)
-         (org-readme-remove-section section))
-       org-readme-remove-sections)
+      (mapc (lambda (section) (org-readme-remove-section section))
+	    org-readme-remove-sections)
       ;; remove stuff
       (org-readme-regexp-pairs [["=\\<\\(.*?\\)\\>=" "`\\1'"] ;replace =SYMBOL= with `SYMBOL'
 				["#.*" ""] ;remove all org #+KEYWORDS
 				["^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" ""]
-				["^:" ""] ;remove : at beginning of lines
-				])
+				["^:" ""]]) ;remove : at beginning of lines
       ;; remove all TODO items
       (goto-char (point-min))
       (when org-todo-keyword-faces
-        (while (org-readme-remove-section
-                (regexp-opt
-                 (mapcar
-                  (lambda(x)
-                    (nth 0 x))
-                  org-todo-keyword-faces)) nil t)))
+	(while (org-readme-remove-section
+		(regexp-opt (mapcar (lambda(x) (nth 0 x)) org-todo-keyword-faces))
+		nil t)))
       ;; replace initial & final whitespace with single newline chars
       (goto-char (point-min))
       (skip-chars-forward " \t\n")
@@ -1448,11 +1430,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
     (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
       (skip-chars-forward "\n")
       (let ((pt (point)))
-        (when (re-search-forward "^;;;;+[ \t]*$" nil t)
-          (goto-char (match-beginning 0))
-          (skip-chars-backward "\n")
-          (delete-region pt (point))
-          (insert readme))))))
+	(when (re-search-forward "^;;;;+[ \t]*$" nil t)
+	  (goto-char (match-beginning 0))
+	  (skip-chars-backward "\n")
+	  (delete-region pt (point))
+	  (insert readme))))))
 
 (defun org-readme-get-emacswiki-name ()
   "Gets emacswiki-style name based on buffer."
@@ -1481,23 +1463,6 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
   "Get file for changelog commits."
   (expand-file-name "Changelog" (file-name-directory (buffer-file-name))))
 
-(defcustom org-readme-default-template "
-* Installation
-
-To use without using a package manager:
-
- - Put the library in a directory in the emacs load path, like ~/.emacs.d
- - Add (require 'LIB-NAME) in your ~/.emacs file
- - If you have [[http://www.marmalade-repo.org/][marmalade-repo.org]], this LIB-NAME is part of the emacs packges you can install.  Just type M-x package-install LIB-NAME marmalade 
-
-This is in emacswiki, so this package can also be installed using el-get.
-
-After installing el-get, Type M-x el-get-install LIB-NAME.
-"
-  "Default template for blank Readme.org Files. LIB-NAME is replaced with the library."
-  :type 'string
-  :group 'org-readme)
-
 (defun org-readme-find-readme ()
   "Find the Readme.org."
   (let* ((dir (file-name-directory (buffer-file-name)))
@@ -1522,19 +1487,14 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
         (mtch ""))
     (save-excursion
       (goto-char (point-min))
-      (if (re-search-forward
-           (format "^\\([*]%s\\) +%s"
-                   (if any-level "+" "")
-                   section)
-	   nil t)
+      (if (re-search-forward (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
+			     nil t)
           (progn
             (org-cut-subtree)
             (save-excursion (when txt (insert txt)))
             t)
         (when txt
-          (goto-char (if at-beginning
-                         (point-min)
-                       (point-max)))
+          (goto-char (if at-beginning (point-min) (point-max)))
           ;; Skip comments
           (if at-beginning
               (while (re-search-forward "\\=[ \t]*#.*\n" nil t))
@@ -1600,13 +1560,13 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
         (when (re-search-forward "^[ \t]*;;; Change Log:[ \t]*$" nil t)
           (setq pt1 (point))
           (when (re-search-forward "^[ \t]*;;;;+[ \t]*$" nil t)
-            (setq pt2 (match-beginning 0))
-            (setq txt (buffer-substring-no-properties pt1 pt2))
-            (with-temp-buffer
-              (insert txt)
-              ;; Take out comments
+            (setq pt2 (match-beginning 0)
+		  txt (buffer-substring-no-properties pt1 pt2))
+	    (with-temp-buffer
+	      (insert txt)
+	      ;; Take out comments
 	      (org-readme-regexp-pairs [["^[ \t]*;+ ?" ""]])
-              (goto-char (point-min))
+	      (goto-char (point-min))
 	      (cl-symbol-macrolet
 		  ((date "[0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]")
 		   (whitespace "[ \t]*") (anything ".*") (newline "\n")
@@ -1637,9 +1597,9 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
 		   t t)))
 	      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="]
 					["^[ \t][ \t]+[-]" " -"]])
-              (goto-char (point-min))
-              (insert "* History\n")
-              (setq txt (buffer-substring-no-properties (point-min) (point-max))))
+	      (goto-char (point-min))
+	      (insert "* History\n")
+	      (setq txt (buffer-substring-no-properties (point-min) (point-max))))
 	    (with-temp-buffer
 	      (insert-file-contents readme)
 	      (org-readme-remove-section "History" txt)
