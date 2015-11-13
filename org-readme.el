@@ -1607,41 +1607,34 @@ When AT-BEGINNING is non-nil, if the section is not found, insert it at the begi
               ;; Take out comments
 	      (org-readme-regexp-pairs [["^[ \t]*;+ ?" ""]])
               (goto-char (point-min))
-              (while (re-search-forward "^[ \t]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ \t]*.*\n.*(\\([^)]*\\))[ \t]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ \t]*\\([0-9][0-9]?\\)" nil t)
-                (replace-match
-                 (format " - %s :: %s (%s)\n %s"
-                         (match-string 1)
-                         (save-match-data
-                           (replace-regexp-in-string
-                            "~~~~" "\n    + "
-                            (replace-regexp-in-string
-                             "  +" " "
-                             (replace-regexp-in-string
-                              "\n" " "
-                              (replace-regexp-in-string
-                               "\n[ \t]*[*-+] +" "~~~~" (match-string 3))))))
-                         (save-match-data
-                           (replace-regexp-in-string
-                            "[ \t]*$" ""
-                            (match-string 2))) (match-string 4)) t t)
-                (beginning-of-line))
-              (when (re-search-forward "\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ \t]+\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)" nil t)
-                (replace-match
-                 (format " - %s :: %s (%s)"
-                         (match-string 1)
-                         (save-match-data
-                           (replace-regexp-in-string
-                            "~~~~" "\n    + "
-                            (replace-regexp-in-string
-                             "  +" " "
-                             (replace-regexp-in-string
-                              "\n" " "
-                              (replace-regexp-in-string
-                               "\n[ \t]*[*-+] +" "~~~~" (match-string 3))))))
-                         (save-match-data
-                           (replace-regexp-in-string
-                            "[ \t]*$" ""
-                            (match-string 2)))) t t))
+	      (cl-symbol-macrolet
+		  ((date "[0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]")
+		   (whitespace "[ \t]*") (anything ".*") (newline "\n")
+		   (comment (save-match-data
+			      (replace-regexp-in-string
+			       "~~~~" "\n    + "
+			       (replace-regexp-in-string
+				"  +" " "
+				(replace-regexp-in-string
+				 "\n" " "
+				 (replace-regexp-in-string
+				  "\n[ \t]*[*-+] +" "~~~~" (match-string 3)))))))
+		   (author (save-match-data (replace-regexp-in-string "[ \t]*$" "" (match-string 2)))))
+		(while (re-search-forward
+			(concat "^" whitespace "\\(" date "\\)" whitespace anything newline anything "(\\([^)]*\\))"
+				whitespace newline "\\(\\(?:\n\\|.\\)*?\\)" newline whitespace "\\([0-9][0-9]?\\)")
+			nil t)
+		  (replace-match
+		   (format " - %s :: %s (%s)\n %s" (match-string 1) comment author (match-string 4))
+		   t t)
+		  (beginning-of-line))
+		(when (re-search-forward
+		       (concat "\\(" date "\\)" whitespace "\\(" anything "\\)"
+			       newline anything newline "\\(\\(?:\n\\|.\\)*\\)")
+		       nil t)
+		  (replace-match
+		   (format " - %s :: %s (%s)" (match-string 1) comment author)
+		   t t)))
 	      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="]
 					["^[ \t][ \t]+[-]" " -"]])
               (goto-char (point-min))
