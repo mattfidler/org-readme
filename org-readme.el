@@ -470,7 +470,9 @@ It should contain 4 parenthesised subexpressions matching:
  1) The date of the changelog entry.
  2) The author name.
  3) The changelog comment.
- 4) The beginning of the next changelog line (used to delimit the lines)."
+ 4) The beginning of the next changelog line (used to delimit the lines).
+
+Note: it should match the output from `make-revision'."
   :type 'regexp
   :group 'org-readme)
 
@@ -480,7 +482,9 @@ It should contain 4 parenthesised subexpressions matching:
   It should contain 3 parenthesised subexpressions matching:
   1) The date of the changelog entry.
   2) The author name.
-  3) The changelog comment."
+  3) The changelog comment.
+
+Note: it should match the output from `make-revision'."
   :type 'regexp
   :group 'org-readme)
 
