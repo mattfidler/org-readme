@@ -1574,7 +1574,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
           pt1 pt2 txt)
       (save-excursion
         (goto-char (point-min))
-        (when (re-search-forward "^[ \t]*;;; Change Log:[ \t]*$" nil t)
+        (when (re-search-forward "^[ \t]*;;; \\(?:Change Log\\|History\\):[ \t]*$" nil t)
           (setq pt1 (point))
           (when (re-search-forward org-readme-end-section-regexp nil t)
             (setq pt2 (match-beginning 0)
