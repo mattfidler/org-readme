@@ -127,19 +127,19 @@ libraries and why they are needed.
 
    - *org-readme-default-template* :
     Default template for blank Readme.org Files. LIB-NAME is replaced with the library.\\
-    default value: ="\n* Installation\n\nTo use without using a package manager:\n\n - Put the library in a directory in the emacs load path, like ~/.emacs.d\n - Add (require 'LIB-NAME) in your ~/.emacs file\n - If you have [[http://www.marmalade-repo.org/][marmalade-repo.org]], this LIB-NAME is part of the emacs packges you can install.  Just type M-x package-install LIB-NAME marmalade \n\nThis is in emacswiki, so this package can also be installed using el-get.\n\nAfter installing el-get, Type M-x el-get-install LIB-NAME.\n"=
+    default value: =\n* Installation\n\nTo use without using a package manager:\n\n - Put the library in a directory in the emacs load path, like ~/.emacs.d\n - Add (require 'LIB-NAME) in your ~/.emacs file\n - If you have [[http://www.marmalade-repo.org/][marmalade-repo.org]], this LIB-NAME is part of the emacs packges you can install.  Just type M-x package-install LIB-NAME marmalade \n\nThis is in emacswiki, so this package can also be installed using el-get.\n\nAfter installing el-get, Type M-x el-get-install LIB-NAME.\n=
    - *org-readme-end-section-regexp* :
     Regexp to match the end of a header/comments/changelog section in the elisp file comments.\\
-    default value: ="^+[ 	]*$"=
+    default value: =^+[ 	]*$=
    - *org-readme-features-regexp* :
     Regexp to match the header line for the required libraries section.\\
-    default value: ="^[ 	]*Features that might be required by this library:[ 	]*$"=
+    default value: =^[ 	]*Features that might be required by this library:[ 	]*$=
    - *org-readme-changelog-lines-regexp* :
     Regexp matching changelog lines in the elisp file (you probably shouldn't change this).\\
-    default value: ="^[ 	]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*.*\n.*(\\([^)]*\\))[ 	]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ 	]*\\([0-9][0-9]?\\)"=
+    default value: =^[ 	]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*.*\n.*(\\([^)]*\\))[ 	]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ 	]*\\([0-9][0-9]?\\)=
    - *org-readme-final-changelog-line-regexp* :
     Regexp matching the final changelog line in the elisp file (you probably shouldn't change this).\\
-    default value: ="\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)"=
+    default value: =\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)=
    - *org-readme-use-melpa-versions* :
     Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions.\\
     default value: =nil=
@@ -148,7 +148,7 @@ libraries and why they are needed.
     default value: =nil=
    - *org-readme-marmalade-server* :
     Marmalade server website.\\
-    default value: ="http://marmalade-repo.org"=
+    default value: =http://marmalade-repo.org=
    - *org-readme-marmalade-token* :
     Marmalade token to upload content to the marmalade server.\\
     default value: =nil=
