@@ -5,18 +5,18 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20151112.2115
+;; Version: 20151114.29
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Thu Nov 12 23:37:26 2012 (-0500)
+;; Last-Updated: Sat Nov 14 00:29:15 2015
 ;;           By: Joe Bloggs
-;;     Update #: 794
+;;     Update #: 798
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   yaoddmuse, http-post-simple, org-html, header2
+;;   yaoddmuse http-post-simple org-html header2
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -79,6 +79,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 14-Nov-2015    Joe Bloggs  
+;;    Last-Updated: Sat Nov 14 00:29:15 2015 #798 (Joe Bloggs)
+;;    Update "Last-Updated:", "By:" & "Update #:" fields
 ;; 12-Nov-2015   Joe Bloggs   
 ;;    Last-Updated: Thu Nov 12 23:37:26 2012 (-0500) #795 (Joe Bloggs)
 ;;    Refactor and tidy up code
@@ -515,8 +518,9 @@ just like the default value of http://marmalade-repo.org"
   :type 'string
   :group 'org-readme)
 
-(defcustom org-readme-author-name nil
-  "Name to use as author when updating \"Last Updated\" info in elisp header."
+(defcustom org-readme-author-name user-full-name
+  "Name to use as author when updating \"Last-Updated\" info in elisp header.
+Used by `org-readme-update-last-update'."
   :type 'string
   :group 'org-readme)
 
@@ -665,24 +669,20 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 	 (replace-match (elt x 1) fixedcase literal)))
      pairs)))
 
-;; (dexfxun org-readme-update-last-update nil
-;;   "Change the \"Last Updated:\" date in the elisp file."
-;;   (save-excursion
-;;     (goto-char (point-min))
-;;     ;; Last-Updated: Wed Aug 22 13:11:26 2012 (-0500)
-;;     ;;           By: Matthew L. Fidler
-;;     ;;     Update #: 794
-;;     (if (re-search-forward "^ *Last Updated: *\\(.*\\)" nil t)
-;; 	(replace-match (current-time-string) t nil nil 1))
-;;     (if (re-search-forward "^ *By: *\\(.*\\)" nil t)
-;; 	(replace-match (or org-readme-author-name
-;; 			   (read-string "Author name: ")) t nil nil 1))
-;;     (if (re-search-forward "^ *Update #: *\\(.*\\)" nil t)
-;; 	(replace-match (number-to-string (1+ (string-to-number (match-string 1))))
-;; 		       t nil nil 1))
-;;     ;;org-readme-author-name
-;;     )
-;;   )
+(defun org-readme-update-last-update nil
+  "Update the \"Last-Updated:\", \"By:\" & \"Update #:\" fields in the elisp file header."
+  (save-excursion
+    (goto-char (point-min))
+    (if (re-search-forward "^[; \t]*[Ll]ast[ -][Uu]pdated:[ \t]*\\(.*\\)$" nil t)
+	(let ((endpos (save-excursion (forward-line 3) (point))))
+	  (replace-match (current-time-string) t nil nil 1)
+	  (if (re-search-forward "^[; \t]*[Bb]y:[ \t]*\\(.*\\)$" endpos t)
+	      (replace-match (or (and (not (equal org-readme-author-name ""))
+				      org-readme-author-name)
+				 (read-string "Author Name: " user-full-name)) t nil nil 1))
+	  (if (re-search-forward "^[; \t]*[Uu]pdate[ -]\\(?:#\\|[Nn]umber\\):[ \t]*\\(.*\\)$" endpos t)
+	      (replace-match (number-to-string (1+ (string-to-number (match-string 1))))
+			     t nil nil 1))))))
 
 (defun org-readme-insert-functions ()
   "Extracts function & macro documentation and places it in the Readme.org file."
@@ -961,7 +961,7 @@ Returns file name if created."
   "Changelog for editing."
   (interactive)
   (let ((comment (buffer-substring (point-min) (point-max)))
-        mr)                             
+        mr)
     (kill-buffer (get-buffer "*Change Comment*"))
     (with-temp-buffer
       (insert comment)
@@ -971,7 +971,8 @@ Returns file name if created."
         (insert ";;    "))
       (setq mr (buffer-substring (point-min) (point-max))))
     (set-buffer org-readme-edit-last-buffer)
-    (make-revision)
+    (let ((user-full-name org-readme-author-name))
+      (make-revision))
     (insert mr)
     (save-buffer)
     (with-temp-file (org-readme-get-change)
@@ -1344,8 +1345,10 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  ;; Update the Changelog file if necessary
           (progn
             (setq org-readme-edit-last-buffer (current-buffer))
+	    (org-readme-update-last-update)
             (org-readme-edit))
 	;; Update version number
+	(unless comment-added (org-readme-update-last-update))
         (when (yes-or-no-p "Update version number? ")
           (save-excursion
             (goto-char (point-min))
