@@ -696,110 +696,110 @@ the ;;;###autoload magic comment to all functions/macros/options."
      "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
      "\\1\n;;;###autoload\n(\\2")))
 
-(defun org-readme-insert-functions ()
-  "Extracts function & macro documentation and places it in the Readme.org file."
+(defun org-readme-get-matches (regex &optional n)
+  "Return sorted list of matches to REGEX in current file.
+If N is provided return all matches of the Nth subexpression of REGEX."
   (save-excursion
     (goto-char (point-min))
-    (let ((lst1 '()) tmp ret1 ret2 ret lst
-          (readme (org-readme-find-readme)))
-      (while (re-search-forward "(\\(?:cl-\\)?def\\(?:un\\|macro\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
-        (add-to-list 'lst1 (match-string-no-properties 1)))
-      (setq lst (sort lst1 'string<))
-      (cl-flet ((fd (x)
-		    (with-temp-buffer
-		      (insert x)
-		      (goto-char (point-min))
-		      (when (re-search-forward "'[.]" nil t)
-			(skip-chars-forward " \t\n")
-			(delete-region (point) (point-min)))
-		      (goto-char (point-min))
-		      (when (re-search-forward "[(]" nil t)
-			(goto-char (match-beginning 0))
-			(insert "=")
-			(forward-list)
-			(insert "="))
-		      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ["^[ \t]*[*]+[ \t]+" " - "]])
-		      (goto-char (point-max))
-		      (insert "\n")
-		      (org-readme-regexp-pairs [["^[ \t]*[*]+" ""]])
-		      (buffer-string))))
-        (setq ret1 "** Interactive Functions\n"
-	      ret2 "** Internal Functions\n"
-	      ret3 "** Macros\n")
-	(mapc
-	 (lambda(x)
-	   (condition-case err
-	       (when (intern x)
-		 (setq tmp (describe-function (intern x)))
-		 (cond
-		  ((string-match "Not documented" tmp))
-		  ((string-match "Lisp macro" tmp)
-		   (setq ret3 (concat ret3 "\n*** " x "\n" (fd tmp))))
-		  ((string-match "interactive" tmp)
-		   (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
-		  (t
-		   (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
-	     (error nil)))
-	 lst)
-	(setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
-      (with-temp-buffer
-	(insert-file-contents readme)
-	(org-readme-remove-section "Functions & macros" ret)
-	(write-file readme)))))
+    (sort (cl-loop while (re-search-forward regex nil t)
+		   collect (match-string-no-properties (or n 0)))
+	  'string<)))
+
+(defun org-readme-insert-functions ()
+  "Extracts function & macro documentation and places it in the Readme.org file."
+  (let ((lst (org-readme-get-matches
+	      "(\\(?:cl-\\)?def\\(?:un\\|macro\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" 1))
+	(readme (org-readme-find-readme))
+	tmp ret1 ret2 ret)
+    (cl-flet ((fd (x)
+		  (with-temp-buffer
+		    (insert x)
+		    (goto-char (point-min))
+		    (when (re-search-forward "'[.]" nil t)
+		      (skip-chars-forward " \t\n")
+		      (delete-region (point) (point-min)))
+		    (goto-char (point-min))
+		    (when (re-search-forward "[(]" nil t)
+		      (goto-char (match-beginning 0))
+		      (insert "=")
+		      (forward-list)
+		      (insert "="))
+		    (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ["^[ \t]*[*]+[ \t]+" " - "]])
+		    (goto-char (point-max))
+		    (insert "\n")
+		    (org-readme-regexp-pairs [["^[ \t]*[*]+" ""]])
+		    (buffer-string))))
+      (setq ret1 "** Interactive Functions\n"
+	    ret2 "** Internal Functions\n"
+	    ret3 "** Macros\n")
+      (mapc
+       (lambda(x)
+	 (condition-case err
+	     (when (intern x)
+	       (setq tmp (describe-function (intern x)))
+	       (cond
+		((string-match "Not documented" tmp))
+		((string-match "Lisp macro" tmp)
+		 (setq ret3 (concat ret3 "\n*** " x "\n" (fd tmp))))
+		((string-match "interactive" tmp)
+		 (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
+		(t
+		 (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
+	   (error nil)))
+       lst)
+      (setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
+    (with-temp-buffer
+      (insert-file-contents readme)
+      (org-readme-remove-section "Functions & macros" ret)
+      (write-file readme))))
 
 (defun org-readme-insert-variables ()
   "Extracts variable documentation and places it in the readme file."
   (interactive)
-  (condition-case err
-      (eval-buffer)
-    (error nil))
-  (save-excursion
-    (goto-char (point-min))
-    (let ((lst1 '()) tmp ret1 ret2 ret lst
-          (readme (org-readme-find-readme)))
-      ;; Find all variables & options, add them to `lst1', and sort the list alphabetically
-      (while (re-search-forward "(def\\(?:var\\|var-local\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" nil t)
-        (add-to-list 'lst1 (match-string-no-properties 1)))
-      (setq lst (sort lst1 'string<))
-      (cl-flet ((fd (x)			;function to format text returned by `describe-variable'
-		    (with-temp-buffer
-		      (insert x)
-		      (goto-char (point-min))
-		      ;; remove whitespace before and after variable description
-		      (when (re-search-forward "Documentation:" nil t)
-			(skip-chars-forward " \t\n")
-			(delete-region (point) (point-min)))
-		      (when (re-search-forward "You can customize this variable" nil t)
-			(goto-char (match-beginning 0))
-			(skip-chars-backward " \t\n")
-			(delete-region (point) (point-max)))
-		      ;; reformat to org format
-		      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
-						["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
-						["^[ \t]*[*]+" ""]]) ;remove empty list items
-		      (goto-char (point-max))
-		      (insert "\n")	;final extra newline
-		      (buffer-string))))
-	(setq ret1 "** Customizable Variables\n"
-	      ret2 "** Internal Variables\n")
-	(mapc
-	 (lambda(x)
-	   (condition-case err
-	       (when (intern x)
-		 (setq tmp (describe-variable (intern x)))
-		 (cond
-		  ((string-match "Not documented" tmp))
-		  ((string-match "customize" tmp)
-		   (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
-		  (t
-		   (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
-	     (error nil)))
-	 lst)
-	(setq ret (concat "* Variables\n" ret1 "\n" ret2)))
-      (with-temp-buffer
-	(insert-file-contents readme)
-	(org-readme-remove-section "Variables" ret)
-	(write-file readme)))))
+  (condition-case err (eval-buffer) (error nil))
+  (let ((lst (org-readme-get-matches
+	      "(def\\(?:var\\|var-local\\|custom\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" 1))
+	(readme (org-readme-find-readme))
+	tmp ret1 ret2 ret)
+    (cl-flet ((fd (x) ;function to format text returned by `describe-variable'
+		  (with-temp-buffer
+		    (insert x)
+		    (goto-char (point-min))
+		    ;; remove whitespace before and after variable description
+		    (when (re-search-forward "Documentation:" nil t)
+		      (skip-chars-forward " \t\n")
+		      (delete-region (point) (point-min)))
+		    (when (re-search-forward "You can customize this variable" nil t)
+		      (goto-char (match-beginning 0))
+		      (skip-chars-backward " \t\n")
+		      (delete-region (point) (point-max)))
+		    ;; reformat to org format
+		    (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
+					      ["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
+					      ["^[ \t]*[*]+" ""]]) ;remove empty list items
+		    (goto-char (point-max))
+		    (insert "\n")	;final extra newline
+		    (buffer-string))))
+      (setq ret1 "** Customizable Variables\n"
+	    ret2 "** Internal Variables\n")
+      (mapc
+       (lambda(x)
+	 (condition-case err
+	     (when (intern x)
+	       (setq tmp (describe-variable (intern x)))
+	       (cond
+		((string-match "Not documented" tmp))
+		((string-match "customize" tmp)
+		 (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
+		(t
+		 (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
+	   (error nil)))
+       lst)
+      (setq ret (concat "* Variables\n" ret1 "\n" ret2)))
+    (with-temp-buffer
+      (insert-file-contents readme)
+      (org-readme-remove-section "Variables" ret)
+      (write-file readme))))
 
 (defun org-readme-build-el-get ()
   "Builds an el-get recipe. This assumes github, though others could be added.

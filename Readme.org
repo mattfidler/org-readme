@@ -77,6 +77,15 @@ libraries and why they are needed.
 * Functions & macros
 ** Interactive Functions
 
+*** org-readme-add-autoloads
+org-readme-add-autoloads is an interactive Lisp function.
+
+=(org-readme-add-autoloads &optional ALL)=
+
+Query user to add ;;;###autoload magic comments to each function/macro/option.
+If ALL is non-nil (or called interactively with prefix arg) then add
+the ;;;###autoload magic comment to all functions/macros/options.
+
 *** org-readme-changelog-to-readme
 =(org-readme-changelog-to-readme)=
 
@@ -165,7 +174,7 @@ Returns file name if created.
 *** org-readme-find-readme
 =(org-readme-find-readme)=
 
-Find the Readme.org.
+Find the Readme.org, or create it if it doesn't yet exist.
 
 *** org-readme-get-change
 =(org-readme-get-change)=
@@ -176,6 +185,14 @@ Get file for changelog commits.
 =(org-readme-get-emacswiki-name)=
 
 Gets emacswiki-style name based on buffer.
+
+*** org-readme-get-matches
+org-readme-get-matches is a Lisp function.
+
+=(org-readme-get-matches REGEX &optional N)=
+
+Return sorted list of matches to REGEX in current file.
+If N is provided return all matches of the Nth subexpression of REGEX.
 
 *** org-readme-in-readme-org-p
 =(org-readme-in-readme-org-p)=
@@ -380,6 +397,7 @@ Value: (keymap
 		 "Text"))
  (27 keymap
      (9 . ispell-complete-word)))
+
 
 * History
 
