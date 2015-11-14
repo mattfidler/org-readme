@@ -8,11 +8,11 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20151114.2203
+ - Version :: 20151114.2306
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Sat Nov 14 22:03:34 2015
+ - Last-Updated :: Sat Nov 14 23:08:20 2015
  -           By :: Joe Bloggs
- -     Update # :: 799
+ -     Update # :: 801
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
@@ -33,6 +33,8 @@ Org readme is used to:
   in the single lisp library.
 - Create/Update a "Variables" Section based on the variables defined
   in the single lisp library.
+- Create/Update "Commands & keybindings" & "Customizable Options" sections as
+  output by =auto-document=
 
 All other sections of the Readme.org are then put into the
 "Commentary" section of the readme.org.
@@ -142,10 +144,10 @@ libraries and why they are needed.
     default value: =\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)=
    - *org-readme-use-melpa-versions* :
     Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions.\\
-    default value: =nil=
+    default value: =(quote prompt)=
    - *org-readme-create-tar-package* :
     Create a tar package for use in ELPA.\\
-    default value: =nil=
+    default value: =(quote prompt)=
    - *org-readme-marmalade-server* :
     Marmalade server website.\\
     default value: =http://marmalade-repo.org=
@@ -160,40 +162,40 @@ libraries and why they are needed.
     default value: =user-full-name=
    - *org-readme-sync-emacswiki* :
     Post library to the emacswiki.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-sync-marmalade* :
     Post library to marmalade-repo.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-sync-git* :
     Post library to git.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-build-melpa-recipe* :
     Build a melpa recipe based on github information.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-build-el-get-recipe* :
     Build an el-get recipe based on github information.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-build-markdown* :
     Build Readme.md from Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-use-pandoc-markdown* :
     Use pandoc's grid tables instead of transferring the tables to html.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-build-texi* :
     Build library-name.texi from Readme.org, using Readme.md and pandoc.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-drop-markdown-after-build-texi* :
     Remove Readme.md after texinfo is generated.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-build-info* :
     Build library-name.info from Reade.org using texi.  \\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-drop-texi-after-build-info* :
     Remove the texi information after building info files.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-add-readme-to-lisp-file* :
     Update elisp file header with commentary section of Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-use-autodoc* :
     Use  - *auto-document* : to document elisp file.\\
     default value: =(quote prompt)=
@@ -202,19 +204,19 @@ libraries and why they are needed.
     default value: =(quote prompt)=
    - *org-readme-add-functions-to-readme* :
     Add a Functions section to Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-add-variables-to-readme* :
     Add a Variables section to Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-update-changelog* :
     Add/update Changelog file.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-add-changelog-to-readme* :
     Add Changelog information to Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-add-top-header-to-readme* :
     Add Top Header information to Readme.org.\\
-    default value: =t=
+    default value: =(quote prompt)=
    - *org-readme-remove-sections* :
     List of sections to remove when changing the Readme.org to Commentary.\\
     default value: =(quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables"))=
@@ -223,6 +225,7 @@ libraries and why they are needed.
     default value: =(quote ("Functions & macros" "Variables"))=
 * History
 
+ - 14-Nov-2015 ::  Add auto-document integration (Joe Bloggs)
  - 14-Nov-2015 ::  Update "Last-Updated:", "By:" & "Update #:" fields (Joe Bloggs)
  - 12-Nov-2015 ::  Refactor and tidy up code (Joe Bloggs)
  - 8-May-2013 ::  Add bugfix from vapniks for org-readme-to-commentary (Matthew L. Fidler)
@@ -321,3 +324,4 @@ libraries and why they are needed.
  - 05-Aug-2012 ::  Added git support as well as a comment mode. The only thing that should need to be called is =org-readme-sync= (Matthew L. Fidler)
  - 04-Aug-2012 ::  Added syncing with emacswiki.  (Matthew L. Fidler)
  - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)
+
