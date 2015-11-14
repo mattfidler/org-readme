@@ -865,18 +865,20 @@ If COPY is non-nil copy the output to Readme.org."
 	     (replace-regexp-in-string
 	      "\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="
 	      (replace-regexp-in-string
-	       "^\\*[ \t]+Customizable Options:" "* Customizable Options"
+	       "\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="
 	       (replace-regexp-in-string
-		"^\\*[ \t]+Commands:" "* Commands & keybindings"
+		"^\\*[ \t]+Customizable Options:" "* Customizable Options"
 		(replace-regexp-in-string
-		 "`\\(.*?\\)'" " - =\\1="
+		 "^\\*[ \t]+Commands:" "* Commands & keybindings"
 		 (replace-regexp-in-string
-		  ";+" ""
+		  "`\\(.*?\\)'" " - =\\1= :"
 		  (replace-regexp-in-string
-		   "^;;;+" "*"
+		   ";+" ""
 		   (replace-regexp-in-string
-		    "^;;;;+" ""
-		    (with-output-to-string (adoc-output (current-buffer))))))))))))
+		    "^;;;+" "*"
+		    (replace-regexp-in-string
+		     "^;;;;+" ""
+		     (with-output-to-string (adoc-output (current-buffer)))))))))))))
 	(with-temp-buffer
 	  (insert-file-contents readme)
 	  (org-readme-remove-section "Commands & keybindings")
