@@ -7,9 +7,9 @@
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 20151114.29
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Sat Nov 14 00:29:15 2015
+;; Last-Updated: Sat Nov 14 21:57:15 2015
 ;;           By: Joe Bloggs
-;;     Update #: 798
+;;     Update #: 799
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -418,6 +418,154 @@
 ;; Floor, Boston, MA 02110-1301, USA.
 ;; 
 
+;;; Commands:
+;;
+;; Below is a complete list of commands:
+;;
+;;  `org-readme-add-autoloads'
+;;    Query user to add ;;;###autoload magic comments to each function/macro/option.
+;;    Keybinding: M-x org-readme-add-autoloads
+;;  `org-readme-insert-variables'
+;;    Extracts variable documentation and places it in the readme file.
+;;    Keybinding: M-x org-readme-insert-variables
+;;  `org-readme-marmalade-post'
+;;    Posts the current buffer to Marmalade.
+;;    Keybinding: M-x org-readme-marmalade-post
+;;  `org-readme-edit-commit'
+;;    Changelog for editing.
+;;    Keybinding: C-x C-s
+;;  `org-readme-edit-cancel'
+;;    Cancel the edit log.
+;;    Keybinding: C-c C-k
+;;  `org-readme-edit'
+;;    Edit change comment for commit.
+;;    Keybinding: M-x org-readme-edit
+;;  `org-readme-convert-to-markdown'
+;;    Convert Readme.org to markdown Readme.md.
+;;    Keybinding: M-x org-readme-convert-to-markdown
+;;  `org-readme-convert-to-emacswiki'
+;;    Converts Readme.org to oddmuse markup and uploads to emacswiki.
+;;    Keybinding: M-x org-readme-convert-to-emacswiki
+;;  `org-readme-git'
+;;    Add The files to git.
+;;    Keybinding: M-x org-readme-git
+;;  `org-readme-gen-info'
+;;    With the proper tools, generates an info and dir from the current readme.org
+;;    Keybinding: M-x org-readme-gen-info
+;;  `org-readme-sync'
+;;    Syncs Readme.org with current buffer.
+;;    Keybinding: M-x org-readme-sync
+;;  `org-readme-to-commentary'
+;;    Replace Commentary section in elisp file with text from Readme.org.
+;;    Keybinding: M-x org-readme-to-commentary
+;;  `org-readme-top-header-to-readme'
+;;    Copy top header from the elisp file into the readme file as Library Information.
+;;    Keybinding: M-x org-readme-top-header-to-readme
+;;  `org-readme-changelog-to-readme'
+;;    This puts the Emacs Lisp change-log into the Readme.org file.
+;;    Keybinding: M-x org-readme-changelog-to-readme
+;;
+;;; Customizable Options:
+;;
+;; Below is a list of customizable options:
+;;
+;;  `org-readme-default-template'
+;;    Default template for blank Readme.org Files. LIB-NAME is replaced with the library.
+;;    default = "\n* Installation\n\nTo use without using a package manager:\n\n - Put the library in a directory in the emacs load path, like ~/.emacs.d\n - Add (require 'LIB-NAME) in your ~/.emacs file\n - If you have [[http://www.marmalade-repo.org/][marmalade-repo.org]], this LIB-NAME is part of the emacs packges you can install.  Just type M-x package-install LIB-NAME marmalade \n\nThis is in emacswiki, so this package can also be installed using el-get.\n\nAfter installing el-get, Type M-x el-get-install LIB-NAME.\n"
+;;  `org-readme-end-section-regexp'
+;;    Regexp to match the end of a header/comments/changelog section in the elisp file comments.
+;;    default = "^;;;;+[ 	]*$"
+;;  `org-readme-features-regexp'
+;;    Regexp to match the header line for the required libraries section.
+;;    default = "^[ 	]*Features that might be required by this library:[ 	]*$"
+;;  `org-readme-changelog-lines-regexp'
+;;    Regexp matching changelog lines in the elisp file (you probably shouldn't change this).
+;;    default = "^[ 	]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*.*\n.*(\\([^)]*\\))[ 	]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ 	]*\\([0-9][0-9]?\\)"
+;;  `org-readme-final-changelog-line-regexp'
+;;    Regexp matching the final changelog line in the elisp file (you probably shouldn't change this).
+;;    default = "\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*\\(.*\\)\n.*\n\\(\\(?:\n\\|.\\)*\\)"
+;;  `org-readme-use-melpa-versions'
+;;    Use Melpa-type versions YYYYMMDD.HHMM instead of 0.0.0 versions.
+;;    default = nil
+;;  `org-readme-create-tar-package'
+;;    Create a tar package for use in ELPA.
+;;    default = nil
+;;  `org-readme-marmalade-server'
+;;    Marmalade server website.
+;;    default = "http://marmalade-repo.org"
+;;  `org-readme-marmalade-token'
+;;    Marmalade token to upload content to the marmalade server.
+;;    default = nil
+;;  `org-readme-marmalade-user-name'
+;;    Marmalade user name to upload content to the marmalade server.
+;;    default = nil
+;;  `org-readme-author-name'
+;;    Name to use as author when updating "Last-Updated" info in elisp header.
+;;    default = user-full-name
+;;  `org-readme-sync-emacswiki'
+;;    Post library to the emacswiki.
+;;    default = t
+;;  `org-readme-sync-marmalade'
+;;    Post library to marmalade-repo.org.
+;;    default = t
+;;  `org-readme-sync-git'
+;;    Post library to git.
+;;    default = t
+;;  `org-readme-build-melpa-recipe'
+;;    Build a melpa recipe based on github information.
+;;    default = t
+;;  `org-readme-build-el-get-recipe'
+;;    Build an el-get recipe based on github information.
+;;    default = t
+;;  `org-readme-build-markdown'
+;;    Build Readme.md from Readme.org.
+;;    default = t
+;;  `org-readme-use-pandoc-markdown'
+;;    Use pandoc's grid tables instead of transferring the tables to html.
+;;    default = t
+;;  `org-readme-build-texi'
+;;    Build library-name.texi from Readme.org, using Readme.md and pandoc.
+;;    default = t
+;;  `org-readme-drop-markdown-after-build-texi'
+;;    Remove Readme.md after texinfo is generated.
+;;    default = t
+;;  `org-readme-build-info'
+;;    Build library-name.info from Reade.org using texi.  
+;;    default = t
+;;  `org-readme-drop-texi-after-build-info'
+;;    Remove the texi information after building info files.
+;;    default = t
+;;  `org-readme-add-readme-to-lisp-file'
+;;    Update elisp file header with commentary section of Readme.org.
+;;    default = t
+;;  `org-readme-use-autodoc'
+;;    Use `auto-document' to document elisp file.
+;;    default = (quote prompt)
+;;  `org-readme-add-autodoc-to-readme'
+;;    Copy `auto-document' output to Readme.org.
+;;    default = (quote prompt)
+;;  `org-readme-add-functions-to-readme'
+;;    Add a Functions section to Readme.org.
+;;    default = t
+;;  `org-readme-add-variables-to-readme'
+;;    Add a Variables section to Readme.org.
+;;    default = t
+;;  `org-readme-update-changelog'
+;;    Add/update Changelog file.
+;;    default = t
+;;  `org-readme-add-changelog-to-readme'
+;;    Add Changelog information to Readme.org.
+;;    default = t
+;;  `org-readme-add-top-header-to-readme'
+;;    Add Top Header information to Readme.org.
+;;    default = t
+;;  `org-readme-remove-sections'
+;;    List of sections to remove when changing the Readme.org to Commentary.
+;;    default = (quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables"))
+;;  `org-readme-remove-sections-from-markdown'
+;;    List of sections to remove when changing the Readme.org to 
+;;    default = (quote ("Functions & macros" "Variables"))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Code:
@@ -588,6 +736,16 @@ This will also create the directory entry using install-info, if it is found."
   :type 'yesnoprompt
   :group 'org-readme)
 
+(defcustom org-readme-use-autodoc 'prompt
+  "Use `auto-document' to document elisp file."
+  :type 'yesnoprompt
+  :group 'org-readme)
+
+(defcustom org-readme-add-autodoc-to-readme 'prompt
+  "Copy `auto-document' output to Readme.org."
+  :type 'yesnoprompt
+  :group 'org-readme)
+
 (defcustom org-readme-add-functions-to-readme t
   "Add a Functions section to Readme.org."
   :type 'yesnoprompt
@@ -695,6 +853,32 @@ the ;;;###autoload magic comment to all functions/macros/options."
     (query-replace-regexp
      "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
      "\\1\n;;;###autoload\n(\\2")))
+
+(defun org-readme-insert-autodoc (&optional copy)
+  "Use `auto-document' to document functions and options in current elisp file.
+If COPY is non-nil copy the output to Readme.org."
+  (require 'auto-document)
+  (auto-document)
+  (if copy
+      (let ((readme (org-readme-find-readme))
+	    (txt (replace-regexp-in-string
+		  "^\\*[ \t]+Customizable Options:" "* Customizable Options"
+		  (replace-regexp-in-string
+		   "^\\*[ \t]+Commands:" "* Commands"
+		   (replace-regexp-in-string
+		    "`\\(.*?\\)'" "=\\1="
+		    (replace-regexp-in-string
+		     ";+" ""
+		     (replace-regexp-in-string
+		      "^;;;+" "*"
+		      (replace-regexp-in-string
+		       "^;;;;+" ""
+		       (with-output-to-string (adoc-output (current-buffer)))))))))))
+	(with-temp-buffer
+	  (insert-file-contents readme)
+	  (org-readme-remove-section "Commands")
+	  (org-readme-remove-section "Customizable Options" txt)
+	  (write-file readme)))))
 
 (defun org-readme-get-matches (regex &optional n)
   "Return sorted list of matches to REGEX in current file.
@@ -1383,6 +1567,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	(when (org-readme-check-opt org-readme-add-readme-to-lisp-file)
 	  (message "Adding Readme to Header Commentary")
 	  (org-readme-to-commentary))
+	;; Add functions section to readme file
+        (when (org-readme-check-opt org-readme-use-autodoc)
+          (message "Updating using autodoc.")
+          (org-readme-insert-autodoc
+	   (org-readme-check-opt org-readme-add-autodoc-to-readme)))
 	;; Add functions section to readme file
         (when (org-readme-check-opt org-readme-add-functions-to-readme)
           (message "Updating Functions.")
