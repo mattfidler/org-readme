@@ -684,6 +684,18 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 	      (replace-match (number-to-string (1+ (string-to-number (match-string 1))))
 			     t nil nil 1))))))
 
+(defun org-readme-add-autoloads (&optional all)
+  "Query user to add ;;;###autoload magic comments to each function/macro/option.
+If ALL is non-nil (or called interactively with prefix arg) then add
+the ;;;###autoload magic comment to all functions/macros/options."
+  (interactive "P")
+  (if all
+      (replace-regexp "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
+		      "\\1\n;;;###autoload\n(\\2")
+    (query-replace-regexp
+     "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
+     "\\1\n;;;###autoload\n(\\2")))
+
 (defun org-readme-insert-functions ()
   "Extracts function & macro documentation and places it in the Readme.org file."
   (save-excursion
@@ -996,6 +1008,7 @@ Returns file name if created."
 
 (define-derived-mode org-readme-edit-mode text-mode "Org-readme Log edit.")
 
+;;;###autoload
 (defun org-readme-convert-to-markdown ()
   "Convert Readme.org to markdown Readme.md."
   (interactive)
@@ -1078,6 +1091,7 @@ Returns file name if created."
 		     (file-name-directory (buffer-file-name)))
       (insert readme))))
 
+;;;###autoload
 (defun org-readme-convert-to-emacswiki ()
   "Converts Readme.org to oddmuse markup and uploads to emacswiki."
   (interactive)
@@ -1164,6 +1178,7 @@ Returns file name if created."
       (kill-buffer (current-buffer)))
     (delete-file wiki)))
 
+;;;###autoload
 (defun org-readme-git ()
   "Add The files to git."
   (interactive)
@@ -1347,7 +1362,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
             (setq org-readme-edit-last-buffer (current-buffer))
 	    (org-readme-update-last-update)
             (org-readme-edit))
-	;; Update version number
+	;; Update last update & version number
 	(unless comment-added (org-readme-update-last-update))
         (when (yes-or-no-p "Update version number? ")
           (save-excursion
@@ -1509,7 +1524,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
   (expand-file-name "Changelog" (file-name-directory (buffer-file-name))))
 
 (defun org-readme-find-readme ()
-  "Find the Readme.org."
+  "Find the Readme.org, or create it if it doesn't yet exist."
   (let* ((dir (file-name-directory (buffer-file-name)))
          (df (directory-files dir t "^[Rr][Ee][Aa][Dd][Mm][Ee][.][Oo][Rr][Gg]$")))
     (if (= 1 (length df))
