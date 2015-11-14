@@ -860,31 +860,25 @@ If COPY is non-nil copy the output to Readme.org."
   (require 'auto-document)
   (auto-document)
   (if copy
-      (let ((readme (org-readme-find-readme))
-	    (txt
-	     (replace-regexp-in-string
-	      "\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="
-	      (replace-regexp-in-string
-	       "=\"\\(.*\\)\"=" "=\\1="
-	       (replace-regexp-in-string
-		"\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="
-		(replace-regexp-in-string
-		 "^\\*[ \t]+Customizable Options:" "* Customizable Options"
-		 (replace-regexp-in-string
-		  "^\\*[ \t]+Commands:" "* Commands & keybindings"
-		  (replace-regexp-in-string
-		   "`\\(.*?\\)'" " - *\\1* :"
-		   (replace-regexp-in-string
-		    ";+" ""
-		    (replace-regexp-in-string
-		     "^;;;+" "*"
-		     (replace-regexp-in-string
-		      "^;;;;+" ""
-		      (with-output-to-string (adoc-output (current-buffer))))))))))))))
+      (let* ((readme (org-readme-find-readme))
+	     (txt (with-output-to-string (adoc-output (current-buffer))))
+	     (formattedtxt
+	      (with-temp-buffer
+		(insert txt)
+		(org-readme-regexp-pairs [["^;;;;+" ""]
+					  ["^;;;+" "*"]
+					  [";+" ""]
+					  ["`\\(.*?\\)'" " - *\\1* :"]
+					  ["^\\*[ \t]+Commands:" "* Commands & keybindings"]
+					  ["^\\*[ \t]+Customizable Options:" "* Customizable Options"]
+					  ["\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="]
+					  ["\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="]
+					  ["=\"\\(.*\\)\"=" "=\\1="]])
+		(buffer-string))))
 	(with-temp-buffer
 	  (insert-file-contents readme)
 	  (org-readme-remove-section "Commands & keybindings")
-	  (org-readme-remove-section "Customizable Options" txt)
+	  (org-readme-remove-section "Customizable Options" formattedtxt)
 	  (write-file readme)))))
 
 (defun org-readme-get-matches (regex &optional n)
