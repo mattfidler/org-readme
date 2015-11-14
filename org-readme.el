@@ -871,7 +871,7 @@ If COPY is non-nil copy the output to Readme.org."
 		(replace-regexp-in-string
 		 "^\\*[ \t]+Commands:" "* Commands & keybindings"
 		 (replace-regexp-in-string
-		  "`\\(.*?\\)'" " - =\\1= :"
+		  "`\\(.*?\\)'" " - *\\1* :"
 		  (replace-regexp-in-string
 		   ";+" ""
 		   (replace-regexp-in-string
