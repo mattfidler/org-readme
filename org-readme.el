@@ -5,9 +5,9 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20151114.29
+;; Version: 20151114.2203
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Sat Nov 14 21:57:15 2015
+;; Last-Updated: Sat Nov 14 22:03:34 2015
 ;;           By: Joe Bloggs
 ;;     Update #: 799
 ;; URL: https://github.com/mlf176f2/org-readme
@@ -866,7 +866,7 @@ If COPY is non-nil copy the output to Readme.org."
 		  (replace-regexp-in-string
 		   "^\\*[ \t]+Commands:" "* Commands"
 		   (replace-regexp-in-string
-		    "`\\(.*?\\)'" "=\\1="
+		    "`\\(.*?\\)'" " - =\\1="
 		    (replace-regexp-in-string
 		     ";+" ""
 		     (replace-regexp-in-string
@@ -1570,8 +1570,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	;; Add functions section to readme file
         (when (org-readme-check-opt org-readme-use-autodoc)
           (message "Updating using autodoc.")
-          (org-readme-insert-autodoc
-	   (org-readme-check-opt org-readme-add-autodoc-to-readme)))
+          (org-readme-insert-autodoc (org-readme-check-opt org-readme-add-autodoc-to-readme)))
 	;; Add functions section to readme file
         (when (org-readme-check-opt org-readme-add-functions-to-readme)
           (message "Updating Functions.")
