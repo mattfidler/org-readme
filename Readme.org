@@ -19,7 +19,7 @@
 
 * Possible Dependencies
 
-  yaoddmuse http-post-simple org-html header2
+  yaoddmuse http-post-simple org-html header2 auto-document
 
 * Using org-readme
 Org readme is used to:
