@@ -16,7 +16,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   yaoddmuse http-post-simple org-html header2
+;;   yaoddmuse http-post-simple org-html header2 auto-document
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -725,6 +725,7 @@
 (require 'yaoddmuse nil t)
 (require 'http-post-simple nil t)
 (require 'org-html nil t)
+(require 'auto-document nil t)
 
 (defgroup org-readme nil
   "Org-readme is a way to create Readme.org files based on an elisp file."
@@ -1720,10 +1721,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	(when (org-readme-check-opt org-readme-add-readme-to-lisp-file)
 	  (message "Adding Readme to Header Commentary")
 	  (org-readme-to-commentary))
-	;; Add functions section to readme file
-        (when (org-readme-check-opt org-readme-use-autodoc)
-          (message "Updating using autodoc.")
-          (org-readme-insert-autodoc (org-readme-check-opt org-readme-add-autodoc-to-readme)))
+	;; Document commands and options in elisp file
+        (when (and (require 'auto-document nil t)
+		   (org-readme-check-opt org-readme-use-autodoc))
+	  (message "Updating using autodoc.")
+	  (org-readme-insert-autodoc (org-readme-check-opt org-readme-add-autodoc-to-readme)))
 	;; Add functions section to readme file
         (when (org-readme-check-opt org-readme-add-functions-to-readme)
           (message "Updating Functions.")
