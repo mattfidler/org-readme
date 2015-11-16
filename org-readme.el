@@ -1297,9 +1297,8 @@ Returns file name if created."
 				 `((name . ,user-name)
 				   (password . ,password))))))
                 (goto-char (point-min))
-                (if (not (re-search-forward "\"token\"[ \t]*:[ \t]*\"\\(.*?\\)\"" nil t))
-                    nil
-                  (match-string 1))))
+                (when (re-search-forward "\"token\"[ \t]*:[ \t]*\"\\(.*?\\)\"" nil t)
+		  (match-string 1))))
         (when token
           (setq org-readme-marmalade-user-name user-name
 		org-readme-marmalade-token token)
@@ -1632,17 +1631,17 @@ If so, return the name of that Lisp file, otherwise return nil."
 	  (setq cnt (with-temp-buffer
 		      (insert-file-contents file)
 		      (goto-char (point-min))
-		      (if (not (search-forward "@strong{Description} -- " nil t))
-			  (setq desc base)
-			(setq desc (buffer-substring (point) (point-at-eol))))
+		      (if (search-forward "@strong{Description} -- " nil t)
+			  (setq desc (buffer-substring (point) (point-at-eol)))
+			(setq desc base))
 		      (goto-char (point-min))
-		      (if (not (search-forward "@strong{Package-Requires} -- " nil t))
-			  (setq pkg "()")
-			(setq pkg (buffer-substring (point) (point-at-eol))))
+		      (if (search-forward "@strong{Package-Requires} -- " nil t)
+			  (setq pkg (buffer-substring (point) (point-at-eol)))
+			(setq pkg "()"))
 		      (goto-char (point-min))
-		      (if (not (search-forward "@strong{Version} -- " nil t))
-			  (setq ver "0.0")
-			(setq ver (buffer-substring (point) (point-at-eol))))
+		      (if (search-forward "@strong{Version} -- " nil t)
+			  (setq ver (buffer-substring (point) (point-at-eol)))
+			(setq ver "0.0"))
 		      (buffer-string)))
 	  ;; Now add direntry to the .texi file
 	  (with-temp-file file
