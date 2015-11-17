@@ -952,6 +952,9 @@ Markdown which is an intermediary for texinfo (using pandoc)."
 
 (defvar org-readme-edit-last-buffer nil)
 
+(defvar-local org-readme-added-autoloads nil
+  "Whether autoload's have been added yet.")
+
 (cl-defmacro org-readme-check-opt (opt &optional prompt)
   "Query user if option OPT is 'prompt, otherwise return OPT.
 If PROMPT is supplied use that for the prompt, otherwise use
@@ -995,17 +998,14 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 	      (replace-match (number-to-string (1+ (string-to-number (match-string 1))))
 			     t nil nil 1))))))
 
-(defun org-readme-add-autoloads (&optional all)
+(defun org-readme-add-autoloads nil
   "Query user to add ;;;###autoload magic comments to each function/macro/option.
 If ALL is non-nil (or called interactively with prefix arg) then add
 the ;;;###autoload magic comment to all functions/macros/options."
-  (interactive "P")
-  (if all
-      (replace-regexp "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
-		      "\\1\n;;;###autoload\n(\\2")
-    (query-replace-regexp
-     "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
-     "\\1\n;;;###autoload\n(\\2")))
+  (interactive)
+  (query-replace-regexp
+   "^\\(;;?[^;\n]*\\|[ \t]*\\)\n(\\(def\\|cl-def\\)"
+   "\\1\n;;;###autoload\n(\\2"))
 
 (defun org-readme-insert-autodoc (&optional copy)
   "Use `auto-document' to document functions and options in current elisp file.
@@ -1699,6 +1699,10 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
             (setq org-readme-edit-last-buffer (current-buffer))
 	    (org-readme-update-last-update)
             (org-readme-edit))
+	;; Add autoload's
+	(when (and (not org-readme-added-autoloads)
+		   (y-or-n-p "Add autoloads"))
+	  (org-readme-add-autoloads))
 	;; Update last update & version number
 	(unless comment-added (org-readme-update-last-update))
         (when (yes-or-no-p "Update version number? ")
