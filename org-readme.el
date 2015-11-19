@@ -16,7 +16,7 @@
 ;;
 ;; Features that might be required by this library:
 ;;
-;;   yaoddmuse http-post-simple org-html header2 auto-document
+;;   yaoddmuse http-post-simple org-html auto-document
 ;; 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
@@ -840,7 +840,7 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
      (lambda (x)
        (goto-char (point-min))
        (while (search-forward-regexp (elt x 0) (point-max) t)
-	 (replace-match (elt x 1) fixedcase literal)))
+	 (replace-match (elt x 1) fixedcase literal string subexp)))
      pairs)))
 
 (defun org-readme-update-last-update nil
@@ -1870,6 +1870,27 @@ match to `org-readme-end-section-regexp'."
 	      (insert-file-contents readme)
 	      (org-readme-remove-section "History" txt)
 	      (write-file readme))))))))
+
+(defun org-readme-get-required-features nil
+  "Return list of names of libraries required in current file."
+  (save-excursion
+    (goto-char (point-min))
+    (cl-loop with form
+	     while (setq form (condition-case v
+				  (read (current-buffer)) (error nil)))
+	     if (eq (car form) 'require)
+	     collect (symbol-name (cadadr form)))))
+
+(defun org-readme-update-required-features-section nil
+  "Update the required features section of the elisp file."
+  (org-readme-regexp-pairs (list (list
+				  (replace-regexp-in-string
+				   "\\$" "\n;;[ \t]*\n;;[ \t]*\\\\(.*\\\\)$"
+				   (replace-regexp-in-string
+				    "\\^" ";;"
+				    org-readme-features-regexp))
+				  (mapconcat 'identity (org-readme-get-required-features) " ")
+				  )) nil nil nil 1))
 
 (provide 'org-readme)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
