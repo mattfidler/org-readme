@@ -1666,7 +1666,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
   (interactive)
   ;; Store the name of the package in `base'
   (let ((base (file-name-sans-extension
-               (file-name-nondirectory (buffer-file-name)))))
+               (file-name-nondirectory (buffer-file-name))))
+        (ver (org-readme-buffer-version)))
     (when (string= (downcase base) "readme")
       (let ((df (directory-files (file-name-directory (buffer-file-name)) t ".*[.]el$")))
         (unless (= 1 (length df))
