@@ -5,11 +5,11 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20151114.2306
+;; Version: 20151119.1039
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Sat Nov 14 23:08:20 2015
+;; Last-Updated: Thu Nov 19 10:39:47 2015
 ;;           By: Joe Bloggs
-;;     Update #: 801
+;;     Update #: 803
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -64,23 +64,24 @@
 ;; ** EmacsWiki Page Names
 ;; EmacsWiki Page names are generated from the file.  `org-readme.el'
 ;; would generate a page of OrgReadme.
-;;
-;; NOTE: if you use `auto-insert' then make sure the elisp entry in
-;; `auto-insert-alist' is compatible - the header should end with a
-;; line that matches `org-readme-end-section-regexp'.
 ;; 
 ;; ** Why each required library is needed
 ;; There are a few required libraries.  This is a list of the require
 ;; libraries and why they are needed.
 ;; 
-;; |------------------+--------------------------------------|
-;; | Library          | Why it is needed                     |
-;; |------------------+--------------------------------------|
-;; | yaoddmuse        | Publish to emacswiki                 |
-;; | http-post-simple | Publish to marmalade-repo.org        |
-;; | header2          | To create header and changelog       |
-;; | lib-requires     | To generate the library dependencies |
-;; |------------------+--------------------------------------|
+;; |------------------+---------------------------------------------------------------------|
+;; | Library          | Why it is needed                                                    |
+;; |------------------+---------------------------------------------------------------------|
+;; | yaoddmuse        | Publish to emacswiki                                                |
+;; | http-post-simple | Publish to marmalade-repo.org                                       |
+;; | header2          | To create header and changelog                                      |
+;; | lib-requires     | To generate the library dependencies                                |
+;; | auto-document    | To generate list of commands & options within elisp file (optional) |
+;; |------------------+---------------------------------------------------------------------|
+;; ** Notes
+;; If you use `auto-insert' you may need to change your elisp 
+;; entry of `auto-insert-alist' so that the end of the header section 
+;; matches `org-readme-end-section-regexp'
 ;; 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -236,6 +237,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 19-Nov-2015    Joe Bloggs  
+;;    Last-Updated: Thu Nov 19 02:43:29 2015 #802 (Joe Bloggs)
+;;    Automatically update required features section in elisp comments
 ;; 14-Nov-2015    Joe Bloggs  
 ;;    Last-Updated: Sat Nov 14 23:05:32 2015 #800 (Joe Bloggs)
 ;;    Add auto-document integration
@@ -871,7 +875,7 @@ the ;;;###autoload magic comment to all functions/macros/options."
 (defun org-readme-insert-autodoc (&optional copy)
   "Use `auto-document' to document functions and options in current elisp file.
 If COPY is non-nil copy the output to Readme.org."
-  (require 'auto-document)
+  (interactive)
   (auto-document)
   (if copy
       (let* ((readme (org-readme-find-readme))
@@ -1883,8 +1887,10 @@ match to `org-readme-end-section-regexp'."
 	     if (eq (car form) 'require)
 	     collect (symbol-name (cadadr form)))))
 
+;;;###autoload
 (defun org-readme-update-required-features-section nil
   "Update the required features section of the elisp file."
+  (interactive)
   (org-readme-regexp-pairs (list (list
 				  (replace-regexp-in-string
 				   "\\$" "\n;;[ \t]*\n;;[ \t]*\\\\(.*\\\\)$"

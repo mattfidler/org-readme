@@ -8,18 +8,18 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20151114.2306
+ - Version :: 20151119.1039
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Sat Nov 14 23:08:20 2015
+ - Last-Updated :: Thu Nov 19 10:39:47 2015
  -           By :: Joe Bloggs
- -     Update # :: 801
+ -     Update # :: 803
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
 
 * Possible Dependencies
 
-  yaoddmuse http-post-simple org-html header2 auto-document
+  yaoddmuse http-post-simple org-html auto-document
 
 * Using org-readme
 Org readme is used to:
@@ -68,14 +68,19 @@ would generate a page of OrgReadme.
 There are a few required libraries.  This is a list of the require
 libraries and why they are needed.
 
-|------------------+--------------------------------------|
-| Library          | Why it is needed                     |
-|------------------+--------------------------------------|
-| yaoddmuse        | Publish to emacswiki                 |
-| http-post-simple | Publish to marmalade-repo.org        |
-| header2          | To create header and changelog       |
-| lib-requires     | To generate the library dependencies |
-|------------------+--------------------------------------|
+|------------------+---------------------------------------------------------------------|
+| Library          | Why it is needed                                                    |
+|------------------+---------------------------------------------------------------------|
+| yaoddmuse        | Publish to emacswiki                                                |
+| http-post-simple | Publish to marmalade-repo.org                                       |
+| header2          | To create header and changelog                                      |
+| lib-requires     | To generate the library dependencies                                |
+| auto-document    | To generate list of commands & options within elisp file (optional) |
+|------------------+---------------------------------------------------------------------|
+** Notes
+If you use =auto-insert= you may need to change your elisp 
+entry of =auto-insert-alist= so that the end of the header section 
+matches =org-readme-end-section-regexp=
 * Commands & keybindings
 
  Below is a complete list of commands:
@@ -219,12 +224,13 @@ libraries and why they are needed.
     default value: =(quote prompt)=
    - *org-readme-remove-sections* :
     List of sections to remove when changing the Readme.org to Commentary.\\
-    default value: =(quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables"))=
+    default value: =(quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables" ...))=
    - *org-readme-remove-sections-from-markdown* :
     List of sections to remove when changing the Readme.org to \\
     default value: =(quote ("Functions & macros" "Variables"))=
 * History
 
+ - 19-Nov-2015 ::  Automatically update required features section in elisp comments (Joe Bloggs)
  - 14-Nov-2015 ::  Add auto-document integration (Joe Bloggs)
  - 14-Nov-2015 ::  Update "Last-Updated:", "By:" & "Update #:" fields (Joe Bloggs)
  - 12-Nov-2015 ::  Refactor and tidy up code (Joe Bloggs)
@@ -324,4 +330,3 @@ libraries and why they are needed.
  - 05-Aug-2012 ::  Added git support as well as a comment mode. The only thing that should need to be called is =org-readme-sync= (Matthew L. Fidler)
  - 04-Aug-2012 ::  Added syncing with emacswiki.  (Matthew L. Fidler)
  - 04-Aug-2012 ::  Initial Release  (Matthew L. Fidler)
-
