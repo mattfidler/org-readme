@@ -1563,6 +1563,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	(when (and (not org-readme-added-autoloads)
 		   (y-or-n-p "Add autoloads? "))
 	  (org-readme-add-autoloads))
+	;; Update required features section
+	(org-readme-update-required-features-section)
 	;; Update last update & version number
 	(unless comment-added (org-readme-update-last-update))
         (when (y-or-n-p "Update version number? ")
