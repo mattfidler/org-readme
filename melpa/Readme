@@ -1,4 +1,0 @@
-(Readme
- :repo "mlf176f2/org-readme"
- :fetcher github
- :files ("Readme.el"))

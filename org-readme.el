@@ -1088,9 +1088,8 @@ Returns file name if created."
         (insert-file-contents git-cfg)
         (goto-char (point-min))
         (when (re-search-forward "git@github.com:\\(.*?\\)[.]git")
-          (setq rcp
-                (format "(%s\n :repo \"%s\"\n :fetcher github\n :files (\"%s.el\" \"dir\" \"%s.info\"))"
-                        lib-name (match-string 1) lib-name lib-name))))
+          (setq rcp (format "(%s\n :repo \"%s\"\n :fetcher github\n)"
+			    lib-name (match-string 1)))))
       (when rcp (with-temp-file melpa (insert rcp))))
     (if (file-exists-p melpa) (symbol-value 'melpa) nil)))
 
@@ -1647,7 +1646,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 					 "Post elisp file to emacswiki?"))
           (message "Posting elisp file to emacswiki")
           (emacswiki-post nil ""))
-	;; add files to git repo
+	;; add files to git repo, and create MELPA recipe
         (when (org-readme-check-opt org-readme-sync-git) (org-readme-git))
 	;; post readme file to emacswiki
         (when (and (featurep 'yaoddmuse)
