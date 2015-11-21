@@ -831,6 +831,11 @@ the first sentence of the docstring for OPT."
 		       ',opt 'variable-documentation))))
      ,opt))
 
+;; This occurs frequently
+(defsubst goto-start nil
+  "Move cursor to start of buffer."
+  (goto-char (point-min)))
+
 ;; The following function is a slightly modified version of `xah-replace-regexp-pairs-region'
 ;; available here: https://github.com/xahlee/xah-replace-pairs
 (defun org-readme-regexp-pairs (pairs &optional fixedcase literal string subexp)
@@ -842,7 +847,7 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
   (save-restriction
     (mapc
      (lambda (x)
-       (goto-char (point-min))
+       (goto-start)
        (while (search-forward-regexp (elt x 0) (point-max) t)
 	 (replace-match (elt x 1) fixedcase literal string subexp)))
      pairs)))
@@ -850,7 +855,7 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
 (defun org-readme-update-last-update nil
   "Update the \"Last-Updated:\", \"By:\" & \"Update #:\" fields in the elisp file header."
   (save-excursion
-    (goto-char (point-min))
+    (goto-start)
     (if (re-search-forward "^[; \t]*[Ll]ast[ -][Uu]pdated:[ \t]*\\(.*\\)$" nil t)
 	(let ((endpos (save-excursion (forward-line 3) (point))))
 	  (replace-match (current-time-string) t nil nil 1)
@@ -917,7 +922,7 @@ If COPY is non-nil copy the output to Readme.org."
   "Return sorted list of matches to REGEX in current file.
 If N is provided return all matches of the Nth subexpression of REGEX."
   (save-excursion
-    (goto-char (point-min))
+    (goto-start)
     (sort (cl-loop while (re-search-forward regex nil t)
 		   collect (match-string-no-properties (or n 0)))
 	  'string<)))
@@ -931,11 +936,11 @@ If N is provided return all matches of the Nth subexpression of REGEX."
     (cl-flet ((fd (x)
 		  (with-temp-buffer
 		    (insert x)
-		    (goto-char (point-min))
+		    (goto-start)
 		    (when (re-search-forward "'[.]" nil t)
 		      (skip-chars-forward " \t\n")
 		      (delete-region (point) (point-min)))
-		    (goto-char (point-min))
+		    (goto-start)
 		    (when (re-search-forward "[(]" nil t)
 		      (goto-char (match-beginning 0))
 		      (insert "=")
@@ -981,7 +986,7 @@ If N is provided return all matches of the Nth subexpression of REGEX."
     (cl-flet ((fd (x) ;function to format text returned by `describe-variable'
 		  (with-temp-buffer
 		    (insert x)
-		    (goto-char (point-min))
+		    (goto-start)
 		    ;; remove whitespace before and after variable description
 		    (when (re-search-forward "Documentation:" nil t)
 		      (skip-chars-forward " \t\n")
@@ -1026,7 +1031,7 @@ Assumes the current buffer contains a toplevel project file."
     (if (file-exists-p git-cfg)
 	(with-temp-buffer
 	  (insert-file-contents git-cfg)
-	  (goto-char (point-min))
+	  (goto-start)
 	  (if (or (re-search-forward "git@github.com:\\(.*?\\)[.]git" nil t)
 		  (re-search-forward "https://github.com/\\(.*\\)" nil t))
 	      (match-string 1))))))
@@ -1046,21 +1051,21 @@ Returns file name if created."
 	(insert (format "(:name %s\n :description \"%s\"%s\n :website \"%s\"\n :type git\n :url \"%s\")"
 			lib-name	; :name
 			(save-excursion	; :description
-			  (goto-char (point-min))
+			  (goto-start)
 			  (if (re-search-forward
 			       (format "^[ \t]*;;;[ \t]*%s[.]el[ \t]*--+[ \t]*\\(.*?\\)[ \t]*$"
 				       lib-name) nil t)
 			      (match-string 1)
 			    lib-name))
 			(save-excursion	; :depends
-			  (goto-char (point-min))
+			  (goto-start)
 			  (if (re-search-forward "^[ \t]*;+[ \t]*[Pp]ackage-[Rr]equires:[ \t]*\\(.*?\\)[ \t]*$" nil t)
 			      (condition-case err
 				  (format "\n :depends %s" (mapcar 'car (read (match-string 1))))
 				(error (message "Error parsing package-requires: %s" err) ""))
 			    ""))
 			(save-excursion	; :website
-			  (goto-char (point-min))
+			  (goto-start)
 			  (if (re-search-forward "^[ \t]*;+[ \t]*URL:[ \t]*\\(.*\\)[ \t]*$" nil t)
 			      (match-string 1)
 			    (format "https://github.com/%s" github)))
@@ -1089,7 +1094,7 @@ Returns file name if created."
   "Gets the version of the current buffer."
   (let ((case-fold-search t))
     (save-excursion
-      (goto-char (point-min))
+      (goto-start)
       (when (re-search-forward "^ *;+ *Version: *\\(.*?\\) *$" nil t)
         (match-string-no-properties 1)))))
 
@@ -1131,7 +1136,7 @@ Returns file name if created."
     (when ver-json
       (save-excursion
         (set-buffer ver-json)
-        (goto-char (point-min))
+        (goto-start)
         (when (re-search-forward "\"version\"[ \t]*:[ \t]*\"\\(.*?\\)\"" nil t)
           (setq ver (match-string 1)))
         (kill-buffer (current-buffer))))
@@ -1152,7 +1157,7 @@ Returns file name if created."
 				 (format "%s/v1/users/login" org-readme-marmalade-server)
 				 `((name . ,user-name)
 				   (password . ,password))))))
-                (goto-char (point-min))
+                (goto-start)
                 (when (re-search-forward "\"token\"[ \t]*:[ \t]*\"\\(.*?\\)\"" nil t)
 		  (match-string 1))))
         (when token
@@ -1170,7 +1175,7 @@ Returns file name if created."
     (kill-buffer (get-buffer "*Change Comment*"))
     (with-temp-buffer
       (insert comment)
-      (goto-char (point-min))
+      (goto-start)
       (end-of-line)
       (while (re-search-forward "^" nil t)
         (insert ";;    "))
@@ -1219,7 +1224,7 @@ Returns file name if created."
 				["^[ \t]*#.*" ""]
 				["[+]TITLE:" "# "]])
       ;; Convert Headings
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^\\([*]+\\) *!?\\(.*\\)" nil t)
 	(setq tmp (make-string  (+ 1 (length (match-string 1))) ?#))
 	(replace-match (format "%s %s" tmp (match-string 2)) t t))
@@ -1232,7 +1237,7 @@ Returns file name if created."
 				;; Emphasis /emp/ to _emph_
 				["/\\(.*+?\\)/" "_\\1_"]] t)
       ;; Bold *bold* to __bold__
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "[*]\\(.*+?\\)[*]" nil t)
 	(unless (save-match-data (string-match "^[*]+$" (match-string 1)))
 	  (replace-match "__\\1__" t)))
@@ -1240,7 +1245,7 @@ Returns file name if created."
       (org-readme-regexp-pairs [["^[ \t]*[+-] +\\(.*?\\) *::" "- __\\1__ -- "]
 				["=\\(.*+?\\) *=" "`\\1`"]])
       ;; convert code blocks
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^ *#[+]BEGIN_SRC.*" nil t)
 	(setq tmp (point))
 	(when (re-search-forward "^ *#[+]END_SRC" nil t)
@@ -1251,7 +1256,7 @@ Returns file name if created."
 		      (re-search-forward "^" tmp2 t))
 	    (replace-match "::::"))))
       ;; convert evaluation results
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^: " nil t)
 	(replace-match "\n::::" t t) ;
 	(while (progn (end-of-line)
@@ -1261,7 +1266,7 @@ Returns file name if created."
       ;; Convert pre-formatted
       (org-readme-regexp-pairs [["^::::" "    "]])
       ;; Convert tables to html
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^[ \t]*|.*|[ \t]*$" nil t)
 	(beginning-of-line)
 	(setq p1 (point))
@@ -1299,7 +1304,7 @@ Returns file name if created."
 	(org-readme-regexp-pairs [["\\([A-Z][a-z]+[A-Z][A-Za-z]*\\)" "!\\1"]] t))
       ;; Convert Tables.
       (org-readme-regexp-pairs [["^[ \t]*|[-+]+|[ \t]*\n" ""]])
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^[ \t]*|" nil t)
 	(replace-match "||")
 	(while (re-search-forward "|" (point-at-eol) t)
@@ -1310,7 +1315,7 @@ Returns file name if created."
 				["\\[\\[file:\\(.*?[.]el\\)\\]\\[\\1\\]\\]" "[[\\1]]"]
 				["\\[\\[\\(.*?\\)\\]\\[\\(.*?\\)\\]\\]" "\\2"]
 				["=\\(.*?\\)=" "<tt>\\1</tt>"]] t)
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^\\([*]+\\) *!?\\(.*\\)" nil t)
 	(setq tmp (make-string (min 4 (+ 1 (length (match-string 1)))) ?=))
 	(replace-match (format "%s %s %s" tmp (match-string 2) tmp) t t)
@@ -1318,7 +1323,7 @@ Returns file name if created."
 	(let ((case-fold-search nil))
 	  (while (re-search-forward "!\\([A-Z][a-z]+[A-Z][A-Za-z]*\\)" (point-at-eol) t)
 	    (replace-match "\\1" t))))
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^: " nil t)
 	(replace-match "<pre>\n::::" t t) ;
 	(while (progn (end-of-line)
@@ -1326,7 +1331,7 @@ Returns file name if created."
 	  (replace-match "\n:::: "))
 	(end-of-line)
 	(insert "\n</pre>"))
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^ *#[+]BEGIN_SRC emacs-lisp *.*" nil t)
 	(replace-match "{{{")
 	(setq tmp (point))
@@ -1338,7 +1343,7 @@ Returns file name if created."
 	  (while (and (> tmp2 (point))
 		      (re-search-forward "^" tmp2 t))
 	    (replace-match "::::"))))
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^ *#[+]BEGIN_SRC.*" nil t)
 	(replace-match "<pre>" t t)
 	(setq tmp (point))
@@ -1355,7 +1360,7 @@ Returns file name if created."
 				["^[ \t]*#.*" ""]
 				["^[ \t]*[0-9]+[.)] +" "# "]
 				["^[ \t]+" ""]])
-      (goto-char (point-min))
+      (goto-start)
       (while (re-search-forward "^::::" nil t)
 	(replace-match "")
 	(let ((case-fold-search nil))
@@ -1478,15 +1483,15 @@ If so, return the name of that Lisp file, otherwise return nil."
 	  ;; get information for direntry
 	  (setq cnt (with-temp-buffer
 		      (insert-file-contents file)
-		      (goto-char (point-min))
+		      (goto-start)
 		      (if (search-forward "@strong{Description} -- " nil t)
 			  (setq desc (buffer-substring (point) (point-at-eol)))
 			(setq desc base))
-		      (goto-char (point-min))
+		      (goto-start)
 		      (if (search-forward "@strong{Package-Requires} -- " nil t)
 			  (setq pkg (buffer-substring (point) (point-at-eol)))
 			(setq pkg "()"))
-		      (goto-char (point-min))
+		      (goto-start)
 		      (if (search-forward "@strong{Version} -- " nil t)
 			  (setq ver (buffer-substring (point) (point-at-eol)))
 			(setq ver "0.0"))
@@ -1494,7 +1499,7 @@ If so, return the name of that Lisp file, otherwise return nil."
 	  ;; Now add direntry to the .texi file
 	  (with-temp-file file
 	    (insert cnt)
-	    (goto-char (point-min))
+	    (goto-start)
 	    (when (re-search-forward "@documentencoding")
 	      (goto-char (point-at-eol))
 	      (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
@@ -1547,7 +1552,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	(unless comment-added (org-readme-update-last-update))
 	(when (y-or-n-p "Update version number? ")
 	  (save-excursion
-	    (goto-char (point-min))
+	    (goto-start)
 	    (let ((case-fold-search t))
 	      (when (re-search-forward "^[ \t]*;+[ \t]*Version:" nil t)
 		(if (or (org-readme-check-opt org-readme-use-melpa-versions)
@@ -1653,13 +1658,13 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 				["^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" ""]
 				["^:" ""]]) ;remove : at beginning of lines
       ;; remove all TODO items
-      (goto-char (point-min))
+      (goto-start)
       (when org-todo-keyword-faces
 	(while (org-readme-remove-section
 		(regexp-opt (mapcar (lambda(x) (nth 0 x)) org-todo-keyword-faces))
 		nil t)))
       ;; replace initial & final whitespace with single newline chars
-      (goto-char (point-min))
+      (goto-start)
       (skip-chars-forward " \t\n")
       (delete-region (point-min) (point))
       (insert "\n")
@@ -1672,7 +1677,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (setq readme (buffer-string)))
     ;; delete current "Commentary" region in elisp file, and replace
     ;; with text extracted from Readme.org
-    (goto-char (point-min))
+    (goto-start)
     (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
       (skip-chars-forward "\n")
       (let ((pt (point)))
@@ -1688,7 +1693,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (let ((wiki (file-name-nondirectory (substring (file-name-directory (buffer-file-name)) 0 -1))))
         (with-temp-buffer
           (insert wiki)
-          (goto-char (point-min))
+          (goto-start)
           (when (looking-at ".") (replace-match (upcase (match-string 0)) t t))
           (while (re-search-forward "[-._]\\(.\\)" nil t)
             (replace-match  (upcase (match-string 1))) t t)
@@ -1698,7 +1703,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
           (name (file-name-sans-extension (file-name-nondirectory (buffer-file-name)))))
       (with-temp-buffer
         (insert (downcase name))
-        (goto-char (point-min))
+        (goto-start)
         (when (looking-at ".") (replace-match (upcase (match-string 0)) t t))
         (while (re-search-forward "-\\(.\\)" nil t)
           (replace-match  (upcase (match-string 1))) t t)
@@ -1720,7 +1725,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
                        (file-name-nondirectory (buffer-file-name)))))
         (with-temp-file df
           (insert org-readme-default-template)
-          (goto-char (point-min))
+          (goto-start)
           (while (re-search-forward "LIB-NAME" nil t)
             (replace-match lib-name t t)))))
     (symbol-value 'df)))
@@ -1732,7 +1737,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
   (let ((case-fold-search t)
         (mtch ""))
     (save-excursion
-      (goto-char (point-min))
+      (goto-start)
       (if (re-search-forward
 	   (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
 	   nil t)
@@ -1760,14 +1765,14 @@ match to `org-readme-end-section-regexp'."
         (readme (org-readme-find-readme)))
     ;; copy the top header from the elisp file
     (save-excursion
-      (goto-char (point-min))
+      (goto-start)
       (when (re-search-forward org-readme-end-section-regexp nil t)
         (beginning-of-line)
         (setq top-header (buffer-substring (point-min) (point)))))
     ;; copy top header info and reformat it for orgmode
     (with-temp-buffer
       (insert top-header)
-      (goto-char (point-min))
+      (goto-start)
       ;; uncomment and format first line
       ;; (remove initial ;'s and backslash quote the library name)
       (when (looking-at ";;; *\\(.*?\\) *--+ *\\(.*\\)")
@@ -1775,13 +1780,13 @@ match to `org-readme-end-section-regexp'."
       ;; remove elisp comment chars (;'s)
       (org-readme-regexp-pairs [["^ *;; ?" ""]])
       ;; replace filename with orglink to filename
-      (goto-char (point-min))
+      (goto-start)
       (when (re-search-forward "[Ff]ile[Nn]ame: *\\(.*\\) *$" nil t)
 	(replace-match "Filename: [[file:\\1][\\1]]"))
       ;; format other info lines into an org list
       (org-readme-regexp-pairs [["^\\(.*?\\):\\(.*?[A-Za-z0-9.].*\\)$" " - \\1 ::\\2"]])
       ;; add the header line
-      (goto-char (point-min))
+      (goto-start)
       (insert "* Library Information\n")
       ;; make new header for dependencies info
       (org-readme-regexp-pairs (list (list org-readme-features-regexp
@@ -1805,7 +1810,7 @@ match to `org-readme-end-section-regexp'."
     (let ((readme (org-readme-find-readme))
           pt1 pt2 txt)
       (save-excursion
-        (goto-char (point-min))
+        (goto-start)
         (when (re-search-forward "^[ \t]*;;; \\(?:Change Log\\|History\\):[ \t]*$" nil t)
           (setq pt1 (point))
           (when (re-search-forward org-readme-end-section-regexp nil t)
@@ -1815,7 +1820,7 @@ match to `org-readme-end-section-regexp'."
 	      (insert txt)
 	      ;; Remove initial ;'s
 	      (org-readme-regexp-pairs [["^[ \t]*;+ ?" ""]])
-	      (goto-char (point-min))
+	      (goto-start)
 	      (cl-symbol-macrolet	;a couple of symbol-macros to save space
 		  ((comment (save-match-data
 			      (replace-regexp-in-string
@@ -1843,7 +1848,7 @@ match to `org-readme-end-section-regexp'."
 	      (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="]
 					["^[ \t][ \t]+[-]" " -"]])
 	      ;; add org header
-	      (goto-char (point-min))
+	      (goto-start)
 	      (insert "* History\n")
 	      (setq txt (buffer-substring-no-properties (point-min) (point-max))))
 	    ;; add to readme file and save it
@@ -1855,7 +1860,7 @@ match to `org-readme-end-section-regexp'."
 (defun org-readme-get-required-features nil
   "Return list of names of libraries required in current file."
   (save-excursion
-    (goto-char (point-min))
+    (goto-start)
     (cl-loop with form
 	     while (setq form (condition-case v
 				  (read (current-buffer)) (error nil)))
