@@ -1373,54 +1373,49 @@ Returns file name if created."
 
 ;;;###autoload
 (defun org-readme-git ()
-  "Add The files to git."
+  "Add current file and other relevant files to git."
   (interactive)
-  ;; this assumes we are in the elisp file
-  (let* ((thisfile (file-name-nondirectory (buffer-file-name)))
-	 (base (org-readme-guess-package-name))
+  (let* ((base (org-readme-guess-package-name))
 	 (texifile (concat base ".texi"))
 	 (infofile (concat base ".info"))
 	 (changelog (org-readme-get-change))
          melpa el-get)
     ;; these functions will be used later
-    (cl-flet ((gitadd (file) (shell-command (concat "git add " file)))
-	      (gitrm (file) (shell-command (concat "git rm " file))))
+    (cl-flet ((gitadd (file) (message "Git adding %s" file)
+		      (shell-command (concat "git add " file)))
+	      (gitrm (file) (delete-file file)
+		     (shell-command (concat "git rm " file))))
       ;; add melpa recipe if necessary
       (when (org-readme-check-opt org-readme-build-melpa-recipe)
 	(setq melpa (org-readme-build-melpa))
 	(when melpa
-	  (message "Adding Melpa recipe")
 	  (gitadd (concat "melpa/" (file-name-nondirectory melpa)))))
       ;; add el-get recipe
       (when (org-readme-check-opt org-readme-build-el-get-recipe)
 	(setq el-get (org-readme-build-el-get))
 	(when el-get
-	  (message "Adding El-Get recipe")
 	  (gitadd (concat "el-get/" (file-name-nondirectory el-get)))))
       ;; add Readme.org
-      (message "Git Adding Readme")
       (gitadd (file-name-nondirectory (org-readme-find-readme)))
       ;; add either .info or .texi file, and delete Readme.md if necessary
       (when (file-exists-p texifile)
 	(when (and (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
 		   (file-exists-p "Readme.md"))
-	  (delete-file "Readme.md")
 	  (gitrm "Readme.md"))
+	;; add either the info & dir files or the texifile
 	(if (and (org-readme-check-opt org-readme-drop-texi-after-build-info)
 		 (file-exists-p infofile))
-	    (progn (delete-file texifile)
-		   (gitadd infofile)
-		   (if (file-exists-p
-			(expand-file-name
-			 "dir" (file-name-directory (buffer-file-name))))
+	    (progn (gitadd infofile)
+		   (if (file-exists-p (expand-file-name
+				       "dir" (file-name-directory (buffer-file-name))))
 		       (gitadd "dir"))
 		   (gitrm texifile))
 	  (gitadd texifile)))
       ;; add Readme.md if it wasn't deleted
-      (when (file-exists-p "Readme.md") (gitadd "Readme.md"))
-      ;; add elisp file
-      (message "Git Adding %s" thisfile)
-      (gitadd thisfile)
+      (when (file-exists-p "Readme.md")
+	(gitadd "Readme.md"))
+      ;; add this file
+      (gitadd (file-name-nondirectory (buffer-file-name)))
       ;; commit the changes
       (when (file-exists-p changelog)
 	(message "Git Committing")
