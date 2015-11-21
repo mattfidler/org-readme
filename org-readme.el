@@ -1018,78 +1018,72 @@ If N is provided return all matches of the Nth subexpression of REGEX."
       (org-readme-remove-section "Variables" ret)
       (write-file readme))))
 
+(defun org-readme-get-github-repo nil
+  "Return the name of the github repo for the project, or nil if none found.
+Assumes the current buffer contains a toplevel project file."
+  (let* ((dir (file-name-directory (buffer-file-name)))
+	 (git-cfg (expand-file-name "config" (expand-file-name ".git" dir))))
+    (if (file-exists-p git-cfg)
+	(with-temp-buffer
+	  (insert-file-contents git-cfg)
+	  (goto-char (point-min))
+	  (if (or (re-search-forward "git@github.com:\\(.*?\\)[.]git" nil t)
+		  (re-search-forward "https://github.com/\\(.*\\)" nil t))
+	      (match-string 1))))))
+
 (defun org-readme-build-el-get ()
   "Builds an el-get recipe. This assumes github, though others could be added.
 Returns file name if created."
-  (let* ((dir (file-name-directory (buffer-file-name)))
-	 (el-get (expand-file-name "el-get" dir))
+  (let* ((el-get (expand-file-name
+		  "el-get" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
-	 (git-cfg (expand-file-name "config" (expand-file-name ".git" dir)))
-	 github rcp)
+	 (github (org-readme-get-github-repo)))
     (unless (file-exists-p el-get)
       (make-directory el-get))
     (setq el-get (expand-file-name lib-name el-get))
-    (when (file-exists-p git-cfg)
-      (with-temp-buffer
-        (insert-file-contents git-cfg)
-        (goto-char (point-min))
-        (if (or (re-search-forward "git@github.com:\\(.*?\\)[.]git" nil t)
-		(re-search-forward "https://github.com/\\(.*\\)" nil t))
-	    (setq github (match-string 1))))
-      (setq rcp
-            (format "(:name %s\n :description \"%s\"%s\n :website \"%s\"\n :type git\n :url \"%s\")"
-		    ;; :name
-                    lib-name
-		    ;; :description
-		    (save-excursion
-                      (goto-char (point-min))
-                      (if (re-search-forward
-			   (format "^[ \t]*;;;[ \t]*%s[.]el[ \t]*--+[ \t]*\\(.*?\\)[ \t]*$"
-				   lib-name)
-			   nil t)
-                          (match-string 1)
-                        lib-name))
-                    ;; :depends
-                    (save-excursion
-                      (goto-char (point-min))
-                      (if (re-search-forward "^[ \t]*;+[ \t]*[Pp]ackage-[Rr]equires:[ \t]*\\(.*?\\)[ \t]*$" nil t)
-                          (condition-case err
-                              (format "\n :depends %s"
-				      (mapcar 'car (read (match-string 1))))
-                            (error (message "Error parsing package-requires: %s" err) ""))
-                        ""))
-                    ;; :website
-                    (save-excursion
-                      (goto-char (point-min))
-                      (if (re-search-forward "^[ \t]*;+[ \t]*URL:[ \t]*\\(.*\\)[ \t]*$" nil t)
-                          (match-string 1)
-                        (format "https://github.com/%s" github)))
-                    ;; :url
-                    (format "https://github.com/%s.git" github)))
-      (when rcp (with-temp-file el-get (insert rcp))))
-    (if (file-exists-p el-get) el-get)))
+    (unless (not github)
+      (with-temp-file el-get
+	(insert (format "(:name %s\n :description \"%s\"%s\n :website \"%s\"\n :type git\n :url \"%s\")"
+			lib-name	; :name
+			(save-excursion	; :description
+			  (goto-char (point-min))
+			  (if (re-search-forward
+			       (format "^[ \t]*;;;[ \t]*%s[.]el[ \t]*--+[ \t]*\\(.*?\\)[ \t]*$"
+				       lib-name) nil t)
+			      (match-string 1)
+			    lib-name))
+			(save-excursion	; :depends
+			  (goto-char (point-min))
+			  (if (re-search-forward "^[ \t]*;+[ \t]*[Pp]ackage-[Rr]equires:[ \t]*\\(.*?\\)[ \t]*$" nil t)
+			      (condition-case err
+				  (format "\n :depends %s" (mapcar 'car (read (match-string 1))))
+				(error (message "Error parsing package-requires: %s" err) ""))
+			    ""))
+			(save-excursion	; :website
+			  (goto-char (point-min))
+			  (if (re-search-forward "^[ \t]*;+[ \t]*URL:[ \t]*\\(.*\\)[ \t]*$" nil t)
+			      (match-string 1)
+			    (format "https://github.com/%s" github)))
+			;; :url
+			(format "https://github.com/%s.git" github))))
+      el-get)))
 
 (defun org-readme-build-melpa ()
   "Builds a melpa recipe. This assumes github, though other could be added.
 Returns file name if created."
   ;; this assumes we are in the main elisp file
-  (let* ((dir (file-name-directory (buffer-file-name)))
-	 (melpa (expand-file-name "melpa" dir))
+  (let* ((melpa (expand-file-name
+		 "melpa" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
-	 (git-cfg (expand-file-name "config" (expand-file-name ".git" dir)))
-	 rcp)
+	 (github (org-readme-get-github-repo)))
     (unless (file-exists-p melpa)
       (make-directory melpa))
     (setq melpa (expand-file-name lib-name melpa))
-    (when (file-exists-p git-cfg)
-      (with-temp-buffer
-	(insert-file-contents git-cfg)
-	(goto-char (point-min))
-	(when (re-search-forward "git@github.com:\\(.*?\\)[.]git")
-	  (setq rcp (format "(%s\n :repo \"%s\"\n :fetcher github\n)"
-			    lib-name (match-string 1)))))
-      (when rcp (with-temp-file melpa (insert rcp))))
-    (if (file-exists-p melpa) melpa)))
+    (when github
+      (with-temp-file melpa
+	(insert (format "(%s\n :repo \"%s\"\n :fetcher github\n)"
+			lib-name github)))
+      melpa)))
 
 (defun org-readme-buffer-version ()
   "Gets the version of the current buffer."
