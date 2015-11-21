@@ -872,11 +872,14 @@ The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `r
   (let ((base (file-name-sans-extension
                (file-name-nondirectory (buffer-file-name)))))
     (when (string= (downcase base) "readme")
-      (let ((df (directory-files (file-name-directory (buffer-file-name)) t ".*[.]el$")))
+      (let ((df (directory-files (file-name-directory (buffer-file-name))
+				 t ".*[.]el$")))
         (unless (= 1 (length df))
-          (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-mode[.]el$")))
+          (setq df (directory-files (file-name-directory (buffer-file-name))
+				    t ".*-mode[.]el$")))
         (unless (= 1 (length df))
-          (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-pkg[.]el$")))
+          (setq df (directory-files (file-name-directory (buffer-file-name))
+				    t ".*-pkg[.]el$")))
         (when (= 1 (length df))
           (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))))))
     base))
@@ -902,15 +905,16 @@ If COPY is non-nil copy the output to Readme.org."
 	     (formattedtxt
 	      (with-temp-buffer
 		(insert txt)
-		(org-readme-regexp-pairs [["^;;;;+" ""]
-					  ["^;;;+" "*"]
-					  [";+" ""]
-					  ["`\\(.*?\\)'" " - *\\1* :"]
-					  ["^\\*[ \t]+Commands:" "* Commands & keybindings"]
-					  ["^\\*[ \t]+Customizable Options:" "* Customizable Options"]
-					  ["\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="]
-					  ["\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="]
-					  ["=\"\\(.*\\)\"=" "=\\1="]])
+		(org-readme-regexp-pairs
+		 [["^;;;;+" ""]
+		  ["^;;;+" "*"]
+		  [";+" ""]
+		  ["`\\(.*?\\)'" " - *\\1* :"]
+		  ["^\\*[ \t]+Commands:" "* Commands & keybindings"]
+		  ["^\\*[ \t]+Customizable Options:" "* Customizable Options"]
+		  ["\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="]
+		  ["\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="]
+		  ["=\"\\(.*\\)\"=" "=\\1="]])
 		(buffer-string))))
 	(with-temp-buffer
 	  (insert-file-contents readme)
@@ -965,8 +969,7 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		 (setq ret3 (concat ret3 "\n*** " x "\n" (fd tmp))))
 		((string-match "interactive" tmp)
 		 (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
-		(t
-		 (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
+		(t (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
 	   (error nil)))
        lst)
       (setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
@@ -996,9 +999,10 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		      (skip-chars-backward " \t\n")
 		      (delete-region (point) (point-max)))
 		    ;; reformat to org format
-		    (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
-					      ["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
-					      ["^[ \t]*[*]+" ""]]) ;remove empty list items
+		    (org-readme-regexp-pairs
+		     [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
+		      ["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
+		      ["^[ \t]*[*]+" ""]]) ;remove empty list items
 		    (goto-char (point-max))
 		    (insert "\n")	;final extra newline
 		    (buffer-string))))
@@ -1013,8 +1017,7 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		((string-match "Not documented" tmp))
 		((string-match "customize" tmp)
 		 (setq ret1 (concat ret1 "\n*** " x "\n" (fd tmp))))
-		(t
-		 (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
+		(t (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
 	   (error nil)))
        lst)
       (setq ret (concat "* Variables\n" ret1 "\n" ret2)))
@@ -1459,43 +1462,28 @@ If so, return the name of that Lisp file, otherwise return nil."
   (interactive)
   (when (org-readme-check-opt org-readme-build-markdown)
     ;; first create the Readme.md file
-    (org-readme-convert-to-markdown)	;create Readme.md
+    (org-readme-convert-to-markdown)
     (when (org-readme-check-opt org-readme-build-texi)
       (when (executable-find "pandoc")
-        (let ((default-directory (file-name-directory (buffer-file-name)))
-              (base (file-name-sans-extension
-                     (file-name-nondirectory (buffer-file-name))))
-              (file (concat (file-name-sans-extension
-                             (file-name-nondirectory (buffer-file-name)))
-                            ".texi"))
-              pkg ver desc cnt)
-          (when (string= (downcase base) "readme")
-            (let ((df (directory-files (file-name-directory (buffer-file-name)) t ".*[.]el$")))
-              (unless (= 1 (length df))
-                (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-mode[.]el$")))
-              (unless (= 1 (length df))
-                (setq df (directory-files (file-name-directory (buffer-file-name)) t ".*-pkg[.]el$")))
-              (when (= 1 (length df))
-                (setq base (file-name-sans-extension (file-name-nondirectory (nth 0 df)))
-		      file (concat base ".texi")))))
-	  ;; convert Readme.md to a .texi file
-	  (shell-command (concat "pandoc Readme.md -s -o " file))
-	  ;; get information for direntry
-	  (setq cnt (with-temp-buffer
-		      (insert-file-contents file)
-		      (goto-start)
-		      (if (search-forward "@strong{Description} -- " nil t)
-			  (setq desc (buffer-substring (point) (point-at-eol)))
-			(setq desc base))
-		      (goto-start)
-		      (if (search-forward "@strong{Package-Requires} -- " nil t)
-			  (setq pkg (buffer-substring (point) (point-at-eol)))
-			(setq pkg "()"))
-		      (goto-start)
-		      (if (search-forward "@strong{Version} -- " nil t)
-			  (setq ver (buffer-substring (point) (point-at-eol)))
-			(setq ver "0.0"))
-		      (buffer-string)))
+        (let ((base (org-readme-guess-package-name))
+	      (file (concat (file-name-sans-extension
+			     (file-name-nondirectory (buffer-file-name)))
+			    ".texi"))
+	      pkg ver desc cnt)
+	  (cl-macrolet ((shell-cmd-concat (&rest strs) (shell-command (apply 'concat strs)))
+			(getval (var str default) ;var = variable to assign to, str = string to search for
+				(goto-start)	  ;default = default value
+				(if (search-forward str nil t)
+				    (setq var (buffer-substring (point) (point-at-eol)))
+				  (setq var default))))
+	    ;; convert Readme.md to a .texi file
+	    (shell-cmd-concat "pandoc Readme.md -s -o " file)
+	    ;; get information for direntry
+	    (setq cnd (with-temp-buffer
+			(getval desc "@strong{Description} -- " base)
+			(getval pkg "@strong{Package-Requires} -- " "()")
+			(getval ver "@strong{Version} -- " "0.0")
+			(buffer-string))))
 	  ;; Now add direntry to the .texi file
 	  (with-temp-file file
 	    (insert cnt)
@@ -1507,9 +1495,9 @@ If so, return the name of that Lisp file, otherwise return nil."
 	  ;; create and install the .info file
 	  (when (and (org-readme-check-opt org-readme-build-info)
 		     (executable-find "makeinfo"))
-	    (shell-command (concat "makeinfo " base ".texi"))
+	    (shell-cmd-concat "makeinfo " base ".texi")
 	    (when (executable-find "install-info")
-	      (shell-command (concat "install-info --dir-file=dir " base ".info")))))))))
+	      (shell-cmd-concat "install-info --dir-file=dir " base ".info"))))))))
 
 ;;;###autoload
 (defun org-readme-sync (&optional comment-added)
