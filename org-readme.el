@@ -7,9 +7,9 @@
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 20151119.1039
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Thu Nov 19 10:39:47 2015
+;; Last-Updated: Tue Nov 24 01:27:10 2015
 ;;           By: Joe Bloggs
-;;     Update #: 803
+;;     Update #: 805
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -1458,46 +1458,77 @@ If so, return the name of that Lisp file, otherwise return nil."
 
 ;;;###autoload
 (defun org-readme-gen-info ()
-  "With the proper tools, generates an info and dir from the current readme.org"
+  "With the proper tools, generate an info and dir from the current readme.org."
   (interactive)
   (when (org-readme-check-opt org-readme-build-markdown)
     ;; first create the Readme.md file
     (org-readme-convert-to-markdown)
     (when (org-readme-check-opt org-readme-build-texi)
       (when (executable-find "pandoc")
-        (let ((base (org-readme-guess-package-name))
-	      (file (concat (file-name-sans-extension
-			     (file-name-nondirectory (buffer-file-name)))
-			    ".texi"))
-	      pkg ver desc cnt)
-	  (cl-macrolet ((shell-cmd-concat (&rest strs) (shell-command (apply 'concat strs)))
-			(getval (var str default) ;var = variable to assign to, str = string to search for
-				(goto-start)	  ;default = default value
-				(if (search-forward str nil t)
-				    (setq var (buffer-substring (point) (point-at-eol)))
-				  (setq var default))))
+	(cl-flet ((shell-cmd-concat (&rest strs) (shell-command (apply 'concat strs)))
+		  (getval (var str default) ;var = variable to assign to, str = string to search for
+			  (goto-start)	  ;default = default value
+			  (if (search-forward str nil t)
+			      (set var (buffer-substring (point) (point-at-eol)))
+			    (set var default))))
+	  (let ((base (org-readme-guess-package-name))
+		(file (concat (file-name-sans-extension
+			       (file-name-nondirectory (buffer-file-name)))
+			      ".texi"))
+		pkg ver desc cnt)
 	    ;; convert Readme.md to a .texi file
 	    (shell-cmd-concat "pandoc Readme.md -s -o " file)
 	    ;; get information for direntry
-	    (setq cnd (with-temp-buffer
-			(getval desc "@strong{Description} -- " base)
-			(getval pkg "@strong{Package-Requires} -- " "()")
-			(getval ver "@strong{Version} -- " "0.0")
-			(buffer-string))))
-	  ;; Now add direntry to the .texi file
-	  (with-temp-file file
-	    (insert cnt)
-	    (goto-start)
-	    (when (re-search-forward "@documentencoding")
-	      (goto-char (point-at-eol))
-	      (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
-		      base ": (" base ").     " desc "\n@end direntry\n")))
-	  ;; create and install the .info file
-	  (when (and (org-readme-check-opt org-readme-build-info)
-		     (executable-find "makeinfo"))
-	    (shell-cmd-concat "makeinfo " base ".texi")
-	    (when (executable-find "install-info")
-	      (shell-cmd-concat "install-info --dir-file=dir " base ".info"))))))))
+	    (setq cnt (with-temp-buffer
+			(insert-file-contents file)
+			(getval 'desc "@strong{Description} -- " base)
+			(getval 'pkg "@strong{Package-Requires} -- " "()")
+			(getval 'ver "@strong{Version} -- " "0.0")
+			(buffer-string)))
+	    ;; Now add direntry to the .texi file
+	    (with-temp-file file
+	      (insert cnt)
+	      (goto-start)
+	      (when (re-search-forward "@documentencoding")
+		(goto-char (point-at-eol))
+		(insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
+			base ": (" base ").     " desc "\n@end direntry\n")))
+	    ;; create and install the .info file
+	    (when (and (org-readme-check-opt org-readme-build-info)
+		       (executable-find "makeinfo"))
+	      (shell-cmd-concat "makeinfo " base ".texi")
+	      (when (executable-find "install-info")
+		(shell-cmd-concat "install-info --dir-file=dir " base ".info")))))))))
+
+(defun org-readme-create-tar-archive nil
+  "Create tar archive for package files in the current directory."
+  (cl-flet ((getval (regexp)
+		    (save-excursion (goto-start)
+				    (re-search-forward regexp)
+				    (match-string 1))))
+    (let* ((base (org-readme-guess-package-name))
+	   (desc (getval "---[ \t]*\\(.*\\)[ \t]*"))
+	   (ver (getval "^[ \t]*;+[ \t]*Version:[ \t]*\\(.*\\)[ \t]*"))
+	   (pkg (getval "^;;[ \t]*Package-Requires:[ \t]*\\(.*\\)[ \t]*"))
+	   (tardir (concat base "-" ver))
+	   (tarbase (concat tardir "/" base)))
+      (when (file-exists-p (concat base ".tar"))
+	(delete-file (concat base ".tar")))
+      (make-directory tardir t)
+      (copy-file (concat base ".el") (concat tarbase ".el") t)
+      (copy-file (concat base ".info") (concat tarbase ".info") t)
+      (copy-file "dir" (concat tardir "/dir") t)
+      (with-temp-file (concat tarbase "-pkg.el")
+	(insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
+      (if (executable-find "tar")
+	  (shell-command (concat "tar -cvf " base ".tar " tardir "/"))
+	(shell-command (concat "7z" (if (executable-find "7za") "a" "")
+			       " -ttar -so " base ".tar " tardir "/*.*")))
+      (mapcar 'delete-file (list (concat tarbase ".el")
+				 (concat tarbase "-pkg.el")
+				 (concat tarbase ".info")
+				 (concat tardir "/dir")))
+      (delete-directory tardir))))
 
 ;;;###autoload
 (defun org-readme-sync (&optional comment-added)
@@ -1544,7 +1575,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	    (let ((case-fold-search t))
 	      (when (re-search-forward "^[ \t]*;+[ \t]*Version:" nil t)
 		(if (or (org-readme-check-opt org-readme-use-melpa-versions)
-			(save-match-data (looking-at "[ \t]*[0-9]\\{8\\}[.][0-9]\\{4\\}[ \t]*$")))
+			(save-match-data (looking-at "[ \t]*[0-9]\\{8\\}[.][0-9]\\{2,4\\}[ \t]*$")))
 		    (progn
 		      (delete-region (point) (point-at-eol))
 		      (insert (concat " " (format-time-string "%Y%m%d." (current-time))
@@ -1577,32 +1608,16 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	;; Copy top header from elisp file into readme file
 	(when (org-readme-check-opt org-readme-add-top-header-to-readme)
 	  (org-readme-top-header-to-readme))
+	;; save the elisp buffer before moving on
 	(save-buffer)
 	;; Create info documentation (if required; checks are done in `org-readme-gen-info')
 	(org-readme-gen-info)
 	;; Create .tar archive
-	(when (file-exists-p (concat base ".tar"))
-	  (delete-file (concat base ".tar")))
-	(when (and (org-readme-check-opt org-readme-create-tar-package)
-		   (or (executable-find "tar")
+	(when (and (or (executable-find "tar")
 		       (executable-find "7z")
-		       (executable-find "7za")))
-	  (make-directory (concat base "-" ver))
-	  (copy-file (concat base ".el") (concat base "-" ver "/" base ".el"))
-	  (copy-file (concat base ".info") (concat base "-" ver "/" base ".info"))
-	  (copy-file "dir" (concat base "-" ver "/dir"))
-	  (with-temp-file (concat base "-" ver "/" base "-pkg.el")
-	    (insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
-	  (if (executable-find "tar")
-	      (shell-command (concat "tar -cvf " base ".tar " base "-" ver "/"))
-	    (shell-command (concat "7z" (if (executable-find "7za") "a" "")
-				   " -ttar -so " base ".tar " base "-" ver "/*.*")))
-	  (mapcar 'delete-file
-		  (list (concat base "-" ver "/" base ".el")
-			(concat base "-" ver "/" base "-pkg.el")
-			(concat base "-" ver "/" base ".info")
-			(concat base "-" ver "/dir")))
-	  (delete-directory (concat base "-" ver)))
+		       (executable-find "7za"))
+		   (org-readme-check-opt org-readme-create-tar-package))
+	  (org-readme-create-tar-archive))
 	;; post to marmalade
 	(when (and (featurep 'http-post-simple)
 		   (org-readme-check-opt org-readme-sync-marmalade))
@@ -1610,8 +1625,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  (org-readme-marmalade-post))
 	;; post to elisp file to emacswiki
 	(when (and (featurep 'yaoddmuse)
-		   (org-readme-check-opt org-readme-sync-emacswiki
-					 "Post elisp file to emacswiki?"))
+		   (org-readme-check-opt org-readme-sync-emacswiki "Post elisp file to emacswiki?"))
 	  (message "Posting elisp file to emacswiki")
 	  (emacswiki-post nil ""))
 	;; add files to git repo, and create MELPA recipe
@@ -1619,15 +1633,13 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  (org-readme-git))
 	;; post readme file to emacswiki
 	(when (and (featurep 'yaoddmuse)
-		   (org-readme-check-opt
-		    org-readme-sync-emacswiki
-		    "Post Readme.org to emacswiki?"))
+		   (org-readme-check-opt org-readme-sync-emacswiki "Post Readme.org to emacswiki?"))
 	  (message "Posting Description to emacswiki")
 	  (org-readme-convert-to-emacswiki))
 	;; revert the window config back to how it was before
 	(when org-readme-edit-last-window-configuration
 	  (set-window-configuration org-readme-edit-last-window-configuration)
-	  (setq org-readme-edit-last-window-configuration nil))))))
+	  (setq org-readme-edit-last-window-configuration nil)))))))
 
 ;;;###autoload
 (defun org-readme-to-commentary ()
