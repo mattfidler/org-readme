@@ -14,10 +14,11 @@
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
 ;;
+;;
 ;; Features that might be required by this library:
 ;;
 ;;   yaoddmuse http-post-simple org-html auto-document
-;; 
+;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Commentary: 
@@ -844,13 +845,12 @@ BEGIN END are the region boundaries.
 PAIRS is: [[regexStr1 replaceStr1] [regexStr2 replaceStr2] …]
 It can be list or vector, for the elements or the entire argument.
 The optional arguments FIXEDCASE, LITERAL, STRING & SUBEXP are the same as in `replace-match'."
-  (save-restriction
-    (mapc
-     (lambda (x)
-       (goto-start)
-       (while (search-forward-regexp (elt x 0) (point-max) t)
-	 (replace-match (elt x 1) fixedcase literal string subexp)))
-     pairs)))
+  (save-excursion
+    (mapc (lambda (x)
+	    (goto-start)
+	    (while (search-forward-regexp (elt x 0) (point-max) t)
+	      (replace-match (elt x 1) fixedcase literal string subexp)))
+	  pairs)))
 
 (defun org-readme-update-last-update nil
   "Update the \"Last-Updated:\", \"By:\" & \"Update #:\" fields in the elisp file header."
@@ -1639,7 +1639,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	;; revert the window config back to how it was before
 	(when org-readme-edit-last-window-configuration
 	  (set-window-configuration org-readme-edit-last-window-configuration)
-	  (setq org-readme-edit-last-window-configuration nil)))))))
+	  (setq org-readme-edit-last-window-configuration nil))))))
 
 ;;;###autoload
 (defun org-readme-to-commentary ()
@@ -1871,14 +1871,19 @@ match to `org-readme-end-section-regexp'."
 (defun org-readme-update-required-features-section nil
   "Update the required features section of the elisp file."
   (interactive)
-  (org-readme-regexp-pairs (list (list
-				  (replace-regexp-in-string
-				   "\\$" "\n;;[ \t]*\n;;[ \t]*\\\\(.*\\\\)$"
-				   (replace-regexp-in-string
-				    "\\^" ";;"
-				    org-readme-features-regexp))
-				  (mapconcat 'identity (org-readme-get-required-features) " ")
-				  )) nil nil nil 1))
+  (save-excursion
+    (goto-start)
+    (if (re-search-forward (replace-regexp-in-string
+			    "\\$" "\n;;[ \t]*\n;;[ \t]*\\\\(.*\\\\)$"
+			    (replace-regexp-in-string
+			     "\\^" ";;**" org-readme-features-regexp)) nil t)
+	(replace-match (mapconcat 'identity (org-readme-get-required-features) " ")
+		       nil nil nil 1)
+      (unless (not (re-search-forward ";;;;+\\|;;+[ \t]Commentary" nil t))
+	(forward-line -1)
+	(insert (concat ";;\n;; Features that might be required by this library:\n;;\n;;   "
+			(mapconcat 'identity (org-readme-get-required-features) " ")
+			"\n;;\n"))))))
 
 (provide 'org-readme)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
