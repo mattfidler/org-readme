@@ -191,9 +191,6 @@
 ;;  `org-readme-use-pandoc-markdown'
 ;;    Use pandoc's grid tables instead of transferring the tables to html.
 ;;    default = (quote prompt)
-;;  `org-readme-build-texi'
-;;    Build library-name.texi from Readme.org, using Readme.md and pandoc.
-;;    default = (quote prompt)
 ;;  `org-readme-drop-markdown-after-build-texi'
 ;;    Remove Readme.md after texinfo is generated.
 ;;    default = (quote prompt)
@@ -716,19 +713,8 @@ Requires `yaoddmuse'."
   :type 'yesnoprompt
   :group 'org-readme)
 
-(defcustom org-readme-build-markdown 'prompt
-  "Build Readme.md from Readme.org."
-  :type 'yesnoprompt
-  :group 'org-readme)
-
 (defcustom org-readme-use-pandoc-markdown 'prompt
   "Use pandoc's grid tables instead of transferring the tables to html."
-  :type 'yesnoprompt
-  :group 'org-readme)
-
-(defcustom org-readme-build-texi 'prompt
-  "Build library-name.texi from Readme.org, using Readme.md and pandoc.
-Requires `org-readme-build-markdown' to be non-nil as pandoc to be found."
   :type 'yesnoprompt
   :group 'org-readme)
 
@@ -739,7 +725,7 @@ Requires `org-readme-build-markdown' to be non-nil as pandoc to be found."
 
 (defcustom org-readme-build-info 'prompt
   "Build library-name.info from Reade.org using texi.  
-Requires `org-readme-build-texi' to be non-nil, pandoc and makeinfo to be found. 
+Requires pandoc and makeinfo to be found. 
 This will also create the directory entry using install-info, if it is found."
   :type 'yesnoprompt
   :group 'org-readme)
@@ -1214,7 +1200,7 @@ Returns file name if created."
   "Convert Readme.org to markdown Readme.md."
   (interactive)
   (let ((readme (org-readme-find-readme))
-        (what "Readme.md")
+        (markdown "Readme.md")
         p1 md tmp tmp2)
     (with-temp-buffer
       (insert-file-contents readme)
@@ -1286,11 +1272,9 @@ Returns file name if created."
 	      (org-export-replace-region-by 'html))
 	    (org-readme-regexp-pairs [["class" "align"]]))))
       ;; Lists are the same.
-      (setq readme (buffer-string)))
-    (with-temp-file (expand-file-name
-		     "Readme.md"
-		     (file-name-directory (buffer-file-name)))
-      (insert readme))))
+      (setq markdown (buffer-string)))
+    (with-temp-file (expand-file-name "Readme.md" (file-name-directory (buffer-file-name)))
+      (insert markdown))))
 
 ;;;###autoload
 (defun org-readme-convert-to-emacswiki ()
@@ -1460,45 +1444,47 @@ If so, return the name of that Lisp file, otherwise return nil."
 (defun org-readme-gen-info ()
   "With the proper tools, generate an info and dir from the current readme.org."
   (interactive)
-  (when (org-readme-check-opt org-readme-build-markdown)
-    ;; first create the Readme.md file
-    (org-readme-convert-to-markdown)
-    (when (org-readme-check-opt org-readme-build-texi)
-      (when (executable-find "pandoc")
-	(cl-flet ((shell-cmd-concat (&rest strs) (shell-command (apply 'concat strs)))
-		  (getval (var str default) ;var = variable to assign to, str = string to search for
-			  (goto-start)	  ;default = default value
-			  (if (search-forward str nil t)
-			      (set var (buffer-substring (point) (point-at-eol)))
-			    (set var default))))
-	  (let ((base (org-readme-guess-package-name))
-		(file (concat (file-name-sans-extension
-			       (file-name-nondirectory (buffer-file-name)))
-			      ".texi"))
-		pkg ver desc cnt)
-	    ;; convert Readme.md to a .texi file
-	    (shell-cmd-concat "pandoc Readme.md -s -o " file)
-	    ;; get information for direntry
-	    (setq cnt (with-temp-buffer
-			(insert-file-contents file)
-			(getval 'desc "@strong{Description} -- " base)
-			(getval 'pkg "@strong{Package-Requires} -- " "()")
-			(getval 'ver "@strong{Version} -- " "0.0")
-			(buffer-string)))
-	    ;; Now add direntry to the .texi file
-	    (with-temp-file file
-	      (insert cnt)
-	      (goto-start)
-	      (when (re-search-forward "@documentencoding")
-		(goto-char (point-at-eol))
-		(insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
-			base ": (" base ").     " desc "\n@end direntry\n")))
-	    ;; create and install the .info file
-	    (when (and (org-readme-check-opt org-readme-build-info)
-		       (executable-find "makeinfo"))
-	      (shell-cmd-concat "makeinfo " base ".texi")
-	      (when (executable-find "install-info")
-		(shell-cmd-concat "install-info --dir-file=dir " base ".info")))))))))
+  (if (not (executable-find "pandoc"))
+      (error "Can't find pandoc executable"))
+  (if (not (executable-find "makeinfo"))
+      (error "Can't find makeinfo executable"))
+  ;; first create the Readme.md file
+  (org-readme-convert-to-markdown)
+  (cl-flet ((shell-cmd-concat (&rest strs) (shell-command (apply 'concat strs)))
+	    (getval (var str default) ;var = variable to assign to, str = string to search for
+		    (goto-start)      ;default = default value
+		    (if (search-forward str nil t)
+			(set var (buffer-substring (point) (point-at-eol)))
+		      (set var default))))
+    (let ((base (org-readme-guess-package-name))
+	  (texifile (concat (file-name-sans-extension
+			     (file-name-nondirectory (buffer-file-name)))
+			    ".texi"))
+	  pkg ver desc cnt)
+      ;; convert Readme.md to a .texi file
+      (shell-cmd-concat "pandoc Readme.md -s -o " texifile)
+      ;; get information for direntry
+      (setq cnt (with-temp-buffer
+		  (insert-file-contents texifile)
+		  (getval 'desc "@strong{Description} -- " base)
+		  (getval 'pkg "@strong{Package-Requires} -- " "()")
+		  (getval 'ver "@strong{Version} -- " "0.0")
+		  (buffer-string)))
+      ;; Now add direntry to the .texi file
+      (with-temp-file texifile
+	(insert cnt)
+	(goto-start)
+	(when (re-search-forward "@documentencoding")
+	  (goto-char (point-at-eol))
+	  (insert "\n@dircategory Emacs lisp libraries\n@direntry\n* "
+		  base ": (" base ").     " desc "\n@end direntry\n")))
+      ;; create the .info file
+      (shell-cmd-concat "makeinfo " base ".texi")
+      ;; only create the dir file if the install-info executable is present
+      (when (executable-find "install-info")
+	(shell-cmd-concat "install-info --dir-file=dir " base ".info"))))
+  ;; remove the markdown file as it is no longer needed
+  (delete-file "Readme.md"))
 
 (defun org-readme-create-tar-archive nil
   "Create tar archive for package files in the current directory."
@@ -1617,8 +1603,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  (org-readme-top-header-to-readme))
 	;; save the elisp buffer before moving on
 	(save-buffer)
-	;; Create info documentation (if required; checks are done in `org-readme-gen-info')
-	(org-readme-gen-info)
+	;; Create info documentation
+	(when (org-readme-check-opt org-readme-build-info)
+	  (org-readme-gen-info))
 	;; Create .tar archive
 	(when (and (or (executable-find "tar")
 		       (executable-find "7z")
