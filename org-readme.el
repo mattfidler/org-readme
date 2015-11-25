@@ -7,9 +7,9 @@
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 20151119.1039
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Tue Nov 24 01:27:10 2015
+;; Last-Updated: Wed Nov 25 20:11:14 2015
 ;;           By: Joe Bloggs
-;;     Update #: 805
+;;     Update #: 806
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -718,20 +718,22 @@ Requires `yaoddmuse'."
   :type 'yesnoprompt
   :group 'org-readme)
 
-(defcustom org-readme-drop-markdown-after-build-texi 'prompt
+(defcustom org-readme-drop-markdown-after-build-texi t
   "Remove Readme.md after texinfo is generated."
   :type 'yesnoprompt
   :group 'org-readme)
 
-(defcustom org-readme-build-info 'prompt
-  "Build library-name.info from Reade.org using texi.  
-Requires pandoc and makeinfo to be found. 
+(defcustom org-readme-build-info nil
+  "Build .info file from Reade.org using texi.
+Requires pandoc and makeinfo to be found.
 This will also create the directory entry using install-info, if it is found."
   :type 'yesnoprompt
   :group 'org-readme)
 
-(defcustom org-readme-drop-texi-after-build-info 'prompt
-  "Remove the texi information after building info files."
+(defcustom org-readme-drop-texi-after-build-info t
+  "Remove the texi information after building info files.
+Either the .texi file or the info file and dir will be added to
+the git repo depending on this option."
   :type 'yesnoprompt
   :group 'org-readme)
 
@@ -1376,7 +1378,8 @@ Returns file name if created."
     (cl-flet ((gitadd (file) (message "Git adding %s" file)
 		      (shell-command (concat "git add " file)))
 	      (gitrm (file) (delete-file file)
-		     (shell-command (concat "git rm " file))))
+		     (shell-command (concat "git rm --ignore-unmatch " file))
+		     (shell-command (concat "rm -f " file))))
       ;; add melpa recipe if necessary
       (when (org-readme-check-opt org-readme-build-melpa-recipe)
 	(setq melpa (org-readme-build-melpa))
@@ -1484,7 +1487,8 @@ If so, return the name of that Lisp file, otherwise return nil."
       (when (executable-find "install-info")
 	(shell-cmd-concat "install-info --dir-file=dir " base ".info"))))
   ;; remove the markdown file as it is no longer needed
-  (delete-file "Readme.md"))
+  (when (org-readme-check-opt org-readme-drop-markdown-after-build-texi)
+    (delete-file "Readme.md")))
 
 (defun org-readme-create-tar-archive nil
   "Create tar archive for package files in the current directory."
@@ -1529,31 +1533,37 @@ If so, return the name of that Lisp file, otherwise return nil."
 When COMMENT-ADDED is non-nil, the comment has been added and the syncing should begin."
   (interactive)
   ;; Store the name of the package in `base'
-  (let ((base (org-readme-guess-package-name)))
+  (let ((base (org-readme-guess-package-name))
+	(single-lisp-file (org-readme-single-lisp-p)))
     ;; Check if we need to switch file or update the changelog first
+    ;; (`comment-added' should be nil unless this function was called internally)
     (if (and (not comment-added)
 	     (org-readme-in-readme-org-p))
-	(let ((single-lisp-file (org-readme-single-lisp-p)))
-	  (message "In Readme.org")
-	  ;; If there's only one lisp file, switch to it, and start again.
-	  (if single-lisp-file
-	      (progn
-		(setq org-readme-edit-last-window-configuration (current-window-configuration))
-		(find-file single-lisp-file)
-		(setq org-readme-edit-last-buffer (current-buffer))
-		(org-readme-sync))
-	    ;; Post to emacswiki if necessary
-	    (unless (not (org-readme-check-opt org-readme-sync-emacswiki
-					       "Post Readme.org to emacswiki without changes"))
-	      (message "Posting Description to emacswiki")
-	      (org-readme-convert-to-emacswiki))))
+	(progn (message "In Readme.org")
+	       ;; If there's only one lisp file, switch to it, and start again.
+	       (if single-lisp-file
+		   (progn (setq org-readme-edit-last-window-configuration
+				(current-window-configuration))
+			  (find-file single-lisp-file)
+			  (setq org-readme-edit-last-buffer (current-buffer))
+			  (org-readme-sync))
+		 ;; otherwise we are in Readme.org so post to emacswiki if necessary
+		 (unless (not (org-readme-check-opt org-readme-sync-emacswiki
+						    "Post Readme.org to emacswiki without changes"))
+		   (message "Posting Description to emacswiki")
+		   (org-readme-convert-to-emacswiki))))
       (if (and (not comment-added)
 	       (org-readme-check-opt org-readme-update-changelog))
 	  ;; Update the Changelog file if necessary
 	  (progn
 	    (setq org-readme-edit-last-buffer (current-buffer))
 	    (org-readme-update-last-update)
-	    (org-readme-edit))
+	    (org-readme-edit))		;`org-readme-sync' will be called again with `comment-added' set to t
+	;; Check we are in the elisp file now
+	(if (and (org-readme-in-readme-org-p)
+		 single-lisp-file)
+	    (find-file single-lisp-file)
+	  (error "Can't find elisp file"))
 	;; Add autoload's
 	(when (and (not org-readme-added-autoloads)
 		   (y-or-n-p "Add autoloads? "))
@@ -1622,7 +1632,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 		   (org-readme-check-opt org-readme-sync-emacswiki "Post elisp file to emacswiki?"))
 	  (message "Posting elisp file to emacswiki")
 	  (emacswiki-post nil ""))
-	;; add files to git repo, and create MELPA recipe
+	;; add files to git repo, along with MELPA and el-get recipes
 	(when (org-readme-check-opt org-readme-sync-git)
 	  (org-readme-git))
 	;; post readme file to emacswiki
