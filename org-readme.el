@@ -45,6 +45,9 @@
 ;; 
 ;; - Asks for a commentary about the library change.
 ;;   - To exit/save press `C-c C-c'
+;; - Asks the user whether to add 
+;; - Updates the headers in the elisp library according to the current date, time
+;;   and the value of `org-readme-author-name'
 ;; - Asks if this is a minor revision
 ;;   - If it is a minor revision, bumps the revision up so the new
 ;;     library will be posted to marmalade-repo.org
@@ -56,8 +59,8 @@
 ;; - Updates Marmalade-repo if the library version is different than the
 ;;   version in the server (requires http-post-simple).
 ;; - Updates the git repository with the differences that you posted.
-;; - If you are using github, this library creates a melpa recipie.
-;; - If you are using github, this library creates a el-get recipie. 
+;; - If you are using github, this library creates a melpa recipe.
+;; - If you are using github, this library creates a el-get recipe.
 ;; 
 ;; When `org-readme-sync' is called in a `Readme.org' file that is not a
 ;; single lisp file, the function exports the readme in EmacsWiki format
@@ -1547,19 +1550,20 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 			  (find-file single-lisp-file)
 			  (setq org-readme-edit-last-buffer (current-buffer))
 			  (org-readme-sync))
-		 ;; otherwise we are in Readme.org so post to emacswiki if necessary
+		 ;; otherwise there are several elisp files so just post Readme.org to emacswiki if necessary
 		 (unless (not (org-readme-check-opt org-readme-sync-emacswiki
 						    "Post Readme.org to emacswiki without changes"))
 		   (message "Posting Description to emacswiki")
 		   (org-readme-convert-to-emacswiki))))
       (if (and (not comment-added)
 	       (org-readme-check-opt org-readme-update-changelog))
-	  ;; Update the Changelog file if necessary
+	  ;; Update the Changelog file if necessary (and set `comment-added' to t)
 	  (progn
 	    (setq org-readme-edit-last-buffer (current-buffer))
 	    (org-readme-update-last-update)
-	    (org-readme-edit))		;`org-readme-sync' will be called again with `comment-added' set to t
-	;; Check we are in the elisp file now
+	    ;; `org-readme-sync' will be called again with `comment-added' set to t
+	    (org-readme-edit))
+	;; Otherwise, make sure we are in the elisp file 
 	(if (and (org-readme-in-readme-org-p)
 		 single-lisp-file)
 	    (find-file single-lisp-file)
@@ -1742,9 +1746,8 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
         (mtch ""))
     (save-excursion
       (goto-start)
-      (if (re-search-forward
-	   (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
-	   nil t)
+      (if (re-search-forward (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
+			     nil t)
           (progn
             (org-cut-subtree)
             (save-excursion (when txt (insert txt)))
