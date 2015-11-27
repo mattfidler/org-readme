@@ -1563,11 +1563,11 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	    (org-readme-update-last-update)
 	    ;; `org-readme-sync' will be called again with `comment-added' set to t
 	    (org-readme-edit))
-	;; Otherwise, make sure we are in the elisp file 
-	(if (and (org-readme-in-readme-org-p)
-		 single-lisp-file)
-	    (find-file single-lisp-file)
-	  (error "Can't find elisp file"))
+	;; Otherwise, make sure we are in the elisp file
+	(if (org-readme-in-readme-org-p)
+	    (if single-lisp-file
+		(find-file single-lisp-file)
+	      (error "Can't find elisp file")))
 	;; Add autoload's
 	(when (and (not org-readme-added-autoloads)
 		   (y-or-n-p "Add autoloads? "))
