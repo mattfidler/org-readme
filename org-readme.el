@@ -627,7 +627,7 @@ After installing el-get, Type M-x el-get-install LIB-NAME.
   :type 'regexp
   :group 'org-readme)
 
-(defcustom org-readme-features-regexp "^[ \t]*Features that might be required by this library:[ \t]*$"
+(defcustom org-readme-features-regexp "^[ \t]*Features that might be required by this library:?[ \t]*$"
   "Regexp to match the header line for the required libraries section."
   :type 'regexp
   :group 'org-readme)
@@ -901,8 +901,8 @@ If COPY is non-nil copy the output to Readme.org."
 		  ["^;;;+" "*"]
 		  [";+" ""]
 		  ["`\\(.*?\\)'" " - *\\1* :"]
-		  ["^\\*[ \t]+Commands:" "* Commands & keybindings"]
-		  ["^\\*[ \t]+Customizable Options:" "* Customizable Options"]
+		  ["^\\*[ \t]+Commands:?" "* Commands & keybindings"]
+		  ["^\\*[ \t]+Customizable Options:?" "* Customizable Options"]
 		  ["\n[ \t]*default = \\(.*\\)" "\\\\\\\\\n    default value: =\\1="]
 		  ["\n[ \t]*Keybinding:[ \t]*\\(.*\\)$" "\\\\\\\\\n    Keybinding: =\\1="]
 		  ["=\"\\(.*\\)\"=" "=\\1="]])
@@ -1686,7 +1686,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
     ;; delete current "Commentary" region in elisp file, and replace
     ;; with text extracted from Readme.org
     (goto-start)
-    (when (re-search-forward "^;;;[ \t]*Commentary:[ \t]*$" nil t)
+    (when (re-search-forward "^;;;[ \t]*Commentary:?[ \t]*$" nil t)
       (skip-chars-forward "\n")
       (let ((pt (point)))
 	(when (re-search-forward org-readme-end-section-regexp nil t)
