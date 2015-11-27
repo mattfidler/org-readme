@@ -781,7 +781,7 @@ the git repo depending on this option."
   :group 'org-readme)
 
 (defcustom org-readme-remove-sections
-  '("History" "Possible Dependencies" "Library Information"
+  '("History" "Possible Dependencies" "Library Information" "Installation"
     "Functions & macros" "Variables" "Customizable Options" "Commands & keybindings")
   "List of sections to remove when changing the Readme.org to Commentary."
   :group 'org-readme
@@ -1664,7 +1664,9 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
       (org-readme-regexp-pairs [["=\\<\\(.*?\\)\\>=" "`\\1'"] ;replace =SYMBOL= with `SYMBOL'
 				["#.*" ""] ;remove all org #+KEYWORDS
 				["^[ \t]*[A-Z]+:[ \t]*\\[[0-9]\\{4\\}-[0-9]\\{2\\}-[0-9]\\{2\\}.*" ""]
-				["^:" ""]]) ;remove : at beginning of lines
+				["^:" ""] ;remove : at beginning of lines
+				["^[ \t]*\\*+ Commentary" ""]
+				["^[ \t]*\\*+" ""]]) ;remove *'s from beginning of lines
       ;; remove all TODO items
       (goto-start)
       (when org-todo-keyword-faces
@@ -1693,7 +1695,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  (goto-char (match-beginning 0))
 	  (skip-chars-backward "\n")
 	  (delete-region pt (point))
-	  (insert readme))))))
+	  (insert "\n" readme "\n"))))))
 
 (defun org-readme-get-emacswiki-name ()
   "Gets emacswiki-style name based on buffer."
@@ -1746,7 +1748,7 @@ When AT-BEGINNING is non-nil, if the section is not found, insert TXT at the beg
         (mtch ""))
     (save-excursion
       (goto-start)
-      (if (re-search-forward (format "^\\([*]%s\\) +%s" (if any-level "+" "") section)
+      (if (re-search-forward (format "^\\([*]%s\\)[ \t]+%s" (if any-level "+" "") section)
 			     nil t)
           (progn
             (org-cut-subtree)
