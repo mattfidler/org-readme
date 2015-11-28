@@ -43,6 +43,9 @@ In addition this library defines =org-readme-sync=,  a convenience function that
 
 - Asks for a commentary about the library change.
   - To exit/save press =C-c C-c=
+- Asks the user whether to add ###;;;autoload magic cookies to the elisp file.
+- Updates the headers in the elisp library according to the current date, time
+  and the value of =org-readme-author-name=
 - Asks if this is a minor revision
   - If it is a minor revision, bumps the revision up so the new
     library will be posted to marmalade-repo.org
@@ -54,8 +57,8 @@ In addition this library defines =org-readme-sync=,  a convenience function that
 - Updates Marmalade-repo if the library version is different than the
   version in the server (requires http-post-simple).
 - Updates the git repository with the differences that you posted.
-- If you are using github, this library creates a melpa recipie.
-- If you are using github, this library creates a el-get recipie. 
+- If you are using github, this library creates a melpa recipe.
+- If you are using github, this library creates a el-get recipe. 
 
 When =org-readme-sync= is called in a =Readme.org= file that is not a
 single lisp file, the function exports the readme in EmacsWiki format

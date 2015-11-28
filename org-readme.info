@@ -1,4 +1,4 @@
-This is org-readme.info, produced by makeinfo version 4.13 from
+This is org-readme.info, produced by makeinfo version 5.2 from
 org-readme.texi.
 
 INFO-DIR-SECTION Emacs lisp libraries
@@ -22,41 +22,29 @@ File: org-readme.info,  Node: Org Readme,  Prev: Top,  Up: Top
 1 Org Readme
 ************
 
-Matthew L. Fidler ## Library Information _org-readme.el_ -- Integrates
+Matthew L. Fidler ## Library Information _org-readme.el_ — Integrates
 Readme.org and Commentary/Change-logs.
 
-   * *Filename* - org-readme.el
-
-   * *Description* - Integrate Readme.org and Commentary/Change Logs.
-
-   * *Author* - Matthew L. Fidler
-
-   * *Maintainer* - Matthew L. Fidler
-
-   * *Created* - Fri Aug 3 22:33:41 2012 (-0500)
-
-   * *Version* - 20130322.925
-
-   * *Package-Requires* - ((http-post-simple "1.0") (yaoddmuse
+   • *Filename* – org-readme.el
+   • *Description* – Integrate Readme.org and Commentary/Change Logs.
+   • *Author* – Matthew L. Fidler
+   • *Maintainer* – Matthew L. Fidler
+   • *Created* – Fri Aug 3 22:33:41 2012 (-0500)
+   • *Version* – 20151119.1039
+   • *Package-Requires* – ((http-post-simple "1.0") (yaoddmuse
      "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-
-   * *Last-Updated* - Wed Aug 22 13:11:26 2012 (-0500)
-
-   * *By* - Matthew L. Fidler
-
-   * *Update #* - 794
-
-   * *URL* - https:__github.com_mlf176f2_org-readme
-
-   * *Keywords* - Header2, Readme.org, Emacswiki, Git
-
-   * *Compatibility* - Tested with Emacs 24.1 on Windows.
+   • *Last-Updated* – Thu Nov 19 10:39:47 2015
+   • *By* – Joe Bloggs
+   • *Update #* – 803
+   • *URL* – https:__github.com_mlf176f2_org-readme
+   • *Keywords* – Header2, Readme.org, Emacswiki, Git
+   • *Compatibility* – Tested with Emacs 24.1 on Windows.
 
 * Menu:
 
 * Possible Dependencies::
 * Using org-readme::
-* History::
+* Customizable Options::
 
 
 File: org-readme.info,  Node: Possible Dependencies,  Next: Using org-readme,  Up: Org Readme
@@ -64,69 +52,56 @@ File: org-readme.info,  Node: Possible Dependencies,  Next: Using org-readme,  U
 1.1 Possible Dependencies
 =========================
 
-None
+yaoddmuse http-post-simple org-html auto-document
 
 
-File: org-readme.info,  Node: Using org-readme,  Next: History,  Prev: Possible Dependencies,  Up: Org Readme
+File: org-readme.info,  Node: Using org-readme,  Next: Customizable Options,  Prev: Possible Dependencies,  Up: Org Readme
 
 1.2 Using org-readme
 ====================
 
 Org readme is used to:
 
-   * Create/Update a "History" section in the Readme.org based on the
+   • Create/Update a "History" section in the Readme.org based on the
      changelog section of the Emacs Log.
-
-   * Create/Update a "Library Information" Section Based on the Emacs
+   • Create/Update a "Library Information" Section Based on the Emacs
      lisp header.
-
-   * Create/Update a "Possible Dependencies" Section Based on the Emacs
+   • Create/Update a "Possible Dependencies" Section Based on the Emacs
      lisp header.
-
-   * Create/Update a "Functions" Section based on the functions defined
+   • Create/Update a "Functions" Section based on the functions defined
      in the single lisp library.
-
-   * Create/Update a "Variables" Section based on the variables defined
+   • Create/Update a "Variables" Section based on the variables defined
      in the single lisp library.
+   • Create/Update "Commands & keybindings" & "Customizable Options"
+     sections as output by ‘auto-document’
 
 All other sections of the Readme.org are then put into the "Commentary"
 section of the readme.org.
 
-In addition this library defines `org-readme-sync', a convenience
+In addition this library defines ‘org-readme-sync’, a convenience
 function that:
 
-   * Asks for a commentary about the library change.
-
-   * To exit/save press `C-c C-c'
-
-   * Asks if this is a minor revision
-
-   * If it is a minor revision, bumps the revision up so the new
-     library will be posted to marmalade-repo.org
-
-   * The package will attempt to add the readme to the info
+   • Asks for a commentary about the library change.
+   • To exit/save press ‘C-c C-c’
+   • Asks if this is a minor revision
+   • If it is a minor revision, bumps the revision up so the new library
+     will be posted to marmalade-repo.org
+   • The package will attempt to add the readme to the info
      documentation system within emacs.
-
-   * Syncs the Readme.org with the lisp file as described above.
-
-   * Updates emacswiki with the library description and the library
+   • Syncs the Readme.org with the lisp file as described above.
+   • Updates emacswiki with the library description and the library
      itself (requires yaoddmuse).
+   • Updates Marmalade-repo if the library version is different than the
+     version in the server (requires http-post-simple).
+   • Updates the git repository with the differences that you posted.
+   • If you are using github, this library creates a melpa recipie.
+   • If you are using github, this library creates a el-get recipie.
 
-   * Updates Marmalade-repo if the library version is different than
-     the version in the server (requires http-post-simple).
-
-   * Updates the git repository with the differences that you posted.
-
-   * If you are using github, this library creates a melpa recipie.
-
-   * If you are using github, this library creates a el-get recipie.
-
-When `org-readme-sync' is called in a `Readme.org' file that is not a
+When ‘org-readme-sync’ is called in a ‘Readme.org’ file that is not a
 single lisp file, the function exports the readme in EmacsWiki format
-and posts it to the EmacsWiki. ### EmacsWiki Page Names EmacsWiki Page
-names are generated from the file. `org-readme.el' would generate a
+and posts it to the EmacsWiki.  ### EmacsWiki Page Names EmacsWiki Page
+names are generated from the file.  ‘org-readme.el’ would generate a
 page of OrgReadme.
-
 * Menu:
 
 * Why each required library is needed::
@@ -137,167 +112,363 @@ File: org-readme.info,  Node: Why each required library is needed,  Up: Using or
 1.2.1 Why each required library is needed
 -----------------------------------------
 
-There are a few required libraries. This is a list of the require
+There are a few required libraries.  This is a list of the require
 libraries and why they are needed.
 
-Library             Why it is needed
-yaoddmuse           Publish to emacswiki Publish to
-http-post-simple    marmalade-repo.org To create header
-header2             and changelog To generate the library
-lib-requires        dependencies
++——————+———————————————————————+ | Library | Why it is needed |
++——————+———————————————————————+ | yaoddmuse | Publish to emacswiki | |
+http-post-simple | Publish to marmalade-repo.org | | header2 | To create
+header and changelog | | lib-requires | To generate the library
+dependencies | | auto-document | To generate list of commands & options
+within elisp file (optional) | +——————+———————————————————————+ ###
+Notes If you use ‘auto-insert’ you may need to change your elisp entry
+of ‘auto-insert-alist’ so that the end of the header section matches
+‘org-readme-end-section-regexp’ ## Commands & keybindings
+
+Below is a complete list of commands:
+
+   • *org-readme-add-autoloads* : Query user to add ###autoload magic
+     comments to each function_macro_option.\ Keybinding: ‘M-x
+     org-readme-add-autoloads’
+   • *org-readme-insert-variables* : Extracts variable documentation and
+     places it in the readme file.\ Keybinding: ‘M-x
+     org-readme-insert-variables’
+   • *org-readme-marmalade-post* : Posts the current buffer to
+     Marmalade.\ Keybinding: ‘M-x org-readme-marmalade-post’
+   • *org-readme-edit-commit* : Changelog for editing.\ Keybinding: ‘C-x
+     C-s’
+   • *org-readme-edit-cancel* : Cancel the edit log.\ Keybinding: ‘C-c
+     C-k’
+   • *org-readme-edit* : Edit change comment for commit.\ Keybinding:
+     ‘M-x org-readme-edit’
+   • *org-readme-convert-to-markdown* : Convert Readme.org to markdown
+     Readme.md.\ Keybinding: ‘M-x org-readme-convert-to-markdown’
+   • *org-readme-convert-to-emacswiki* : Converts Readme.org to oddmuse
+     markup and uploads to emacswiki.\ Keybinding: ‘M-x
+     org-readme-convert-to-emacswiki’
+   • *org-readme-git* : Add The files to git.\ Keybinding: ‘M-x
+     org-readme-git’
+   • *org-readme-gen-info* : With the proper tools, generates an info
+     and dir from the current readme.org\ Keybinding: ‘M-x
+     org-readme-gen-info’
+   • *org-readme-sync* : Syncs Readme.org with current buffer.\
+     Keybinding: ‘M-x org-readme-sync’
+   • *org-readme-to-commentary* : Replace Commentary section in elisp
+     file with text from Readme.org.\ Keybinding: ‘M-x
+     org-readme-to-commentary’
+   • *org-readme-top-header-to-readme* : Copy top header from the elisp
+     file into the readme file as Library Information.\ Keybinding: ‘M-x
+     org-readme-top-header-to-readme’
+   • *org-readme-changelog-to-readme* : This puts the Emacs Lisp
+     change-log into the Readme.org file.\ Keybinding: ‘M-x
+     org-readme-changelog-to-readme’
 
 
-File: org-readme.info,  Node: History,  Prev: Using org-readme,  Up: Org Readme
+File: org-readme.info,  Node: Customizable Options,  Prev: Using org-readme,  Up: Org Readme
 
-1.3 History
-===========
+1.3 Customizable Options
+========================
 
-3-May-2013 Matthew L. Fidler
-Last-Updated: Wed Aug 22 13:11:26 2012 (-0500) #794 (Matthew L. Fidler)
-Uploading using org-readme. - *22-Mar-2013* - Bug fix for org-readme
-generating texinfo documentation from org-files. (Matthew L. Fidler) -
-*22-Mar-2013* - Separated out the texinfo conversion so that this may
-be applied to a generalized readme. (Matthew L. Fidler) - *13-Mar-2013*
-- Added bug fix so that starred initial variables do not mess with
-org-cut-region. That way, strange duplication of lines and regions do
-not occur. (Matthew L. Fidler) - *10-Dec-2012* - Changed melpa versions
-to be nil. However if a melpa version is detected, continue using it.
-(Matthew L. Fidler) - *07-Dec-2012* - Post to marmalade (Matthew L.
-Fidler) - *07-Dec-2012* - Remove tar support because it is broken
-without gnu tar. Gnu tar in windows is broken in opening elpa tarballs.
-(Matthew L. Fidler) - *07-Dec-2012* - Use 7zip to create tar. May
-create a readable tar for package.el (Matthew L. Fidler) -
-*07-Dec-2012* - Trying to test the org-readme tar balls (Matthew L.
-Fidler) - *07-Dec-2012* - Trying to post the tar package again.
-(Matthew L. Fidler) - *07-Dec-2012* - Bug fix - Tar package contents to
-include trailing /, otherwise emacs complains :( (Matthew L. Fidler) -
-*07-Dec-2012* - Bug fix for MELPA versions. (Matthew L. Fidler) -
-*07-Dec-2012* - Updated org-readme to use MELPA versions. Therefore
-when you upload to marmalade-repo and MELPA doesn't pick up your
-revision, you can download the latest version yourself and try it out.
-(Matthew L. Fidler) - *07-Dec-2012* - Added info to melpa recipie.
-(Matthew L. Fidler) - *07-Dec-2012* - Attempted to add Readme in info
-format in the elpa package. (Matthew L. Fidler) - *07-Dec-2012* - Bug
-fix for deleting directory. (Matthew L. Fidler) - *07-Dec-2012* -
-Remove the directory that was created to make the package tarball
-(Matthew L. Fidler) - *07-Dec-2012* - Attempted to fix the package
-information file. (Matthew L. Fidler) - *07-Dec-2012* - Added tar
-package that includes the info file (Matthew L. Fidler) - *07-Dec-2012*
-- No longer deletes ilg files. (Matthew L. Fidler) - *07-Dec-2012* -
-Bug fix for info generation. (Matthew L. Fidler) - *07-Dec-2012* -
-Added mecahism to build info files and dir files for elpa package.
-(Matthew L. Fidler) - *07-Dec-2012* - Get description from info file.
-(Matthew L. Fidler) - *07-Dec-2012* - The description should now be
-picked up. (Matthew L. Fidler) - *07-Dec-2012* - Attempting to update
-description. (Matthew L. Fidler) - *07-Dec-2012* - Test directory entry
-(Matthew L. Fidler) - *07-Dec-2012* - Added directory entry to texinfo
-file. (Matthew L. Fidler) - *18-Sep-2012* - Bug fix to allow changes
-that read (Matthew L. Fidler) - *12-Sep-2012* - Handle errors with the
-package gracefully. to include the author name who updated the file.
-(Matthew L. Fidler) - *12-Sep-2012* - Handle errors with the package
-gracefully. (Matthew L. Fidler) - *12-Sep-2012* - Bug fix to eliminate
-duplicate headers in Readme.org and emacswiki (Matthew L. Fidler) -
-*12-Sep-2012* - Bug fix when org todo faces are not set. (Matthew L.
-Fidler) - *12-Sep-2012* - Added bug fix when `org-todo-keyword-faces'
-is undefined. (Matthew L. Fidler) - *22-Aug-2012* - Attempting to
-upload again (Matthew L. Fidler) - *22-Aug-2012* - Now will remove
-variable name and functions from markdown and outputted texinfo.
-(Matthew L. Fidler) - *21-Aug-2012* - Bug fix. When variables/functions
-are documented with an initial asterisk, change that asterisk to a
-bulleted item. (Matthew L. Fidler) - *21-Aug-2012* - Another
-documentation update where I document how to change the comment and
-that org-readme may change the minor revision of the library. (Matthew
-L. Fidler) - *21-Aug-2012* - Updated the documentation for org-readme.
-(Matthew L. Fidler) - *20-Aug-2012* - Bug fix for variables that don't
-really transport well to the documentation. (Matthew L. Fidler) -
-*20-Aug-2012* - Bump minor version for marmalade-repo.org (Matthew L.
-Fidler) - *20-Aug-2012* - Attempt to fix the History list (Matthew L.
-Fidler) - *20-Aug-2012* - Added ability to customize which sections are
-added to the Readme.org (Matthew L. Fidler) - *20-Aug-2012* - Bug fix
-for creating function readme (Matthew L. Fidler) - *20-Aug-2012* - Will
-now remove the Functions and Variables sections before putting them in
-the commentary section. (Matthew L. Fidler) - *20-Aug-2012* - Attempt
-to remove Readme.md when not needed. (Matthew L. Fidler) -
-*20-Aug-2012* - Added ability to add function documentation and
-variable documentation to the Readme.org file (Matthew L. Fidler) -
-*20-Aug-2012* - Added pandoc markdown table support (optional) (Matthew
-L. Fidler) - *13-Aug-2012* - Another attempt to make texinfo documents.
-(Matthew L. Fidler) - *13-Aug-2012* - Added texinfo output. Allows
-native emacs documentation. (Matthew L. Fidler) - *13-Aug-2012* - Tried
-to post behind firewall. Reattempting. (Matthew L. Fidler) -
-*13-Aug-2012* - Changed the `org-readme-remove-section' to use
-`org-cut-subtree'. Hopefully all errors will resolve themselves now.
-(Matthew L. Fidler) - *11-Aug-2012* - Reverted. Still buggy. (Matthew
-L. Fidler) - *11-Aug-2012* - Another attempt at bug fix to remove
-section. (Matthew L. Fidler) - *11-Aug-2012* - Another attempt at a
-remove-section fix. (Matthew L. Fidler) - *11-Aug-2012* - Bug fix for
-org-readme version tagging. (Matthew L. Fidler) - *11-Aug-2012* - Test
-the bug where some of the section text is deleted (Matthew L. Fidler) -
-*11-Aug-2012* - Added more documentation (Matthew L. Fidler) -
-*11-Aug-2012* - One last bug fix to the markdown export engine.
-(Matthew L. Fidler) - *11-Aug-2012* - Markdown bug fix (Matthew L.
-Fidler) - *11-Aug-2012* - Bug fix for el-get recipe. (Matthew L.
-Fidler) - *11-Aug-2012* - Added the ability to create a markdown Readme
-(Readme.md) as well as adding a el-get recipe. (Matthew L. Fidler) -
-*11-Aug-2012* - Bug fix for emacswiki post and melpa bug fix (Matthew
-L. Fidler) - *11-Aug-2012* - Bug fix for adding melpa recipes. (Matthew
-L. Fidler) - *11-Aug-2012* - Bug fix for creating melpa recipe.
-(Matthew L. Fidler) - *11-Aug-2012* - Added ability to add melpa recipe
-(Matthew L. Fidler) - *11-Aug-2012* - Bug fix for pushing tags to a git
-repository (Matthew L. Fidler) - *11-Aug-2012* - Another fix for git
-tags. (Matthew L. Fidler) - *11-Aug-2012* - Found a bug, let see if
-tagging works now. (Matthew L. Fidler) - *11-Aug-2012* - Added Git
-tagging of new versions. Lets see if it works. (Matthew L. Fidler) -
-*11-Aug-2012* - Git push worked. Bumping minor version. (Matthew L.
-Fidler) - *11-Aug-2012* - Attempted to push repository again. (Matthew
-L. Fidler) - *11-Aug-2012* - Attempt to push with git. Something
-changed. (Matthew L. Fidler) - *11-Aug-2012* - Added better
-Package-Requires tag. (Matthew L. Fidler) - *11-Aug-2012* - Made
-request for minor revision earlier, and fixed bug. (Matthew L. Fidler)
-- *11-Aug-2012* - Fixed code typo (Matthew L. Fidler) - *11-Aug-2012* -
-Bug fix for deleting a section of a Readme.org file. (Matthew L.
-Fidler) - *11-Aug-2012* - Testing bug. (Matthew L. Fidler) -
-*11-Aug-2012* - Minor bug fix. (Matthew L. Fidler) - *11-Aug-2012* -
-Bug fix for comment sync, now Readme.org `file' is translated to lisp
-`file'. Additionally, asks for version bump. (Matthew L. Fidler) -
-*11-Aug-2012* - Bug fix for syncing readme. Now the returns should not
-be as prevalent. (Matthew L. Fidler) - *11-Aug-2012* - Attempting to
-post to marmlade again... (Matthew L. Fidler) - *11-Aug-2012* -
-Attempting to fix org-readme-marmalade-post. (Matthew L. Fidler) -
-*11-Aug-2012* - Bug fix to upload to emacswiki and upload to
-marmalade-repo (Matthew L. Fidler) - *11-Aug-2012* - Added
-marmalade-repo support. Now org-readme should upload to marmalade-repo
-when the version is different from the latest version. (Matthew L.
-Fidler) - *08-Aug-2012* - Fixed preformatting tags in emacswiki post.
-Previously they may have been replaced with <_pre> instead of <_pre>.
-This makes the emacswiki page display correctly. (Matthew L. Fidler) -
-*07-Aug-2012* - To use, put (require 'ess-smart-underscore) in your
-~/.emacs file 7-Aug-2012 Matthew L. Fidler Last-Updated: Tue Aug 7
-19:14:34 2012 (-0500) #331 (Matthew L. Fidler) Added a Comment to
-EmcsWiki pages that states that the content of the page will likely be
-overwitten since it is automatically generated by `org-readme'
-7-Aug-2012 Matthew L. Fidler Last-Updated: Mon Aug 6 23:42:02 2012
-(-0500) #328 (Matthew L. Fidler) Added more documentation. (Matthew L.
-Fidler) - *06-Aug-2012* - Added support for uploading Readme.org files
-to emacswiki without having to have a single associated lisp file.
-(Matthew L. Fidler) - *06-Aug-2012* - Bug fix for syncing from the
-single lisp file. (Matthew L. Fidler) - *06-Aug-2012* - Added the
-ability to call `org-readme-sync' from Readme.org (Matthew L. Fidler) -
-*05-Aug-2012* - Added git pushing to org-readme (Matthew L. Fidler) -
-*05-Aug-2012* - Added git support as well as a comment mode. The only
-thing that should need to be called is `org-readme-sync' (Matthew L.
-Fidler) - *04-Aug-2012* - Added syncing with emacswiki. (Matthew L.
-Fidler) - *04-Aug-2012* - Initial Release (Matthew L. Fidler)
+Below is a list of customizable options:
+
+   • *org-readme-default-template* : Default template for blank
+     Readme.org Files.  LIB-NAME is replaced with the library.\ default
+     value: ‘\n* Installation\n\nTo use without using a package
+     manager:\n\n - Put the library in a directory in the emacs load
+     path, like ~_.emacs.d\n - Add (require 'LIB-NAME) in your ~_.emacs
+     file\n - If you have
+     [marmalade-repo.org](http:__www.marmalade-repo.org/), this LIB-NAME
+     is part of the emacs packges you can install. Just type M-x
+     package-install LIB-NAME marmalade \n\nThis is in emacswiki, so
+     this package can also be installed using el-get.\n\nAfter
+     installing el-get, Type M-x el-get-install LIB-NAME.\n’
+   • *org-readme-end-section-regexp* : Regexp to match the end of a
+     header_comments_changelog section in the elisp file comments.\
+     default value: ‘^+[ ]*$’
+   • *org-readme-features-regexp* : Regexp to match the header line for
+     the required libraries section.\ default value: ‘^[ ]__Features
+     that might be required by this library:[ ]__$’
+   • *org-readme-changelog-lines-regexp* : Regexp matching changelog
+     lines in the elisp file (you probably shouldn’t change this).\
+     default value: ‘^[
+     ]__\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[
+     ]__.__\n.__(\\([^)]__\\))[ ]__\n\\(\\(?:\n\\|.\\)__?\\)\n[
+     ]__\\([0-9][0-9]?\\)’
+   • *org-readme-final-changelog-line-regexp* : Regexp matching the
+     final changelog line in the elisp file (you probably shouldn’t
+     change this).\ default value:
+     ‘\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[
+     ]__\\(.__\\)\n.__\n\\(\\(?:\n\\|.\\)__\\)’
+   • *org-readme-use-melpa-versions* : Use Melpa-type versions
+     YYYYMMDD.HHMM instead of 0.0.0 versions.\ default value: ‘(quote
+     prompt)’
+   • *org-readme-create-tar-package* : Create a tar package for use in
+     ELPA.\ default value: ‘(quote prompt)’
+   • *org-readme-marmalade-server* : Marmalade server website.\ default
+     value: ‘http:__marmalade-repo.org’
+   • *org-readme-marmalade-token* : Marmalade token to upload content to
+     the marmalade server.\ default value: ‘nil’
+   • *org-readme-marmalade-user-name* : Marmalade user name to upload
+     content to the marmalade server.\ default value: ‘nil’
+   • *org-readme-author-name* : Name to use as author when updating
+     "Last-Updated" info in elisp header.\ default value:
+     ‘user-full-name’
+   • *org-readme-sync-emacswiki* : Post library to the emacswiki.\
+     default value: ‘(quote prompt)’
+   • *org-readme-sync-marmalade* : Post library to marmalade-repo.org.\
+     default value: ‘(quote prompt)’
+   • *org-readme-sync-git* : Post library to git.\ default value:
+     ‘(quote prompt)’
+   • *org-readme-build-melpa-recipe* : Build a melpa recipe based on
+     github information.\ default value: ‘(quote prompt)’
+   • *org-readme-build-el-get-recipe* : Build an el-get recipe based on
+     github information.\ default value: ‘(quote prompt)’
+   • *org-readme-build-markdown* : Build Readme.md from Readme.org.\
+     default value: ‘(quote prompt)’
+   • *org-readme-use-pandoc-markdown* : Use pandoc’s grid tables instead
+     of transferring the tables to html.\ default value: ‘(quote
+     prompt)’
+   • *org-readme-build-texi* : Build library-name.texi from Readme.org,
+     using Readme.md and pandoc.\ default value: ‘(quote prompt)’
+   • *org-readme-drop-markdown-after-build-texi* : Remove Readme.md
+     after texinfo is generated.\ default value: ‘(quote prompt)’
+   • *org-readme-build-info* : Build library-name.info from Reade.org
+     using texi.  \ default value: ‘(quote prompt)’
+   • *org-readme-drop-texi-after-build-info* : Remove the texi
+     information after building info files.\ default value: ‘(quote
+     prompt)’
+   • *org-readme-add-readme-to-lisp-file* : Update elisp file header
+     with commentary section of Readme.org.\ default value: ‘(quote
+     prompt)’
+   • *org-readme-use-autodoc* : Use - *auto-document* : to document
+     elisp file.\ default value: ‘(quote prompt)’
+   • *org-readme-add-autodoc-to-readme* : Copy - *auto-document* :
+     output to Readme.org.\ default value: ‘(quote prompt)’
+   • *org-readme-add-functions-to-readme* : Add a Functions section to
+     Readme.org.\ default value: ‘(quote prompt)’
+   • *org-readme-add-variables-to-readme* : Add a Variables section to
+     Readme.org.\ default value: ‘(quote prompt)’
+   • *org-readme-update-changelog* : Add/update Changelog file.\ default
+     value: ‘(quote prompt)’
+   • *org-readme-add-changelog-to-readme* : Add Changelog information to
+     Readme.org.\ default value: ‘(quote prompt)’
+   • *org-readme-add-top-header-to-readme* : Add Top Header information
+     to Readme.org.\ default value: ‘(quote prompt)’
+   • *org-readme-remove-sections* : List of sections to remove when
+     changing the Readme.org to Commentary.\ default value: ‘(quote
+     ("History" "Possible Dependencies" "Library Information" "Functions
+     & macros" "Variables" ...))’
+   • *org-readme-remove-sections-from-markdown* : List of sections to
+     remove when changing the Readme.org to \ default value: ‘(quote
+     ("Functions & macros" "Variables"))’ ## History
+
+   • *19-Nov-2015* – Automatically update required features section in
+     elisp comments (Joe Bloggs)
+   • *14-Nov-2015* – Add auto-document integration (Joe Bloggs)
+   • *14-Nov-2015* – Update "Last-Updated:", "By:" & "Update #:" fields
+     (Joe Bloggs)
+   • *12-Nov-2015* – Refactor and tidy up code (Joe Bloggs)
+   • *8-May-2013* – Add bugfix from vapniks for org-readme-to-commentary
+     (Matthew L. Fidler)
+   • *3-May-2013* – Uploading using org-readme.  (Matthew L. Fidler)
+   • *22-Mar-2013* – Bug fix for org-readme generating texinfo
+     documentation from org-files.  (Matthew L. Fidler)
+   • *22-Mar-2013* – Separated out the texinfo conversion so that this
+     may be applied to a generalized readme.  (Matthew L. Fidler)
+   • *13-Mar-2013* – Added bug fix so that starred initial variables do
+     not mess with org-cut-region.  That way, strange duplication of
+     lines and regions do not occur.  (Matthew L. Fidler)
+   • *10-Dec-2012* – Changed melpa versions to be nil.  However if a
+     melpa version is detected, continue using it.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Post to marmalade (Matthew L. Fidler)
+   • *07-Dec-2012* – Remove tar support because it is broken without gnu
+     tar.  Gnu tar in windows is broken in opening elpa tarballs.
+     (Matthew L. Fidler)
+   • *07-Dec-2012* – Use 7zip to create tar.  May create a readable tar
+     for package.el (Matthew L. Fidler)
+   • *07-Dec-2012* – Trying to test the org-readme tar balls (Matthew L.
+     Fidler)
+   • *07-Dec-2012* – Trying to post the tar package again.  (Matthew L.
+     Fidler)
+   • *07-Dec-2012* – Bug fix – Tar package contents to include trailing
+     /, otherwise emacs complains :( (Matthew L. Fidler)
+   • *07-Dec-2012* – Bug fix for MELPA versions.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Updated org-readme to use MELPA versions.
+     Therefore when you upload to marmalade-repo and MELPA doesn’t pick
+     up your revision, you can download the latest version yourself and
+     try it out.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Added info to melpa recipie.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Attempted to add Readme in info format in the elpa
+     package.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Bug fix for deleting directory.  (Matthew L.
+     Fidler)
+   • *07-Dec-2012* – Remove the directory that was created to make the
+     package tarball (Matthew L. Fidler)
+   • *07-Dec-2012* – Attempted to fix the package information file.
+     (Matthew L. Fidler)
+   • *07-Dec-2012* – Added tar package that includes the info file
+     (Matthew L. Fidler)
+   • *07-Dec-2012* – No longer deletes ilg files.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Bug fix for info generation.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Added mecahism to build info files and dir files
+     for elpa package.  (Matthew L. Fidler)
+   • *07-Dec-2012* – Get description from info file.  (Matthew L.
+     Fidler)
+   • *07-Dec-2012* – The description should now be picked up.  (Matthew
+     L. Fidler)
+   • *07-Dec-2012* – Attempting to update description.  (Matthew L.
+     Fidler)
+   • *07-Dec-2012* – Test directory entry (Matthew L. Fidler)
+   • *07-Dec-2012* – Added directory entry to texinfo file.  (Matthew L.
+     Fidler)
+   • *18-Sep-2012* – Bug fix to allow changes that read (Matthew L.
+     Fidler)
+   • *12-Sep-2012* – Handle errors with the package gracefully.  to
+     include the author name who updated the file.  (Matthew L. Fidler)
+   • *12-Sep-2012* – Handle errors with the package gracefully.
+     (Matthew L. Fidler)
+   • *12-Sep-2012* – Bug fix to eliminate duplicate headers in
+     Readme.org and emacswiki (Matthew L. Fidler)
+   • *12-Sep-2012* – Bug fix when org todo faces are not set.  (Matthew
+     L. Fidler)
+   • *12-Sep-2012* – Added bug fix when ‘org-todo-keyword-faces’ is
+     undefined.  (Matthew L. Fidler)
+   • *22-Aug-2012* – Attempting to upload again (Matthew L. Fidler)
+   • *22-Aug-2012* – Now will remove variable name and functions from
+     markdown and outputted texinfo.  (Matthew L. Fidler)
+   • *21-Aug-2012* – Bug fix.  When variables/functions are documented
+     with an initial asterisk, change that asterisk to a bulleted item.
+     (Matthew L. Fidler)
+   • *21-Aug-2012* – Another documentation update where I document how
+     to change the comment and that org-readme may change the minor
+     revision of the library.  (Matthew L. Fidler)
+   • *21-Aug-2012* – Updated the documentation for org-readme.  (Matthew
+     L. Fidler)
+   • *20-Aug-2012* – Bug fix for variables that don’t really transport
+     well to the documentation.  (Matthew L. Fidler)
+   • *20-Aug-2012* – Bump minor version for marmalade-repo.org (Matthew
+     L. Fidler)
+   • *20-Aug-2012* – Attempt to fix the History list (Matthew L. Fidler)
+   • *20-Aug-2012* – Added ability to customize which sections are added
+     to the Readme.org (Matthew L. Fidler)
+   • *20-Aug-2012* – Bug fix for creating function readme (Matthew L.
+     Fidler)
+   • *20-Aug-2012* – Will now remove the Functions and Variables
+     sections before putting them in the commentary section.  (Matthew
+     L. Fidler)
+   • *20-Aug-2012* – Attempt to remove Readme.md when not needed.
+     (Matthew L. Fidler)
+   • *20-Aug-2012* – Added ability to add function documentation and
+     variable documentation to the Readme.org file (Matthew L. Fidler)
+   • *20-Aug-2012* – Added pandoc markdown table support (optional)
+     (Matthew L. Fidler)
+   • *13-Aug-2012* – Another attempt to make texinfo documents.
+     (Matthew L. Fidler)
+   • *13-Aug-2012* – Added texinfo output.  Allows native emacs
+     documentation.  (Matthew L. Fidler)
+   • *13-Aug-2012* – Tried to post behind firewall.  Reattempting.
+     (Matthew L. Fidler)
+   • *13-Aug-2012* – Changed the ‘org-readme-remove-section’ to use
+     ‘org-cut-subtree’.  Hopefully all errors will resolve themselves
+     now.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Reverted.  Still buggy.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Another attempt at bug fix to remove section.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Another attempt at a remove-section fix.  (Matthew
+     L. Fidler)
+   • *11-Aug-2012* – Bug fix for org-readme version tagging.  (Matthew
+     L. Fidler)
+   • *11-Aug-2012* – Test the bug where some of the section text is
+     deleted (Matthew L. Fidler)
+   • *11-Aug-2012* – Added more documentation (Matthew L. Fidler)
+   • *11-Aug-2012* – One last bug fix to the markdown export engine.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Markdown bug fix (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for el-get recipe.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Added the ability to create a markdown Readme
+     (Readme.md) as well as adding a el-get recipe.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for emacswiki post and melpa bug fix
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for adding melpa recipes.  (Matthew L.
+     Fidler)
+   • *11-Aug-2012* – Bug fix for creating melpa recipe.  (Matthew L.
+     Fidler)
+   • *11-Aug-2012* – Added ability to add melpa recipe (Matthew L.
+     Fidler)
+   • *11-Aug-2012* – Bug fix for pushing tags to a git repository
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Another fix for git tags.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Found a bug, let see if tagging works now.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Added Git tagging of new versions.  Lets see if it
+     works.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Git push worked.  Bumping minor version.  (Matthew
+     L. Fidler)
+   • *11-Aug-2012* – Attempted to push repository again.  (Matthew L.
+     Fidler)
+   • *11-Aug-2012* – Attempt to push with git.  Something changed.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Added better Package-Requires tag.  (Matthew L.
+     Fidler)
+   • *11-Aug-2012* – Made request for minor revision earlier, and fixed
+     bug.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Fixed code typo (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for deleting a section of a Readme.org
+     file.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Testing bug.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Minor bug fix.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for comment sync, now Readme.org ‘file’ is
+     translated to lisp ‘file’.  Additionally, asks for version bump.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix for syncing readme.  Now the returns should
+     not be as prevalent.  (Matthew L. Fidler)
+   • *11-Aug-2012* – Attempting to post to marmlade again...  (Matthew
+     L. Fidler)
+   • *11-Aug-2012* – Attempting to fix org-readme-marmalade-post.
+     (Matthew L. Fidler)
+   • *11-Aug-2012* – Bug fix to upload to emacswiki and upload to
+     marmalade-repo (Matthew L. Fidler)
+   • *11-Aug-2012* – Added marmalade-repo support.  Now org-readme
+     should upload to marmalade-repo when the version is different from
+     the latest version.  (Matthew L. Fidler)
+   • *08-Aug-2012* – Fixed preformatting tags in emacswiki post.
+     Previously they may have been replaced with <_pre> instead of
+     <_pre>.  This makes the emacswiki page display correctly.  (Matthew
+     L. Fidler)
+   • *07-Aug-2012* – To use, put (require ’ess-smart-underscore) in your
+     ~/.emacs file (Matthew L. Fidler)
+   • *7-Aug-2012* – Added a Comment to EmcsWiki pages that states that
+     the content of the page will likely be overwitten since it is
+     automatically generated by ‘org-readme’ (Matthew L. Fidler)
+   • *7-Aug-2012* – Added more documentation.  (Matthew L. Fidler)
+   • *06-Aug-2012* – Added support for uploading Readme.org files to
+     emacswiki without having to have a single associated lisp file.
+     (Matthew L. Fidler)
+   • *06-Aug-2012* – Bug fix for syncing from the single lisp file.
+     (Matthew L. Fidler)
+   • *06-Aug-2012* – Added the ability to call ‘org-readme-sync’ from
+     Readme.org (Matthew L. Fidler)
+   • *05-Aug-2012* – Added git pushing to org-readme (Matthew L. Fidler)
+   • *05-Aug-2012* – Added git support as well as a comment mode.  The
+     only thing that should need to be called is ‘org-readme-sync’
+     (Matthew L. Fidler)
+   • *04-Aug-2012* – Added syncing with emacswiki.  (Matthew L. Fidler)
+   • *04-Aug-2012* – Initial Release (Matthew L. Fidler)
 
 
 
 Tag Table:
-Node: Top242
-Node: Org Readme344
-Node: Possible Dependencies1270
-Node: Using org-readme1426
-Node: Why each required library is needed3495
-Node: History4011
+Node: Top241
+Node: Org Readme343
+Ref: #org-readme436
+Node: Possible Dependencies1309
+Ref: #possible-dependencies1459
+Node: Using org-readme1510
+Ref: #using-org-readme1679
+Node: Why each required library is needed3749
+Ref: #why-each-required-library-is-needed3926
+Node: Customizable Options6807
+Ref: #customizable-options6954
 
 End Tag Table
 

@@ -1,6 +1,6 @@
 (:name org-readme
- :description "org-readme"
+ :description "Integrates Readme.org and Commentary/Change-logs."
  :depends (http-post-simple yaoddmuse header2 lib-requires)
  :website "https://github.com/mlf176f2/org-readme"
  :type git
- :url "https://github.com/mlf176f2/org-readme.git")
+ :url "https://github.com/vapniks/org-readme.git")
