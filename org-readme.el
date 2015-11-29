@@ -1424,7 +1424,7 @@ Returns file name if created."
 	(shell-command "git push")
 	;; tag the commit if this is a new version
 	(let ((tags (shell-command-to-string "git tag"))
-	      (ver  (org-readme-buffer-version)))
+	      (ver (org-readme-buffer-version)))
 	  (when ver
 	    (unless (string-match (concat "v" (regexp-quote ver)) tags)
 	      (message "Tagging the new version")
