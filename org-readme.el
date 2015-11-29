@@ -1387,12 +1387,12 @@ Returns file name if created."
       (when (org-readme-check-opt org-readme-build-melpa-recipe)
 	(setq melpa (org-readme-build-melpa))
 	(when melpa
-	  (gitadd (concat "melpa/" (file-name-nondirectory melpa)))))
+	  (gitadd (concat (file-name-as-directory "melpa") (file-name-nondirectory melpa)))))
       ;; add el-get recipe
       (when (org-readme-check-opt org-readme-build-el-get-recipe)
 	(setq el-get (org-readme-build-el-get))
 	(when el-get
-	  (gitadd (concat "el-get/" (file-name-nondirectory el-get)))))
+	  (gitadd (concat (file-name-as-directory "el-get") (file-name-nondirectory el-get)))))
       ;; add Readme.org
       (gitadd (file-name-nondirectory (org-readme-find-readme)))
       ;; add either .info or .texi file, and delete Readme.md if necessary
@@ -1507,7 +1507,7 @@ If so, return the name of that Lisp file, otherwise return nil."
 	     (ver (getval "^[ \t]*;+[ \t]*Version:[ \t]*\\(.*\\)[ \t]*"))
 	     (pkg (getval "^;;[ \t]*Package-Requires:[ \t]*\\(.*\\)[ \t]*"))
 	     (tardir (concat base "-" ver))
-	     (tarbase (concat tardir "/" base))
+	     (tarbase (concat (file-name-as-directory tardir) base))
 	     (infofile (concat base ".info")))
 	(when (file-exists-p (concat base ".tar"))
 	  (delete-file (concat base ".tar")))
@@ -1516,18 +1516,18 @@ If so, return the name of that Lisp file, otherwise return nil."
 	(when (file-exists-p infofile)
 	  (copy-file (concat base ".info") (concat tarbase ".info") t))
 	(when (file-exists-p "dir")
-	  (copy-file "dir" (concat tardir "/dir") t))
+	  (copy-file "dir" (concat (file-name-as-directory tardir) "dir") t))
 	(with-temp-file (concat tarbase "-pkg.el")
 	  (insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
 	(if (executable-find "tar")
-	    (shell-command (concat "tar -cvf " base ".tar " tardir "/"))
+	    (shell-command (concat "tar -cvf " base ".tar " (file-name-as-directory tardir)))
 	  (shell-command (concat "7z" (if (executable-find "7za") "a" "")
-				 " -ttar -so " base ".tar " tardir "/*.*")))
+				 " -ttar -so " base ".tar " (file-name-as-directory tardir) "*.*")))
 	(mapc (lambda (x) (when (file-exists-p x) (delete-file x)))
 	      (list (concat tarbase ".el")
 		    (concat tarbase "-pkg.el")
 		    (concat tarbase ".info")
-		    (concat tardir "/dir")))
+		    (concat (file-name-as-directory tardir) "dir")))
 	(delete-directory tardir)))))
 
 ;;;###autoload
@@ -1638,6 +1638,7 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 	  (emacswiki-post nil ""))
 	;; add files to git repo, along with MELPA and el-get recipes
 	(when (org-readme-check-opt org-readme-sync-git)
+	  ;; TODO: allow creation of melpa and el-get recipes without syncing to git?
 	  (org-readme-git))
 	;; post readme file to emacswiki
 	(when (and (featurep 'yaoddmuse)
