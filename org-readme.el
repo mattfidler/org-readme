@@ -5,11 +5,11 @@
 ;; Author: Matthew L. Fidler
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
-;; Version: 20151119.1039
+;; Version: 20151130.1948
 ;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
-;; Last-Updated: Wed Nov 25 20:11:14 2015
+;; Last-Updated: Mon Nov 30 19:47:56 2015
 ;;           By: Joe Bloggs
-;;     Update #: 806
+;;     Update #: 808
 ;; URL: https://github.com/mlf176f2/org-readme
 ;; Keywords: Header2, Readme.org, Emacswiki, Git
 ;; Compatibility: Tested with Emacs 24.1 on Windows.
@@ -22,8 +22,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Commentary: 
+
 ;; 
-;; * Using org-readme
+;; Using org-readme
 ;; Org readme is used to:
 ;; 
 ;; - Create/Update a "History" section in the Readme.org based on the changelog
@@ -60,16 +61,16 @@
 ;;   version in the server (requires http-post-simple).
 ;; - Updates the git repository with the differences that you posted.
 ;; - If you are using github, this library creates a melpa recipe.
-;; - If you are using github, this library creates a el-get recipe.
+;; - If you are using github, this library creates a el-get recipe. 
 ;; 
 ;; When `org-readme-sync' is called in a `Readme.org' file that is not a
 ;; single lisp file, the function exports the readme in EmacsWiki format
 ;; and posts it to the EmacsWiki.
-;; ** EmacsWiki Page Names
+;;  EmacsWiki Page Names
 ;; EmacsWiki Page names are generated from the file.  `org-readme.el'
 ;; would generate a page of OrgReadme.
 ;; 
-;; ** Why each required library is needed
+;;  Why each required library is needed
 ;; There are a few required libraries.  This is a list of the require
 ;; libraries and why they are needed.
 ;; 
@@ -82,11 +83,12 @@
 ;; | lib-requires     | To generate the library dependencies                                |
 ;; | auto-document    | To generate list of commands & options within elisp file (optional) |
 ;; |------------------+---------------------------------------------------------------------|
-;; ** Notes
+;;  Notes
 ;; If you use `auto-insert' you may need to change your elisp 
 ;; entry of `auto-insert-alist' so that the end of the header section 
 ;; matches `org-readme-end-section-regexp'
 ;; 
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Commands:
@@ -96,6 +98,9 @@
 ;;  `org-readme-add-autoloads'
 ;;    Query user to add ;;;###autoload magic comments to each function/macro/option.
 ;;    Keybinding: M-x org-readme-add-autoloads
+;;  `org-readme-insert-autodoc'
+;;    Use `auto-document' to document functions and options in current elisp file.
+;;    Keybinding: M-x org-readme-insert-autodoc
 ;;  `org-readme-insert-variables'
 ;;    Extracts variable documentation and places it in the readme file.
 ;;    Keybinding: M-x org-readme-insert-variables
@@ -118,10 +123,10 @@
 ;;    Converts Readme.org to oddmuse markup and uploads to emacswiki.
 ;;    Keybinding: M-x org-readme-convert-to-emacswiki
 ;;  `org-readme-git'
-;;    Add The files to git.
+;;    Add current file and other relevant files to git.
 ;;    Keybinding: M-x org-readme-git
 ;;  `org-readme-gen-info'
-;;    With the proper tools, generates an info and dir from the current readme.org
+;;    With the proper tools, generate an info and dir from the current readme.org.
 ;;    Keybinding: M-x org-readme-gen-info
 ;;  `org-readme-sync'
 ;;    Syncs Readme.org with current buffer.
@@ -135,6 +140,9 @@
 ;;  `org-readme-changelog-to-readme'
 ;;    This puts the Emacs Lisp change-log into the Readme.org file.
 ;;    Keybinding: M-x org-readme-changelog-to-readme
+;;  `org-readme-update-required-features-section'
+;;    Update the required features section of the elisp file.
+;;    Keybinding: M-x org-readme-update-required-features-section
 ;;
 ;;; Customizable Options:
 ;;
@@ -148,7 +156,7 @@
 ;;    default = "^;;;;+[ 	]*$"
 ;;  `org-readme-features-regexp'
 ;;    Regexp to match the header line for the required libraries section.
-;;    default = "^[ 	]*Features that might be required by this library:[ 	]*$"
+;;    default = "^[ 	]*Features that might be required by this library:?[ 	]*$"
 ;;  `org-readme-changelog-lines-regexp'
 ;;    Regexp matching changelog lines in the elisp file (you probably shouldn't change this).
 ;;    default = "^[ 	]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*.*\n.*(\\([^)]*\\))[ 	]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ 	]*\\([0-9][0-9]?\\)"
@@ -188,21 +196,18 @@
 ;;  `org-readme-build-el-get-recipe'
 ;;    Build an el-get recipe based on github information.
 ;;    default = (quote prompt)
-;;  `org-readme-build-markdown'
-;;    Build Readme.md from Readme.org.
-;;    default = (quote prompt)
 ;;  `org-readme-use-pandoc-markdown'
 ;;    Use pandoc's grid tables instead of transferring the tables to html.
 ;;    default = (quote prompt)
 ;;  `org-readme-drop-markdown-after-build-texi'
 ;;    Remove Readme.md after texinfo is generated.
-;;    default = (quote prompt)
+;;    default = t
 ;;  `org-readme-build-info'
-;;    Build library-name.info from Reade.org using texi.  
-;;    default = (quote prompt)
+;;    Build .info file from Reade.org using texi.
+;;    default = nil
 ;;  `org-readme-drop-texi-after-build-info'
 ;;    Remove the texi information after building info files.
-;;    default = (quote prompt)
+;;    default = t
 ;;  `org-readme-add-readme-to-lisp-file'
 ;;    Update elisp file header with commentary section of Readme.org.
 ;;    default = (quote prompt)
@@ -229,7 +234,7 @@
 ;;    default = (quote prompt)
 ;;  `org-readme-remove-sections'
 ;;    List of sections to remove when changing the Readme.org to Commentary.
-;;    default = (quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables" ...))
+;;    default = (quote ("History" "Possible Dependencies" "Library Information" "Installation" "Functions & macros" ...))
 ;;  `org-readme-remove-sections-from-markdown'
 ;;    List of sections to remove when changing the Readme.org to 
 ;;    default = (quote ("Functions & macros" "Variables"))
@@ -238,6 +243,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
 ;;; Change Log:
+;; 30-Nov-2015    Joe Bloggs  
+;;    Last-Updated: Mon Nov 30 19:45:19 2015 #807 (Joe Bloggs)
+;;    Add melpa recipe to package-build-recipes-dir
 ;; 19-Nov-2015    Joe Bloggs  
 ;;    Last-Updated: Thu Nov 19 02:43:29 2015 #802 (Joe Bloggs)
 ;;    Automatically update required features section in elisp comments
@@ -941,11 +949,15 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		      (insert "=")
 		      (forward-list)
 		      (insert "="))
-		    (org-readme-regexp-pairs [["`\\(.*?\\)'" "=\\1="] ["^[ \t]*[*]+[ \t]+" " - "]])
+		    (org-readme-regexp-pairs
+		     [["`\\(.*?\\)'" "=\\1="] ;change `' quotes to =
+		      ["^[ \t]*[*]+[ \t]+" " - "] ;reformat list items
+		      ["^[ \t]*[*]+" ""]])	  ;remove empty list items
 		    (goto-char (point-max))
-		    (insert "\n")
-		    (org-readme-regexp-pairs [["^[ \t]*[*]+" ""]])
-		    (buffer-string))))
+		    (insert "\n")	;final extra newline
+		    (buffer-string)))
+	      (addfns (txt) (if (string-match "\\*\\*\\*" txt)
+				(concat "\n" txt))))
       (setq ret1 "** Interactive Functions\n"
 	    ret2 "** Internal Functions\n"
 	    ret3 "** Macros\n")
@@ -963,10 +975,14 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		(t (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
 	   (error nil)))
        lst)
-      (setq ret (concat "* Functions & macros\n" ret1 "\n" ret2 "\n" ret3)))
+      (setq ret (concat "* Functions & macros" (addfns ret1) (addfns ret2) (addfns ret3))))
     (with-temp-buffer
       (insert-file-contents readme)
-      (org-readme-remove-section "Functions & macros" ret)
+      (org-readme-remove-section "Functions & macros"
+				 (if (string-match "\\*\\*" ret)
+				     ret
+				   (message "No functions or macros found")
+				   nil))
       (write-file readme))))
 
 (defun org-readme-insert-variables ()
@@ -996,7 +1012,9 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		      ["^[ \t]*[*]+" ""]]) ;remove empty list items
 		    (goto-char (point-max))
 		    (insert "\n")	;final extra newline
-		    (buffer-string))))
+		    (buffer-string)))
+	      (addvars (txt) (if (string-match "\\*\\*\\*" txt)
+				 (concat "\n" txt))))
       (setq ret1 "** Customizable Variables\n"
 	    ret2 "** Internal Variables\n")
       (mapc
@@ -1011,10 +1029,14 @@ If N is provided return all matches of the Nth subexpression of REGEX."
 		(t (setq ret2 (concat ret2 "\n*** " x "\n" (fd tmp))))))
 	   (error nil)))
        lst)
-      (setq ret (concat "* Variables\n" ret1 "\n" ret2)))
+      (setq ret (concat "* Variables" (addvars ret1) (addvars ret2))))
     (with-temp-buffer
       (insert-file-contents readme)
-      (org-readme-remove-section "Variables" ret)
+      (org-readme-remove-section "Variables"
+				 (if (string-match "\\*\\*" ret)
+				     ret
+				   (message "No variables found")
+				   nil))
       (write-file readme))))
 
 (defun org-readme-get-github-repo nil
@@ -1033,6 +1055,7 @@ Assumes the current buffer contains a toplevel project file."
 (defun org-readme-build-el-get ()
   "Builds an el-get recipe. This assumes github, though others could be added.
 Returns file name if created."
+  (interactive)
   (let* ((el-get (expand-file-name
 		  "el-get" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
@@ -1071,6 +1094,7 @@ Returns file name if created."
   "Builds a melpa recipe. This assumes github, though other could be added.
 Returns file name if created."
   ;; this assumes we are in the main elisp file
+  (interactive)
   (let* ((melpa (expand-file-name
 		 "melpa" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
@@ -1369,9 +1393,13 @@ Returns file name if created."
     (delete-file wiki)))
 
 ;;;###autoload
-(defun org-readme-git ()
-  "Add current file and other relevant files to git."
-  (interactive)
+(defun org-readme-git (addmelpa addelget)
+  "Add current file and other relevant files to git.
+If ADDMELPA and/or ADDELGET are non-nil then add a melpa/el-get recipe,
+and either of these arguments are filepaths then use those files as the
+recipes."
+  (interactive (list (org-readme-check-opt org-readme-build-melpa-recipe)
+		     (org-readme-check-opt org-readme-build-el-get-recipe)))
   (let* ((base (org-readme-guess-package-name))
 	 (texifile (concat base ".texi"))
 	 (infofile (concat base ".info"))
@@ -1384,15 +1412,21 @@ Returns file name if created."
 		     (shell-command (concat "git rm --ignore-unmatch " file))
 		     (shell-command (concat "rm -f " file))))
       ;; add melpa recipe if necessary
-      (when (org-readme-check-opt org-readme-build-melpa-recipe)
-	(setq melpa (org-readme-build-melpa))
+      (when addmelpa
+	(setq melpa (if (and (stringp addmelpa)
+			     (file-readable-p addmelpa))
+			addmelpa
+		      (org-readme-build-melpa)))
 	(when melpa
-	  (gitadd (concat "melpa/" (file-name-nondirectory melpa)))))
+	  (gitadd (concat (file-name-as-directory "melpa") (file-name-nondirectory melpa)))))
       ;; add el-get recipe
-      (when (org-readme-check-opt org-readme-build-el-get-recipe)
-	(setq el-get (org-readme-build-el-get))
+      (when addelget
+	(setq el-get (if (and (stringp addelget)
+			      (file-readable-p addelget))
+			 addelget
+		       (org-readme-build-el-get)))
 	(when el-get
-	  (gitadd (concat "el-get/" (file-name-nondirectory el-get)))))
+	  (gitadd (concat (file-name-as-directory "el-get") (file-name-nondirectory el-get)))))
       ;; add Readme.org
       (gitadd (file-name-nondirectory (org-readme-find-readme)))
       ;; add either .info or .texi file, and delete Readme.md if necessary
@@ -1507,7 +1541,7 @@ If so, return the name of that Lisp file, otherwise return nil."
 	     (ver (getval "^[ \t]*;+[ \t]*Version:[ \t]*\\(.*\\)[ \t]*"))
 	     (pkg (getval "^;;[ \t]*Package-Requires:[ \t]*\\(.*\\)[ \t]*"))
 	     (tardir (concat base "-" ver))
-	     (tarbase (concat tardir "/" base))
+	     (tarbase (concat (file-name-as-directory tardir) base))
 	     (infofile (concat base ".info")))
 	(when (file-exists-p (concat base ".tar"))
 	  (delete-file (concat base ".tar")))
@@ -1516,18 +1550,18 @@ If so, return the name of that Lisp file, otherwise return nil."
 	(when (file-exists-p infofile)
 	  (copy-file (concat base ".info") (concat tarbase ".info") t))
 	(when (file-exists-p "dir")
-	  (copy-file "dir" (concat tardir "/dir") t))
+	  (copy-file "dir" (concat (file-name-as-directory tardir) "dir") t))
 	(with-temp-file (concat tarbase "-pkg.el")
 	  (insert "(define-package \"" base "\" \"" ver  "\" \"" desc "\" '" pkg ")"))
 	(if (executable-find "tar")
-	    (shell-command (concat "tar -cvf " base ".tar " tardir "/"))
+	    (shell-command (concat "tar -cvf " base ".tar " (file-name-as-directory tardir)))
 	  (shell-command (concat "7z" (if (executable-find "7za") "a" "")
-				 " -ttar -so " base ".tar " tardir "/*.*")))
+				 " -ttar -so " base ".tar " (file-name-as-directory tardir) "*.*")))
 	(mapc (lambda (x) (when (file-exists-p x) (delete-file x)))
 	      (list (concat tarbase ".el")
 		    (concat tarbase "-pkg.el")
 		    (concat tarbase ".info")
-		    (concat tardir "/dir")))
+		    (concat (file-name-as-directory tardir) "dir")))
 	(delete-directory tardir)))))
 
 ;;;###autoload
@@ -1537,7 +1571,8 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
   (interactive)
   ;; Store the name of the package in `base'
   (let ((base (org-readme-guess-package-name))
-	(single-lisp-file (org-readme-single-lisp-p)))
+	(single-lisp-file (org-readme-single-lisp-p))
+	addmelpa addelget melpa elget)
     ;; Check if we need to switch file or update the changelog first
     ;; (`comment-added' should be nil unless this function was called internally)
     (if (and (not comment-added)
@@ -1636,9 +1671,24 @@ When COMMENT-ADDED is non-nil, the comment has been added and the syncing should
 		   (org-readme-check-opt org-readme-sync-emacswiki "Post elisp file to emacswiki?"))
 	  (message "Posting elisp file to emacswiki")
 	  (emacswiki-post nil ""))
+	;; add melpa recipe if necessary
+	(setq addmelpa (org-readme-check-opt org-readme-build-melpa-recipe))
+	(when addmelpa
+	  (setq melpa (org-readme-build-melpa))
+	  (when (and (require 'package-build nil t)
+		     (file-directory-p package-build-recipes-dir))
+	    (let ((melpa2 (expand-file-name (org-readme-guess-package-name)
+					    package-build-recipes-dir)))
+	      (if (file-writable-p melpa2)
+		  (copy-file melpa melpa2 t)
+		(error "Can't write to %s" package-build-recipes-dir)))))
+	;; add el-get recipe if necessary
+	(setq addelget (org-readme-check-opt org-readme-build-el-get-recipe))
+	(when addelget (setq elget (org-readme-build-el-get)))
 	;; add files to git repo, along with MELPA and el-get recipes
 	(when (org-readme-check-opt org-readme-sync-git)
-	  (org-readme-git))
+	  ;; TODO: allow creation of melpa and el-get recipes without syncing to git?
+	  (org-readme-git melpa elget))
 	;; post readme file to emacswiki
 	(when (and (featurep 'yaoddmuse)
 		   (org-readme-check-opt org-readme-sync-emacswiki "Post Readme.org to emacswiki?"))
