@@ -1055,6 +1055,7 @@ Assumes the current buffer contains a toplevel project file."
 (defun org-readme-build-el-get ()
   "Builds an el-get recipe. This assumes github, though others could be added.
 Returns file name if created."
+  (interactive)
   (let* ((el-get (expand-file-name
 		  "el-get" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
@@ -1093,6 +1094,7 @@ Returns file name if created."
   "Builds a melpa recipe. This assumes github, though other could be added.
 Returns file name if created."
   ;; this assumes we are in the main elisp file
+  (interactive)
   (let* ((melpa (expand-file-name
 		 "melpa" (file-name-directory (buffer-file-name))))
 	 (lib-name (org-readme-guess-package-name))
