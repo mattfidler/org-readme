@@ -8,14 +8,15 @@
  - Author :: Matthew L. Fidler
  - Maintainer :: Matthew L. Fidler
  - Created :: Fri Aug  3 22:33:41 2012 (-0500)
- - Version :: 20151119.1039
+ - Version :: 20151130.1948
  - Package-Requires :: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
- - Last-Updated :: Thu Nov 19 10:39:47 2015
+ - Last-Updated :: Mon Nov 30 19:47:56 2015
  -           By :: Joe Bloggs
- -     Update # :: 803
+ -     Update # :: 808
  - URL :: https://github.com/mlf176f2/org-readme
  - Keywords :: Header2, Readme.org, Emacswiki, Git
  - Compatibility :: Tested with Emacs 24.1 on Windows.
+
 
 * Possible Dependencies
 
@@ -91,6 +92,9 @@ matches =org-readme-end-section-regexp=
    - *org-readme-add-autoloads* :
     Query user to add ###autoload magic comments to each function/macro/option.\\
     Keybinding: =M-x org-readme-add-autoloads=
+   - *org-readme-insert-autodoc* :
+    Use  - *auto-document* : to document functions and options in current elisp file.\\
+    Keybinding: =M-x org-readme-insert-autodoc=
    - *org-readme-insert-variables* :
     Extracts variable documentation and places it in the readme file.\\
     Keybinding: =M-x org-readme-insert-variables=
@@ -113,10 +117,10 @@ matches =org-readme-end-section-regexp=
     Converts Readme.org to oddmuse markup and uploads to emacswiki.\\
     Keybinding: =M-x org-readme-convert-to-emacswiki=
    - *org-readme-git* :
-    Add The files to git.\\
+    Add current file and other relevant files to git.\\
     Keybinding: =M-x org-readme-git=
    - *org-readme-gen-info* :
-    With the proper tools, generates an info and dir from the current readme.org\\
+    With the proper tools, generate an info and dir from the current readme.org.\\
     Keybinding: =M-x org-readme-gen-info=
    - *org-readme-sync* :
     Syncs Readme.org with current buffer.\\
@@ -130,6 +134,9 @@ matches =org-readme-end-section-regexp=
    - *org-readme-changelog-to-readme* :
     This puts the Emacs Lisp change-log into the Readme.org file.\\
     Keybinding: =M-x org-readme-changelog-to-readme=
+   - *org-readme-update-required-features-section* :
+    Update the required features section of the elisp file.\\
+    Keybinding: =M-x org-readme-update-required-features-section=
 
 * Customizable Options
 
@@ -143,7 +150,7 @@ matches =org-readme-end-section-regexp=
     default value: =^+[ 	]*$=
    - *org-readme-features-regexp* :
     Regexp to match the header line for the required libraries section.\\
-    default value: =^[ 	]*Features that might be required by this library:[ 	]*$=
+    default value: =^[ 	]*Features that might be required by this library:?[ 	]*$=
    - *org-readme-changelog-lines-regexp* :
     Regexp matching changelog lines in the elisp file (you probably shouldn't change this).\\
     default value: =^[ 	]*\\([0-9][0-9]?-[A-Za-z][A-Za-z][A-Za-z]-[0-9][0-9][0-9][0-9]\\)[ 	]*.*\n.*(\\([^)]*\\))[ 	]*\n\\(\\(?:\n\\|.\\)*?\\)\n[ 	]*\\([0-9][0-9]?\\)=
@@ -183,24 +190,18 @@ matches =org-readme-end-section-regexp=
    - *org-readme-build-el-get-recipe* :
     Build an el-get recipe based on github information.\\
     default value: =(quote prompt)=
-   - *org-readme-build-markdown* :
-    Build Readme.md from Readme.org.\\
-    default value: =(quote prompt)=
    - *org-readme-use-pandoc-markdown* :
     Use pandoc's grid tables instead of transferring the tables to html.\\
     default value: =(quote prompt)=
-   - *org-readme-build-texi* :
-    Build library-name.texi from Readme.org, using Readme.md and pandoc.\\
-    default value: =(quote prompt)=
    - *org-readme-drop-markdown-after-build-texi* :
     Remove Readme.md after texinfo is generated.\\
-    default value: =(quote prompt)=
+    default value: =t=
    - *org-readme-build-info* :
-    Build library-name.info from Reade.org using texi.  \\
-    default value: =(quote prompt)=
+    Build .info file from Reade.org using texi.\\
+    default value: =nil=
    - *org-readme-drop-texi-after-build-info* :
     Remove the texi information after building info files.\\
-    default value: =(quote prompt)=
+    default value: =t=
    - *org-readme-add-readme-to-lisp-file* :
     Update elisp file header with commentary section of Readme.org.\\
     default value: =(quote prompt)=
@@ -227,12 +228,13 @@ matches =org-readme-end-section-regexp=
     default value: =(quote prompt)=
    - *org-readme-remove-sections* :
     List of sections to remove when changing the Readme.org to Commentary.\\
-    default value: =(quote ("History" "Possible Dependencies" "Library Information" "Functions & macros" "Variables" ...))=
+    default value: =(quote ("History" "Possible Dependencies" "Library Information" "Installation" "Functions & macros" ...))=
    - *org-readme-remove-sections-from-markdown* :
     List of sections to remove when changing the Readme.org to \\
     default value: =(quote ("Functions & macros" "Variables"))=
 * History
 
+ - 30-Nov-2015 ::  Add melpa recipe to package-build-recipes-dir (Joe Bloggs)
  - 19-Nov-2015 ::  Automatically update required features section in elisp comments (Joe Bloggs)
  - 14-Nov-2015 ::  Add auto-document integration (Joe Bloggs)
  - 14-Nov-2015 ::  Update "Last-Updated:", "By:" & "Update #:" fields (Joe Bloggs)
