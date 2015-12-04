@@ -6,7 +6,7 @@
 ;; Maintainer: Matthew L. Fidler
 ;; Created: Fri Aug  3 22:33:41 2012 (-0500)
 ;; Version: 20151130.1948
-;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0"))
+;; Package-Requires: ((http-post-simple "1.0") (yaoddmuse "0.1.1")(header2 "21.0") (lib-requires "21.0") (cl-lib "0.5"))
 ;; Last-Updated: Mon Nov 30 19:47:56 2015
 ;;           By: Joe Bloggs
 ;;     Update #: 808
@@ -595,6 +595,7 @@
 ;; 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'yaoddmuse nil t)
 (require 'http-post-simple nil t)
 (require 'org-html nil t)
@@ -1924,7 +1925,7 @@ match to `org-readme-end-section-regexp'."
 	     while (setq form (condition-case v
 				  (read (current-buffer)) (error nil)))
 	     if (eq (car form) 'require)
-	     collect (symbol-name (cadadr form)))))
+	     collect (symbol-name (cl-cadadr form)))))
 
 ;;;###autoload
 (defun org-readme-update-required-features-section nil
