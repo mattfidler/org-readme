@@ -936,7 +936,7 @@ If N is provided return all matches of the Nth subexpression of REGEX."
   (let ((lst (org-readme-get-matches
 	      "(\\(?:cl-\\)?def\\(?:un\\|macro\\)[*]?[ \t\n]+\\([^ \t\n]+\\)" 1))
 	(readme (org-readme-find-readme))
-	tmp ret1 ret2 ret)
+	tmp ret1 ret2 ret3 ret)
     (cl-flet ((fd (x)
 		  (with-temp-buffer
 		    (insert x)
